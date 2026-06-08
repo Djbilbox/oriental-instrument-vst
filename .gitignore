@@ -1,0 +1,40 @@
+# Build output
+build/
+Builds/
+cmake-build-*/
+
+# JUCE framework (cloned during CI)
+JUCE/
+
+# IDE files
+.vs/
+.vscode/
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.db
+*.opendb
+*.ipch
+out/
+
+# Compiled binaries (generated during build)
+*.exe
+*.dll
+*.lib
+*.obj
+*.o
+*.a
+*.pdb
+*.ilk
+*.exp
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary
+*.tmp
+*.log
+*.cache

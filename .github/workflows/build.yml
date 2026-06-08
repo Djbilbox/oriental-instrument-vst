@@ -1,0 +1,48 @@
+name: Build Oriental Instrument VST3
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Clone JUCE framework
+        run: git clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git JUCE
+
+      - name: Configure CMake (Release)
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build VST3
+        run: cmake --build build --config Release --target OrientalInstrument_VST3
+
+      - name: Locate VST3 artifact
+        id: find_vst3
+        shell: bash
+        run: |
+          VST3_PATH=$(find build -name "*.vst3" -type d | head -1)
+          if [ -z "$VST3_PATH" ]; then
+            echo "ERROR: No .vst3 bundle found!"
+            find build -type f -name "*.dll" -o -name "*.vst3"
+            exit 1
+          fi
+          echo "vst3_path=$VST3_PATH" >> $GITHUB_OUTPUT
+          echo "Found VST3 at: $VST3_PATH"
+          ls -la "$VST3_PATH"
+
+      - name: Upload VST3 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrientalInstrument-VST3-Win64
+          path: ${{ steps.find_vst3.outputs.vst3_path }}
+          if-no-files-found: error
+          retention-days: 90

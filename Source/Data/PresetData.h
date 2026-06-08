@@ -1,0 +1,42 @@
+#pragma once
+#include <JuceHeader.h>
+#include "../Utils/Constants.h"
+
+struct PresetData
+{
+    juce::String name;
+    juce::String city;
+    juce::String key;
+    juce::String maqam;
+    juce::String soundDescription;
+    juce::String tags;
+    OrientalConstants::Instrument instrument;
+
+    // Synth parameters
+    float glide   = 25.0f;
+    float space   = 60.0f;
+    float filter  = 80.0f;
+    float orient  = 50.0f;
+    float reso    = 35.0f;
+    float depth   = 70.0f;
+    float fxMix   = 50.0f;
+
+    // FX on/off states
+    bool reverbOn     = true;
+    bool echoOn       = false;
+    bool chorusOn     = true;
+    bool distortOn    = false;
+    bool compressorOn = true;
+    bool eqOn         = false;
+    bool phaserOn     = false;
+    bool bitcrushOn   = false;
+
+    // FX amounts
+    float reverbAmount     = 0.72f;
+    float echoAmount       = 0.45f;
+    float chorusAmount     = 0.38f;
+    float distortAmount    = 0.18f;
+    float compressorAmount = 0.60f;
+    float phaserAmount     = 0.30f;
+    float bitcrushAmount   = 0.08f;
+};

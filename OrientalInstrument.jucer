@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="oRiEnTl" name="OrientalInstrument" projectType="audioplug"
+              version="1.0.0" bundleIdentifier="com.djbilbox.orientalinstrument"
+              pluginName="Oriental Instrument" pluginDesc="Oriental Virtual Instrument - Maqam Edition"
+              pluginManufacturer="DJBILBOX BEATS" pluginManufacturerCode="DJBX"
+              pluginCode="OrIn" pluginChannelConfigs="" pluginIsSynth="1"
+              pluginWantsMidiIn="1" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
+              pluginEditorRequiresKeys="1" pluginAUExportPrefix="OrientalInstrumentAU"
+              aaxIdentifier="com.djbilbox.orientalinstrument"
+              pluginVST3Category="Instrument,Synth"
+              companyName="DJBILBOX BEATS" companyWebsite=""
+              displaySplashScreen="0" reportAppUsage="0"
+              pluginFormats="buildVST3"
+              cppLanguageStandard="17"
+              jucerFormatVersion="1">
+  <MAINGROUP id="mainGrp" name="OrientalInstrument">
+    <GROUP id="srcGrp" name="Source">
+      <FILE id="pp_h" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="pp_cpp" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="pe_h" name="PluginEditor.h" compile="0" resource="0"
+            file="Source/PluginEditor.h"/>
+      <FILE id="pe_cpp" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <GROUP id="dspGrp" name="DSP">
+        <FILE id="osnd_h" name="OrientalSound.h" compile="0" resource="0"
+              file="Source/DSP/OrientalSound.h"/>
+        <FILE id="os_h" name="OrientalSynthesiser.h" compile="0" resource="0"
+              file="Source/DSP/OrientalSynthesiser.h"/>
+        <FILE id="os_cpp" name="OrientalSynthesiser.cpp" compile="1" resource="0"
+              file="Source/DSP/OrientalSynthesiser.cpp"/>
+        <FILE id="ov_h" name="OrientalVoice.h" compile="0" resource="0"
+              file="Source/DSP/OrientalVoice.h"/>
+        <FILE id="ov_cpp" name="OrientalVoice.cpp" compile="1" resource="0"
+              file="Source/DSP/OrientalVoice.cpp"/>
+        <FILE id="wt_h" name="WavetableOscillator.h" compile="0" resource="0"
+              file="Source/DSP/WavetableOscillator.h"/>
+        <FILE id="wt_cpp" name="WavetableOscillator.cpp" compile="1" resource="0"
+              file="Source/DSP/WavetableOscillator.cpp"/>
+        <FILE id="adsr_h" name="ADSREnvelope.h" compile="0" resource="0"
+              file="Source/DSP/ADSREnvelope.h"/>
+        <FILE id="adsr_cpp" name="ADSREnvelope.cpp" compile="1" resource="0"
+              file="Source/DSP/ADSREnvelope.cpp"/>
+        <FILE id="mt_h" name="MaqamTuning.h" compile="0" resource="0"
+              file="Source/DSP/MaqamTuning.h"/>
+        <FILE id="mt_cpp" name="MaqamTuning.cpp" compile="1" resource="0"
+              file="Source/DSP/MaqamTuning.cpp"/>
+        <GROUP id="fxGrp" name="FXChain">
+          <FILE id="fxc_h" name="FXChain.h" compile="0" resource="0"
+                file="Source/DSP/FXChain/FXChain.h"/>
+          <FILE id="fxc_cpp" name="FXChain.cpp" compile="1" resource="0"
+                file="Source/DSP/FXChain/FXChain.cpp"/>
+          <FILE id="rv_h" name="ReverbFX.h" compile="0" resource="0"
+                file="Source/DSP/FXChain/ReverbFX.h"/>
+          <FILE id="rv_cpp" name="ReverbFX.cpp" compile="1" resource="0"
+                file="Source/DSP/FXChain/ReverbFX.cpp"/>
+          <FILE id="dl_h" name="DelayFX.h" compile="0" resource="0"
+                file="Source/DSP/FXChain/DelayFX.h"/>
+          <FILE id="dl_cpp" name="DelayFX.cpp" compile="1" resource="0"
+                file="Source/DSP/FXChain/DelayFX.cpp"/>
+          <FILE id="ch_h" name="ChorusFX.h" compile="0" resource="0"
+                file="Source/DSP/FXChain/ChorusFX.h"/>
+          <FILE id="ch_cpp" name="ChorusFX.cpp" compile="1" resource="0"
+                file="Source/DSP/FXChain/ChorusFX.cpp"/>
+          <FILE id="di_h" name="DistortionFX.h" compile="0" resource="0"
+                file="Source/DSP/FXChain/DistortionFX.h"/>
+          <FILE id="di_cpp" name="DistortionFX.cpp" compile="1" resource="0"
+                file="Source/DSP/FXChain/DistortionFX.cpp"/>
+          <FILE id="co_h" name="CompressorFX.h" compile="0" resource="0"
+                file="Source/DSP/FXChain/CompressorFX.h"/>
+          <FILE id="co_cpp" name="CompressorFX.cpp" compile="1" resource="0"
+                file="Source/DSP/FXChain/CompressorFX.cpp"/>
+          <FILE id="eq_h" name="EQ3BandFX.h" compile="0" resource="0"
+                file="Source/DSP/FXChain/EQ3BandFX.h"/>
+          <FILE id="eq_cpp" name="EQ3BandFX.cpp" compile="1" resource="0"
+                file="Source/DSP/FXChain/EQ3BandFX.cpp"/>
+          <FILE id="ph_h" name="PhaserFX.h" compile="0" resource="0"
+                file="Source/DSP/FXChain/PhaserFX.h"/>
+          <FILE id="ph_cpp" name="PhaserFX.cpp" compile="1" resource="0"
+                file="Source/DSP/FXChain/PhaserFX.cpp"/>
+          <FILE id="bc_h" name="BitcrusherFX.h" compile="0" resource="0"
+                file="Source/DSP/FXChain/BitcrusherFX.h"/>
+          <FILE id="bc_cpp" name="BitcrusherFX.cpp" compile="1" resource="0"
+                file="Source/DSP/FXChain/BitcrusherFX.cpp"/>
+        </GROUP>
+      </GROUP>
+      <GROUP id="dataGrp" name="Data">
+        <FILE id="ip_h" name="InstrumentProfiles.h" compile="0" resource="0"
+              file="Source/Data/InstrumentProfiles.h"/>
+        <FILE id="ip_cpp" name="InstrumentProfiles.cpp" compile="1" resource="0"
+              file="Source/Data/InstrumentProfiles.cpp"/>
+        <FILE id="pd_h" name="PresetData.h" compile="0" resource="0"
+              file="Source/Data/PresetData.h"/>
+        <FILE id="pm_h" name="PresetManager.h" compile="0" resource="0"
+              file="Source/Data/PresetManager.h"/>
+        <FILE id="pm_cpp" name="PresetManager.cpp" compile="1" resource="0"
+              file="Source/Data/PresetManager.cpp"/>
+      </GROUP>
+      <GROUP id="guiGrp" name="GUI">
+        <FILE id="lf_h" name="OrientalLookAndFeel.h" compile="0" resource="0"
+              file="Source/GUI/OrientalLookAndFeel.h"/>
+        <FILE id="lf_cpp" name="OrientalLookAndFeel.cpp" compile="1" resource="0"
+              file="Source/GUI/OrientalLookAndFeel.cpp"/>
+        <FILE id="kn_h" name="KnobComponent.h" compile="0" resource="0"
+              file="Source/GUI/KnobComponent.h"/>
+        <FILE id="kn_cpp" name="KnobComponent.cpp" compile="1" resource="0"
+              file="Source/GUI/KnobComponent.cpp"/>
+        <FILE id="pb_h" name="PresetBrowser.h" compile="0" resource="0"
+              file="Source/GUI/PresetBrowser.h"/>
+        <FILE id="pb_cpp" name="PresetBrowser.cpp" compile="1" resource="0"
+              file="Source/GUI/PresetBrowser.cpp"/>
+        <FILE id="pi_h" name="PianoComponent.h" compile="0" resource="0"
+              file="Source/GUI/PianoComponent.h"/>
+        <FILE id="pi_cpp" name="PianoComponent.cpp" compile="1" resource="0"
+              file="Source/GUI/PianoComponent.cpp"/>
+        <FILE id="fx_h" name="FXPanel.h" compile="0" resource="0"
+              file="Source/GUI/FXPanel.h"/>
+        <FILE id="fx_cpp" name="FXPanel.cpp" compile="1" resource="0"
+              file="Source/GUI/FXPanel.cpp"/>
+        <FILE id="wf_h" name="WaveformDisplay.h" compile="0" resource="0"
+              file="Source/GUI/WaveformDisplay.h"/>
+        <FILE id="wf_cpp" name="WaveformDisplay.cpp" compile="1" resource="0"
+              file="Source/GUI/WaveformDisplay.cpp"/>
+        <FILE id="wl_h" name="WheelComponent.h" compile="0" resource="0"
+              file="Source/GUI/WheelComponent.h"/>
+        <FILE id="wl_cpp" name="WheelComponent.cpp" compile="1" resource="0"
+              file="Source/GUI/WheelComponent.cpp"/>
+        <FILE id="bg_h" name="BackgroundComponent.h" compile="0" resource="0"
+              file="Source/GUI/BackgroundComponent.h"/>
+        <FILE id="bg_cpp" name="BackgroundComponent.cpp" compile="1" resource="0"
+              file="Source/GUI/BackgroundComponent.cpp"/>
+      </GROUP>
+      <GROUP id="utlGrp" name="Utils">
+        <FILE id="cn_h" name="Constants.h" compile="0" resource="0"
+              file="Source/Utils/Constants.h"/>
+      </GROUP>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_VST3_CAN_REPLACE_VST2="0" JUCE_STRICT_REFCOUNTEDPOINTER="1"
+               JUCE_WEB_BROWSER="0" JUCE_USE_CURL="0"/>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="OrientalInstrument"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="OrientalInstrument"
+                       optimisation="3"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path=""/>
+        <MODULEPATH id="juce_audio_devices" path=""/>
+        <MODULEPATH id="juce_audio_formats" path=""/>
+        <MODULEPATH id="juce_audio_plugin_client" path=""/>
+        <MODULEPATH id="juce_audio_processors" path=""/>
+        <MODULEPATH id="juce_audio_utils" path=""/>
+        <MODULEPATH id="juce_core" path=""/>
+        <MODULEPATH id="juce_data_structures" path=""/>
+        <MODULEPATH id="juce_dsp" path=""/>
+        <MODULEPATH id="juce_events" path=""/>
+        <MODULEPATH id="juce_graphics" path=""/>
+        <MODULEPATH id="juce_gui_basics" path=""/>
+        <MODULEPATH id="juce_gui_extra" path=""/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+</JUCERPROJECT>
