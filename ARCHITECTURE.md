@@ -81,8 +81,13 @@ sont déplacés dans `BackgroundComponent`, qui se situe derrière les contrôle
 au-dessus du désert. `PluginEditor::paint()` est désormais vide.
 
 ### 3.2 BackgroundComponent
-- **Cache `juce::Image`** : la scène désert (dégradé, étoiles, pyramides, dunes, vignette)
-  est rendue **une fois** dans `cachedDesert` (régénérée sur changement de taille).
+- **Décor complet porté du prototype HTML** : toutes les figures SVG sont
+  désormais redessinées en `juce::Path` — ciel, étoiles + lune, soleil, 3 pyramides,
+  **Sphinx**, dunes, **4 musiciens Gnawa** (guembri, qraqeb, danseur), **dromadaire**
+  (selle touareg), **2 aigles** en vol, **palmeraie**, brume de chaleur, vignettage.
+  Les coordonnées SVG (repère 980×640) sont mappées par `sx=w/980, sy=h/640`.
+- **Cache `juce::Image`** : la scène entière est rendue **une fois** dans `cachedDesert`
+  (régénérée sur changement de taille) — les figures ne coûtent rien par frame.
 - **Halo animé** : `juce::Timer` à 30 fps fait respirer l'intensité du soleil
   (`0.82 + 0.18·sin(phase)`), dessiné en direct par-dessus le cache.
 - **Glassmorphism réel** : `cachedFrosted` = désert + soleil **floutés** une fois via

@@ -2,8 +2,16 @@
 #include "BlurUtils.h"
 #include "Typography.h"
 #include "../Utils/Constants.h"
+#include <initializer_list>
+#include <cmath>
 
 using namespace OrientalConstants;
+
+// RGB (0xRRGGBB) + alpha helper to mirror SVG fill+opacity.
+static inline juce::Colour rgbA(unsigned int rgb, float a)
+{
+    return juce::Colour(0xFF000000u | rgb).withAlpha(a);
+}
 
 BackgroundComponent::BackgroundComponent()
 {
@@ -34,25 +42,30 @@ void BackgroundComponent::rebuildCaches()
     if (b.isEmpty())
         return;
 
+    const float sx = b.getWidth()  / 980.0f;
+    const float sy = b.getHeight() / 640.0f;
+
     cachedSize = b;
     cachedDesert = juce::Image(juce::Image::ARGB, b.getWidth(), b.getHeight(), true);
     {
         juce::Graphics g(cachedDesert);
         auto bounds = b.toFloat();
+        // Z-order matches the HTML SVG, back → front
         drawDesertGradient(g, bounds);
         drawStars(g, bounds);
+        drawSun(g, b.getWidth() * 0.51f, b.getHeight() * 0.56f, 1.0f);
         drawPyramids(g, bounds);
+        drawSphinx(g, sx, sy);
         drawDunes(g, bounds);
+        drawMusicians(g, sx, sy);
+        drawCamel(g, sx, sy);
+        drawEagles(g, sx, sy);
+        drawPalms(g, sx, sy);
+        drawHeatHaze(g, sx, sy);
         drawVignette(g, bounds);
     }
 
-    // Frosted = desert + a soft sun baked in, then blurred. Used behind glass.
-    juce::Image warm = cachedDesert.createCopy();
-    {
-        juce::Graphics g(warm);
-        drawSun(g, b.getWidth() * 0.51f, b.getHeight() * 0.56f, 1.0f);
-    }
-    cachedFrosted = BlurUtils::frosted(warm, 17, 3);
+    cachedFrosted = BlurUtils::frosted(cachedDesert, 17, 3);
 }
 
 void BackgroundComponent::paint(juce::Graphics& g)
@@ -60,14 +73,12 @@ void BackgroundComponent::paint(juce::Graphics& g)
     if (cachedDesert.isNull() || cachedSize != getLocalBounds())
         rebuildCaches();
 
-    // Sharp desert
     g.drawImageAt(cachedDesert, 0, 0);
 
-    // Live, breathing sun halo
-    float intensity = 0.82f + 0.18f * std::sin(haloPhase);
-    drawSun(g, getWidth() * 0.51f, getHeight() * 0.56f, intensity);
+    // Subtle breathing halo on top for life
+    float pulse = 0.06f + 0.06f * std::sin(haloPhase);
+    drawHalo(g, getWidth() * 0.51f, getHeight() * 0.56f, pulse);
 
-    // Frosted glass relief + chrome
     drawGlassPanels(g);
     drawChrome(g);
 }
@@ -79,7 +90,6 @@ void BackgroundComponent::drawGlassPanel(juce::Graphics& g, juce::Rectangle<int>
 {
     auto rf = r.toFloat();
 
-    // 1) Frosted backdrop clipped to the panel
     {
         juce::Graphics::ScopedSaveState save(g);
         g.reduceClipRegion(r);
@@ -87,25 +97,19 @@ void BackgroundComponent::drawGlassPanel(juce::Graphics& g, juce::Rectangle<int>
             g.drawImageAt(cachedFrosted, 0, 0);
     }
 
-    // 2) Translucent warm-dark tint for legibility (lower opacity than before
-    //    so the frosted desert glows through — true glassmorphism)
-    g.setColour(juce::Colour(0xA60C0906)); // ~65%
+    g.setColour(juce::Colour(0xA60C0906)); // ~65% warm-dark tint
     g.fillRect(rf);
 
-    // 3) Top sheen (specular sweep)
     juce::ColourGradient sheen(juce::Colours::white.withAlpha(0.07f), rf.getX(), rf.getY(),
                                juce::Colours::transparentWhite, rf.getX(), rf.getY() + 70.0f, false);
     g.setGradientFill(sheen);
     g.fillRect(rf.withHeight(70.0f));
 
-    // 4) Gradient gold border (bright top → dim bottom)
     juce::ColourGradient border(juce::Colour(Colors::GOLD_LIGHT).withAlpha(0.45f), rf.getX(), rf.getY(),
                                 juce::Colour(Colors::GOLD_DIM).withAlpha(0.14f), rf.getX(), rf.getBottom(), false);
     g.setGradientFill(border);
-    if (topEdge)
-        g.fillRect(rf.getX(), rf.getY(), rf.getWidth(), 1.0f);
-    if (leftEdge)
-        g.fillRect(rf.getX(), rf.getY(), 1.0f, rf.getHeight());
+    if (topEdge)  g.fillRect(rf.getX(), rf.getY(), rf.getWidth(), 1.0f);
+    if (leftEdge) g.fillRect(rf.getX(), rf.getY(), 1.0f, rf.getHeight());
     g.fillRect(rf.getRight() - 1.0f, rf.getY(), 1.0f, rf.getHeight());
 }
 
@@ -139,43 +143,84 @@ void BackgroundComponent::drawChrome(juce::Graphics& g)
     g.setGradientFill(hdr);
     g.fillRect(header.getX(), header.getBottom() - 1.0f, header.getWidth(), 1.0f);
 
-    // Title — strong display hierarchy
-    g.setColour(juce::Colour(Colors::GOLD_LIGHT));
-    g.setFont(Typography::title());
-    g.drawText(Typography::tracked("ORIENTAL"), header.translated(-2.0f, 0.0f), juce::Justification::centred);
+    // ── Logo (left): geo diamonds + name + sub ──
+    {
+        float cx = 18.0f, cy = header.getCentreY();
+        for (int i = 0; i < 3; ++i)
+        {
+            juce::Path d;
+            float s = 5.0f;
+            d.addRectangle(cx + i * 8.0f - s * 0.5f, cy - 9.0f - s * 0.5f, s, s);
+            g.setColour(i == 1 ? juce::Colour(Colors::GOLD) : juce::Colour(Colors::GOLD_DIM));
+            g.fillPath(d, juce::AffineTransform::rotation(juce::MathConstants<float>::pi * 0.25f,
+                                                          cx + i * 8.0f, cy - 9.0f));
+        }
+        g.setColour(juce::Colour(Colors::GOLD));
+        g.setFont(juce::Font(Typography::displayFamily(), 11.0f, juce::Font::bold));
+        g.drawText("DJBILBOX", juce::Rectangle<float>(12.0f, cy - 2.0f, 150.0f, 14.0f),
+                   juce::Justification::centredLeft);
+        g.setColour(juce::Colour(Colors::GOLD_DIM));
+        g.setFont(juce::Font(Typography::bodyFamily(), 7.5f, juce::Font::plain));
+        g.drawText(Typography::tracked("Maqam Engine Pro"),
+                   juce::Rectangle<float>(12.0f, cy + 9.0f, 200.0f, 10.0f), juce::Justification::centredLeft);
+    }
 
-    // Logo block (left)
-    g.setColour(juce::Colour(Colors::GOLD));
-    g.setFont(Typography::subtitle());
-    g.drawText("DJBILBOX", header.withWidth(150.0f).translated(16.0f, -7.0f),
-               juce::Justification::centredLeft);
+    // ── Title (center) + by-line ──
+    g.setColour(juce::Colour(Colors::GOLD_LIGHT));
+    g.setFont(juce::Font(Typography::displayFamily(), 15.0f, juce::Font::bold));
+    g.drawText("ORIENTAL INSTRUMENT \xE2\x80\x94 MAQAM EDITION",
+               header.withTrimmedTop(6.0f), juce::Justification::centredTop);
     g.setColour(juce::Colour(Colors::GOLD_DIM));
     g.setFont(juce::Font(Typography::bodyFamily(), 8.0f, juce::Font::plain));
-    g.drawText(Typography::tracked("Maqam Engine Pro"),
-               header.withWidth(220.0f).translated(16.0f, 9.0f), juce::Justification::centredLeft);
+    g.drawText(Typography::tracked("by DJBILBOX BEATS"),
+               header.withTrimmedTop(28.0f).withTrimmedBottom(4.0f), juce::Justification::centredTop);
 
-    // Section labels on the columns
+    // ── Transport chips (right) ──
+    {
+        struct Btn { const char* t; juce::Colour col; bool on; };
+        Btn btns[] = {
+            { "MIDI",  juce::Colour(Colors::GOLD_DIM), false },
+            { "POLY",  juce::Colour(Colors::GOLD),     true  },
+            { "LEG",   juce::Colour(Colors::GOLD_DIM), false },
+            { "A/B",   juce::Colour(Colors::GOLD_DIM), false },
+            { "REC",   juce::Colour(Colors::RED),      true  },
+            { "PANIC", juce::Colour(0xFFFF6644),       false },
+        };
+        float ch = 17.0f, gap = 4.0f, rx = header.getRight() - 10.0f, cy = header.getCentreY() - ch * 0.5f;
+        for (int i = (int)(sizeof(btns) / sizeof(btns[0])) - 1; i >= 0; --i)
+        {
+            const auto& bn = btns[i];
+            float cw = (juce::String(bn.t).length() >= 4) ? 36.0f : 30.0f;
+            rx -= cw;
+            juce::Rectangle<float> r(rx, cy, cw, ch);
+            g.setColour(bn.on ? bn.col.withAlpha(0.12f) : rgbA(0xFFFFFF, 0.04f));
+            g.fillRoundedRectangle(r, 3.0f);
+            g.setColour(bn.on ? bn.col : rgbA(0x333333, 1.0f));
+            g.drawRoundedRectangle(r, 3.0f, 1.0f);
+            g.setColour(bn.on ? bn.col : rgbA(0x888888, 1.0f));
+            g.setFont(juce::Font(Typography::bodyFamily(), 8.5f, juce::Font::bold));
+            g.drawFittedText(bn.t, r.toNearestInt(), juce::Justification::centred, 1);
+            rx -= gap;
+        }
+    }
+
+    // ── Section label (left "MACRO"; the right column's FX title is drawn by FXPanel) ──
     auto main = bounds;
     main.removeFromBottom(PIANO_HEIGHT);
-    auto left  = main.removeFromLeft(LEFT_COL_WIDTH);
-    auto right = main.removeFromRight(RIGHT_COL_WIDTH);
+    auto left = main.removeFromLeft(LEFT_COL_WIDTH);
 
     g.setColour(juce::Colour(Colors::GOLD_DIM));
     g.setFont(Typography::sectionLabel());
     g.drawText(Typography::tracked("Macro"), left.removeFromTop(18), juce::Justification::centred);
-    g.drawText(Typography::tracked("Effects"), right.removeFromTop(18), juce::Justification::centred);
 
-    // Piano divider
+    // Piano divider + outer frame
     float pianoTop = static_cast<float>(getHeight() - PIANO_HEIGHT);
     g.setColour(juce::Colour(Colors::GOLD_DIM));
     g.drawLine(0.0f, pianoTop, static_cast<float>(getWidth()), pianoTop, 1.0f);
-
-    // Outer frame
-    g.setColour(juce::Colour(Colors::GOLD_DIM));
     g.drawRect(getLocalBounds(), 1);
 }
 
-// ════════════════════════════ SCENE (cached) ════════════════════════════
+// ════════════════════════════ SCENE — base ════════════════════════════
 
 void BackgroundComponent::drawDesertGradient(juce::Graphics& g, juce::Rectangle<float> bounds)
 {
@@ -221,13 +266,11 @@ void BackgroundComponent::drawStars(juce::Graphics& g, juce::Rectangle<float> bo
         {0.665f, 0.113f, 0.9f, 0.58f}, {0.827f, 0.094f, 0.8f, 0.52f},
         {0.029f, 0.075f, 0.6f, 0.45f}, {0.745f, 0.133f, 0.7f, 0.40f},
     };
-
     for (auto& s : stars)
     {
         g.setColour(juce::Colours::white.withAlpha(s.alpha));
         g.fillEllipse(s.x * w - s.r, s.y * h - s.r, s.r * 2.0f, s.r * 2.0f);
     }
-
     g.setColour(juce::Colours::white.withAlpha(0.4f));
     g.drawLine(w * 0.163f, h * 0.059f, w * 0.224f, h * 0.081f, 0.6f);
 }
@@ -244,11 +287,7 @@ void BackgroundComponent::drawSun(juce::Graphics& g, float cx, float cy, float i
     g.setColour(juce::Colour(0xFFFFAA30).withAlpha(0.055f * intensity));
     float rayAngles[] = { -1.2f, -0.6f, -0.1f, 0.3f, 0.8f, 1.1f };
     for (float angle : rayAngles)
-    {
-        float endX = cx + std::cos(angle) * 500.0f;
-        float endY = cy + std::sin(angle) * -400.0f;
-        g.drawLine(cx, cy, endX, endY, 25.0f);
-    }
+        g.drawLine(cx, cy, cx + std::cos(angle) * 500.0f, cy + std::sin(angle) * -400.0f, 25.0f);
 
     juce::ColourGradient core(juce::Colour(0xFAFFFBE0), cx, cy,
                               juce::Colours::transparentBlack, cx + 42.0f, cy, true);
@@ -263,6 +302,15 @@ void BackgroundComponent::drawSun(juce::Graphics& g, float cx, float cy, float i
     g.drawEllipse(cx - 42.0f, cy - 42.0f, 84.0f, 84.0f, 0.8f);
 }
 
+void BackgroundComponent::drawHalo(juce::Graphics& g, float cx, float cy, float alpha)
+{
+    juce::ColourGradient halo(juce::Colour(0xFFFFB840).withAlpha(alpha), cx, cy,
+                              juce::Colours::transparentBlack, cx, cy - 210.0f, true);
+    halo.addColour(0.4, juce::Colour(0xFFF07010).withAlpha(alpha * 0.5f));
+    g.setGradientFill(halo);
+    g.fillEllipse(cx - 320.0f, cy - 210.0f, 640.0f, 420.0f);
+}
+
 void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float> bounds)
 {
     float w = bounds.getWidth();
@@ -275,7 +323,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
         darkFace.lineTo(w * 0.4082f, h * 0.289f);
         darkFace.lineTo(w * 0.4388f, baseY);
         darkFace.closeSubPath();
-
         juce::ColourGradient darkGrad(juce::Colour(0xFA100602), w * 0.4082f, h * 0.289f,
                                        juce::Colour(0xFA1A0A04), w * 0.2735f, baseY, false);
         g.setGradientFill(darkGrad);
@@ -286,7 +333,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
         litFace.lineTo(w * 0.5510f, baseY);
         litFace.lineTo(w * 0.4388f, baseY);
         litFace.closeSubPath();
-
         juce::ColourGradient litGrad(juce::Colour(0xF52A1406), w * 0.4082f, h * 0.289f,
                                       juce::Colour(0xF53E2010), w * 0.5510f, baseY, false);
         g.setGradientFill(litGrad);
@@ -294,7 +340,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
 
         g.setColour(juce::Colour(0x66503020));
         g.drawLine(w * 0.4082f, h * 0.289f, w * 0.4082f, baseY, 0.6f);
-
         g.setColour(juce::Colour(0xB3C8A060));
         g.fillEllipse(w * 0.4082f - 2.5f, h * 0.289f - 2.5f, 5.0f, 5.0f);
 
@@ -315,7 +360,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
             g.drawLine(lx1, ly, lx2, ly, 0.4f);
         }
     }
-
     {
         juce::Path dark;
         dark.startNewSubPath(w * 0.539f, baseY);
@@ -346,7 +390,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
         g.setColour(juce::Colour(0x598A7050));
         g.fillPath(cap);
     }
-
     {
         juce::Path dark;
         dark.startNewSubPath(w * 0.733f, baseY);
@@ -384,16 +427,11 @@ void BackgroundComponent::drawDunes(juce::Graphics& g, juce::Rectangle<float> bo
         dune.quadraticTo(w * 0.327f, h * 0.644f, w * 0.457f, h * 0.544f);
         dune.quadraticTo(w * 0.584f, h * 0.444f, w * 0.702f, h * 0.563f);
         dune.quadraticTo(w * 0.820f, h * 0.681f, w, h * 0.575f);
-        dune.lineTo(w, h * 0.722f);
-        dune.lineTo(0, h * 0.722f);
-        dune.closeSubPath();
-
+        dune.lineTo(w, h * 0.722f); dune.lineTo(0, h * 0.722f); dune.closeSubPath();
         juce::ColourGradient grad(juce::Colour(0xC7C06818), 0, h * 0.531f,
                                    juce::Colour(0xC74A1E04), 0, h * 0.722f, false);
-        g.setGradientFill(grad);
-        g.fillPath(dune);
+        g.setGradientFill(grad); g.fillPath(dune);
     }
-
     {
         juce::Path dune;
         dune.startNewSubPath(0, h * 0.669f);
@@ -401,46 +439,32 @@ void BackgroundComponent::drawDunes(juce::Graphics& g, juce::Rectangle<float> bo
         dune.quadraticTo(w * 0.318f, h * 0.711f, w * 0.461f, h * 0.622f);
         dune.quadraticTo(w * 0.598f, h * 0.533f, w * 0.735f, h * 0.644f);
         dune.quadraticTo(w * 0.869f, h * 0.750f, w, h * 0.653f);
-        dune.lineTo(w, h * 0.828f);
-        dune.lineTo(0, h * 0.828f);
-        dune.closeSubPath();
-
+        dune.lineTo(w, h * 0.828f); dune.lineTo(0, h * 0.828f); dune.closeSubPath();
         juce::ColourGradient grad(juce::Colour(0xD9D87820), 0, h * 0.602f,
                                    juce::Colour(0xD95E2608), 0, h * 0.828f, false);
-        g.setGradientFill(grad);
-        g.fillPath(dune);
+        g.setGradientFill(grad); g.fillPath(dune);
     }
-
     {
         juce::Path dune;
         dune.startNewSubPath(0, h * 0.742f);
         dune.quadraticTo(w * 0.138f, h * 0.675f, w * 0.314f, h * 0.741f);
         dune.quadraticTo(w * 0.488f, h * 0.809f, w * 0.631f, h * 0.722f);
         dune.quadraticTo(w * 0.774f, h * 0.634f, w, h * 0.747f);
-        dune.lineTo(w, h * 0.891f);
-        dune.lineTo(0, h * 0.891f);
-        dune.closeSubPath();
-
+        dune.lineTo(w, h * 0.891f); dune.lineTo(0, h * 0.891f); dune.closeSubPath();
         juce::ColourGradient grad(juce::Colour(0xE6E89030), 0, h * 0.675f,
                                    juce::Colour(0xE66E3010), 0, h * 0.891f, false);
-        g.setGradientFill(grad);
-        g.fillPath(dune);
+        g.setGradientFill(grad); g.fillPath(dune);
     }
-
     {
         juce::Path dune;
         dune.startNewSubPath(0, h * 0.825f);
         dune.quadraticTo(w * 0.179f, h * 0.773f, w * 0.386f, h * 0.825f);
         dune.quadraticTo(w * 0.574f, h * 0.875f, w * 0.755f, h * 0.806f);
         dune.quadraticTo(w * 0.886f, h * 0.756f, w, h * 0.820f);
-        dune.lineTo(w, h);
-        dune.lineTo(0, h);
-        dune.closeSubPath();
-
+        dune.lineTo(w, h); dune.lineTo(0, h); dune.closeSubPath();
         juce::ColourGradient grad(juce::Colour(0xF5CF7828), 0, h * 0.773f,
                                    juce::Colour(0xF5361404), 0, h, false);
-        g.setGradientFill(grad);
-        g.fillPath(dune);
+        g.setGradientFill(grad); g.fillPath(dune);
     }
 
     g.setColour(juce::Colour(0xFC3A1C08));
@@ -466,6 +490,249 @@ void BackgroundComponent::drawDunes(juce::Graphics& g, juce::Rectangle<float> bo
     crest1.quadraticTo(w * 0.584f, h * 0.444f, w * 0.702f, h * 0.563f);
     crest1.quadraticTo(w * 0.820f, h * 0.681f, w, h * 0.575f);
     g.strokePath(crest1, juce::PathStrokeType(0.8f));
+}
+
+// ════════════════════════════ SCENE — figures ════════════════════════════
+
+void BackgroundComponent::drawSphinx(juce::Graphics& g, float sx, float sy)
+{
+    const float tx = 490.0f, ty = 350.0f;
+    auto X = [&](float v) { return (tx + v) * sx; };
+    auto Y = [&](float v) { return (ty + v) * sy; };
+    auto E = [&](float cx, float cy, float rx, float ry, juce::Colour c)
+    { g.setColour(c); g.fillEllipse(X(cx) - rx * sx, Y(cy) - ry * sy, 2 * rx * sx, 2 * ry * sy); };
+    auto R = [&](float x, float y, float w, float h, juce::Colour c)
+    { g.setColour(c); g.fillRoundedRectangle(X(x), Y(y), w * sx, h * sy, 3.0f); };
+
+    E(0, 8, 55, 18, rgbA(0x1e1006, 0.92f));               // body
+    R(-40, 14, 14, 20, rgbA(0x180c04, 0.9f));             // front legs
+    R(-22, 14, 14, 20, rgbA(0x180c04, 0.9f));
+    R(-10, -16, 22, 26, rgbA(0x1a0e06, 0.92f));           // neck
+    E(2, -22, 18, 14, rgbA(0x1e1206, 0.94f));             // nemes head
+    {   // nemes sides
+        juce::Path l; l.startNewSubPath(X(-16), Y(-18)); l.quadraticTo(X(-22), Y(-10), X(-18), Y(4));
+        l.lineTo(X(-12), Y(0)); l.quadraticTo(X(-14), Y(-8), X(-12), Y(-16)); l.closeSubPath();
+        g.setColour(rgbA(0x160c04, 0.9f)); g.fillPath(l);
+        juce::Path r; r.startNewSubPath(X(18), Y(-18)); r.quadraticTo(X(24), Y(-10), X(20), Y(4));
+        r.lineTo(X(14), Y(0)); r.quadraticTo(X(16), Y(-8), X(14), Y(-16)); r.closeSubPath();
+        g.setColour(rgbA(0x160c04, 0.9f)); g.fillPath(r);
+    }
+    E(2, -22, 12, 10, rgbA(0x221408, 0.9f));              // face
+    E(-4, -24, 3, 1.5f, rgbA(0x060200, 0.95f));           // eyes
+    E(8, -24, 3, 1.5f, rgbA(0x060200, 0.95f));
+    R(-2, -12, 6, 10, rgbA(0x140a02, 0.8f));              // beard
+    {   // uraeus (cobra)
+        juce::Path u; u.startNewSubPath(X(2), Y(-33)); u.quadraticTo(X(6), Y(-30), X(4), Y(-26));
+        u.quadraticTo(X(2), Y(-24), X(2), Y(-26)); u.quadraticTo(X(0), Y(-28), X(2), Y(-33)); u.closeSubPath();
+        g.setColour(rgbA(0xc09020, 0.7f)); g.fillPath(u);
+    }
+}
+
+void BackgroundComponent::drawCamel(juce::Graphics& g, float sx, float sy)
+{
+    const float tx = 700.0f, ty = 425.0f;
+    auto X = [&](float v) { return (tx + v) * sx; };
+    auto Y = [&](float v) { return (ty + v) * sy; };
+    auto E = [&](float cx, float cy, float rx, float ry, juce::Colour c)
+    { g.setColour(c); g.fillEllipse(X(cx) - rx * sx, Y(cy) - ry * sy, 2 * rx * sx, 2 * ry * sy); };
+    auto R = [&](float x, float y, float w, float h, juce::Colour c)
+    { g.setColour(c); g.fillRoundedRectangle(X(x), Y(y), w * sx, h * sy, 3.0f); };
+    auto P = [&](std::initializer_list<float> pts, juce::Colour c, bool quad)
+    {
+        juce::Path p; auto it = pts.begin();
+        float x0 = *it++, y0 = *it++; p.startNewSubPath(X(x0), Y(y0));
+        while (it != pts.end())
+        {
+            if (quad) { float cx = *it++, cy = *it++, ex = *it++, ey = *it++; p.quadraticTo(X(cx), Y(cy), X(ex), Y(ey)); }
+            else      { float ex = *it++, ey = *it++; p.lineTo(X(ex), Y(ey)); }
+        }
+        p.closeSubPath(); g.setColour(c); g.fillPath(p);
+    };
+
+    E(0, 0, 52, 28, rgbA(0x130900, 0.96f));   // body
+    E(-10, -30, 20, 18, rgbA(0x130900, 0.96f)); // hump
+    P({ 32,-12, 48,-8,56,-24, 60,-42,52,-48, 46,-40,48,-26, 42,-12,36,-10 }, rgbA(0x110800, 0.96f), true); // neck
+    E(56, -50, 16, 11, rgbA(0x150a02, 0.96f)); // head
+    P({ 62,-42, 70,-40,68,-36, 62,-35,58,-38 }, rgbA(0x1e1208, 0.96f), true); // lip
+    E(52, -54, 2.2f, 2.2f, rgbA(0x060400, 0.96f));     // eye
+    E(52.6f, -54.6f, 1, 1, rgbA(0xb08820, 0.9f));       // eye glint
+    P({ 44,-58, 42,-68,48,-64, 50,-58,46,-54 }, rgbA(0x190a04, 0.96f), true); // ear
+    P({ -50,-4, -62,-10,-60,-18, -54,-12,-52,-4 }, rgbA(0x130900, 0.96f), true); // tail
+    // legs
+    R(24, 20, 9, 16, rgbA(0x130900, 0.96f)); R(26, 36, 7, 18, rgbA(0x130900, 0.96f));
+    R(36, 20, 9, 14, rgbA(0x130900, 0.96f)); R(38, 34, 7, 16, rgbA(0x130900, 0.96f));
+    R(-22, 22, 9, 14, rgbA(0x130900, 0.96f)); R(-20, 36, 7, 16, rgbA(0x130900, 0.96f));
+    R(-34, 22, 9, 12, rgbA(0x130900, 0.96f)); R(-32, 34, 7, 14, rgbA(0x130900, 0.96f));
+    // hooves
+    E(28, 55, 6, 3, rgbA(0x0a0500, 1.0f)); E(41, 51, 6, 3, rgbA(0x0a0500, 1.0f));
+    E(-18, 53, 6, 3, rgbA(0x0a0500, 1.0f)); E(-29, 49, 6, 3, rgbA(0x0a0500, 1.0f));
+    // saddle + rug + load
+    P({ -14,-10, 0,-38,14,-10, 6,-8,-6,-8 }, rgbA(0x3a2010, 0.85f), true);
+    E(0, -6, 16, 5, rgbA(0x502a14, 0.7f));
+    R(-46, -8, 14, 10, rgbA(0x2e1808, 0.8f)); R(34, -8, 14, 10, rgbA(0x2e1808, 0.8f));
+}
+
+void BackgroundComponent::drawEagles(juce::Graphics& g, float sx, float sy)
+{
+    auto eagle = [&](float tx, float ty, float scale, float op)
+    {
+        auto X = [&](float v) { return (tx + v * scale) * sx; };
+        auto Y = [&](float v) { return (ty + v * scale) * sy; };
+        auto E = [&](float cx, float cy, float rx, float ry, juce::Colour c)
+        { g.setColour(c); g.fillEllipse(X(cx) - rx * scale * sx, Y(cy) - ry * scale * sy,
+                                        2 * rx * scale * sx, 2 * ry * scale * sy); };
+        auto P = [&](std::initializer_list<float> pts, juce::Colour c)
+        {
+            juce::Path p; auto it = pts.begin();
+            float x0 = *it++, y0 = *it++; p.startNewSubPath(X(x0), Y(y0));
+            while (it != pts.end())
+            { float cx = *it++, cy = *it++, ex = *it++, ey = *it++; p.quadraticTo(X(cx), Y(cy), X(ex), Y(ey)); }
+            p.closeSubPath(); g.setColour(c); g.fillPath(p);
+        };
+
+        E(0, 0, 22, 9, rgbA(0x1c1208, op));            // body
+        E(20, -5, 8, 8, rgbA(0x180e06, op));           // head
+        P({ 26,-3, 33,0,31,5, 26,4,24,2 }, rgbA(0x2a2008, op)); // beak
+        // wings (main)
+        P({ -10,-5, -38,-24,-62,-20, -80,-16,-88,-9, -78,-7,-60,-14, -40,-18,-12,-3 }, rgbA(0x1a1206, op));
+        P({ 12,-5, 40,-24,64,-20, 82,-16,90,-9, 80,-7,62,-14, 42,-18,14,-3 }, rgbA(0x1a1206, op));
+        if (scale > 0.6f)
+        {
+            E(22, -6, 2.2f, 2.2f, rgbA(0x060402, op));  // eye
+            E(22.6f, -6.6f, 1, 1, rgbA(0xc89820, op * 0.9f));
+            // a couple of primaries + tail
+            P({ -60,-20, -68,-30,-64,-36, -58,-26,-60,-20 }, rgbA(0x120c04, op));
+            P({ 62,-20, 70,-30,66,-36, 60,-26,62,-20 }, rgbA(0x120c04, op));
+            P({ -20,2, -32,9,-34,5, -28,0,-20,2 }, rgbA(0x1a1006, op));
+        }
+    };
+
+    eagle(780.0f, 110.0f, 1.0f, 0.96f);   // main eagle
+    eagle(192.0f, 88.0f, 0.42f, 0.5f);    // distant eagle
+}
+
+void BackgroundComponent::drawPalms(juce::Graphics& g, float sx, float sy)
+{
+    auto palm = [&](float tx, float ty, float trunkW, float trunkH, float frondLen, float op)
+    {
+        auto X = [&](float v) { return (tx + v) * sx; };
+        auto Y = [&](float v) { return (ty + v) * sy; };
+        juce::Colour c = rgbA(0x0a0500, op);
+        g.setColour(c);
+        g.fillRoundedRectangle(X(-trunkW * 0.5f), Y(0), trunkW * sx, trunkH * sy, trunkW * 0.5f * sx);
+        float ang[] = { -2.4f, -1.9f, -1.57f, -1.2f, -0.7f };
+        for (float a : ang)
+        {
+            juce::Path f;
+            f.startNewSubPath(X(0), Y(0));
+            float mx = std::cos(a) * frondLen * 0.7f, my = std::sin(a) * frondLen * 0.7f;
+            float ex = std::cos(a) * frondLen, ey = std::sin(a) * frondLen - 6.0f;
+            f.quadraticTo(X(mx), Y(my), X(ex), Y(ey));
+            g.strokePath(f, juce::PathStrokeType(2.6f * sx, juce::PathStrokeType::curved,
+                                                 juce::PathStrokeType::rounded));
+        }
+    };
+
+    palm(820.0f, 340.0f, 6.0f, 28.0f, 24.0f, 0.85f);
+    palm(840.0f, 344.0f, 5.0f, 22.0f, 19.0f, 0.75f);
+    palm(808.0f, 348.0f, 4.0f, 18.0f, 15.0f, 0.65f);
+}
+
+void BackgroundComponent::drawMusicians(juce::Graphics& g, float sx, float sy)
+{
+    auto robe = [&](float tx, float ty, std::initializer_list<float> pts, juce::Colour c)
+    {
+        juce::Path p; auto it = pts.begin();
+        float x0 = *it++, y0 = *it++; p.startNewSubPath((tx + x0) * sx, (ty + y0) * sy);
+        while (it != pts.end())
+        {
+            float cx = *it++, cy = *it++, ex = *it++, ey = *it++;
+            p.quadraticTo((tx + cx) * sx, (ty + cy) * sy, (tx + ex) * sx, (ty + ey) * sy);
+        }
+        p.closeSubPath(); g.setColour(c); g.fillPath(p);
+    };
+    auto circle = [&](float tx, float ty, float cx, float cy, float r, juce::Colour c)
+    { g.setColour(c); g.fillEllipse((tx + cx) * sx - r * sx, (ty + cy) * sy - r * sy, 2 * r * sx, 2 * r * sy); };
+    // Djellaba body: M0,0 Q(-a,b)(-c,d) L(c,d) Q(a,b) 0,0 Z
+    auto djellaba = [&](float tx, float ty, float a, float b, float c, float d, juce::Colour col)
+    {
+        juce::Path p;
+        p.startNewSubPath(tx * sx, ty * sy);
+        p.quadraticTo((tx - a) * sx, (ty + b) * sy, (tx - c) * sx, (ty + d) * sy);
+        p.lineTo((tx + c) * sx, (ty + d) * sy);
+        p.quadraticTo((tx + a) * sx, (ty + b) * sy, tx * sx, ty * sy);
+        p.closeSubPath(); g.setColour(col); g.fillPath(p);
+    };
+    auto stroke = [&](float tx, float ty, std::initializer_list<float> pts, float wd, juce::Colour c)
+    {
+        juce::Path p; auto it = pts.begin();
+        float x0 = *it++, y0 = *it++; p.startNewSubPath((tx + x0) * sx, (ty + y0) * sy);
+        while (it != pts.end())
+        {
+            float cx = *it++, cy = *it++, ex = *it++, ey = *it++;
+            p.quadraticTo((tx + cx) * sx, (ty + cy) * sy, (tx + ex) * sx, (ty + ey) * sy);
+        }
+        g.setColour(c); g.strokePath(p, juce::PathStrokeType(wd * sx, juce::PathStrokeType::curved,
+                                                             juce::PathStrokeType::rounded));
+    };
+
+    // ── M1 — Mâalem with guembri (100,462) ──
+    djellaba(100, 462, 16, 48, 20, 96, rgbA(0x1a0c06, 0.95f));
+    circle(100, 462, 0, -16, 11, rgbA(0x0c0502, 0.95f)); // head outer
+    circle(100, 462, 0, -16, 9,  rgbA(0x1a0e08, 0.95f)); // face
+    g.setColour(rgbA(0x2a1808, 0.95f));
+    g.fillEllipse((100 - 10) * sx, (462 - 30) * sy, 20 * sx, 8 * sy); // turban
+    circle(100, 462, -3, -17, 1.6f, rgbA(0x040200, 0.95f));
+    circle(100, 462, 3, -17, 1.6f, rgbA(0x040200, 0.95f));
+    {   // guembri at (62,500)
+        float gx = 62.0f, gy = 500.0f;
+        g.setColour(rgbA(0x2a1a0a, 0.95f)); g.fillEllipse((gx - 9) * sx, (gy - 12) * sy, 18 * sx, 24 * sy);
+        g.setColour(rgbA(0x382210, 0.9f));  g.fillEllipse((gx - 7) * sx, (gy - 10) * sy, 14 * sx, 20 * sy);
+        g.setColour(rgbA(0x1a1006, 0.95f)); g.fillEllipse((gx - 3) * sx, (gy - 1) * sy, 6 * sx, 6 * sy);
+        g.setColour(rgbA(0x1e1206, 0.95f)); g.fillRoundedRectangle((gx - 2) * sx, (gy - 22) * sy, 4 * sx, 24 * sy, 2.0f);
+        g.setColour(rgbA(0x7a6040, 0.8f));
+        for (float dxs : { -2.0f, 0.0f, 2.0f })
+            g.drawLine((gx + dxs) * sx, (gy - 22) * sy, (gx + dxs) * sx, (gy + 8) * sy, 0.6f);
+    }
+    stroke(100, 462, { -12,22, -28,28,-32,40 }, 4.0f, rgbA(0x1a0c06, 0.95f)); // arm to instrument
+
+    // ── M2 — Qraqeb player (148,468) ──
+    djellaba(148, 468, 14, 42, 18, 88, rgbA(0x140e08, 0.93f));
+    circle(148, 468, 0, -15, 10, rgbA(0x1a0e08, 0.93f));
+    g.setColour(rgbA(0x8a1808, 0.93f));
+    g.fillEllipse((148 - 9) * sx, (468 - 31) * sy, 18 * sx, 8 * sy); // chéchia
+    stroke(148, 468, { -10,16, -24,6,-26,-4 }, 4.0f, rgbA(0x140e08, 0.93f));
+    stroke(148, 468, { 10,16, 24,6,26,-4 }, 4.0f, rgbA(0x140e08, 0.93f));
+    for (float qx : { -26.0f, 26.0f }) // qraqeb pairs
+    {
+        circle(148, 468, qx - 4, -6, 5.5f, rgbA(0x2a2418, 0.95f));
+        circle(148, 468, qx + 4, -6, 5.5f, rgbA(0x2a2418, 0.95f));
+    }
+
+    // ── M3 — Dancer in trance (192,472) ──
+    djellaba(192, 472, 12, 36, 16, 80, rgbA(0x180a04, 0.91f));
+    circle(192, 472, 0, -14, 9.5f, rgbA(0x1a0e08, 0.91f));
+    robe(192, 472, { -8,-18, 0,-38,8,-18, 0,-20,-8,-18 }, rgbA(0x601808, 0.91f)); // pointy hat
+    stroke(192, 472, { -10,14, -30,8,-34,2 }, 6.0f, rgbA(0x180a04, 0.91f));
+    stroke(192, 472, { 10,14, 26,20,30,16 }, 6.0f, rgbA(0x180a04, 0.91f));
+    circle(192, 472, -6, 20, 2, rgbA(0x801808, 0.8f));
+    circle(192, 472, 0, 15, 2, rgbA(0x801808, 0.8f));
+    circle(192, 472, 6, 20, 2, rgbA(0x801808, 0.8f));
+
+    // ── M4 — 2nd guembri player (234,476) ──
+    djellaba(234, 476, 11, 32, 14, 72, rgbA(0x160c06, 0.87f));
+    circle(234, 476, 0, -13, 9, rgbA(0x1a0e08, 0.87f));
+    robe(234, 476, { -9,-18, 0,-32,9,-18, 0,-18,-9,-18 }, rgbA(0x1e1006, 0.87f));
+    stroke(234, 476, { -10,14, -22,20,-24,28 }, 5.0f, rgbA(0x160c06, 0.87f));
+    stroke(234, 476, { 10,14, 20,18,22,26 }, 5.0f, rgbA(0x160c06, 0.87f));
+}
+
+void BackgroundComponent::drawHeatHaze(juce::Graphics& g, float sx, float sy)
+{
+    g.setColour(rgbA(0xc06010, 0.06f));
+    g.fillRect(0.0f, 340.0f * sy, 980.0f * sx, 28.0f * sy);
+    g.setColour(rgbA(0xd07818, 0.08f));
+    g.fillRect(0.0f, 600.0f * sy, 980.0f * sx, 40.0f * sy);
 }
 
 void BackgroundComponent::drawVignette(juce::Graphics& g, juce::Rectangle<float> bounds)
