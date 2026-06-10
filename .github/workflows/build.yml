@@ -32,7 +32,10 @@ jobs:
           ls Source/
 
       - name: Configure CMake (Release)
-        run: cmake -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
+        # No hardcoded generator: let CMake auto-detect the Visual Studio
+        # generation installed on the runner (robust to windows-latest moving
+        # from VS2022 to VS2025). -A x64 stays valid for any VS generator.
+        run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
 
       - name: Build VST3
         run: cmake --build build --config Release --target OrientalInstrument_VST3

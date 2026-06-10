@@ -54,6 +54,10 @@ target_sources(OrientalInstrument
         Source/GUI/BackgroundComponent.cpp
 )
 
+# Generate JuceHeader.h (every source uses #include <JuceHeader.h>).
+# Required with the CMake API — the Projucer-style JuceLibraryCode/ is not wired in.
+juce_generate_juce_header(OrientalInstrument)
+
 target_include_directories(OrientalInstrument
     PRIVATE
         Source
