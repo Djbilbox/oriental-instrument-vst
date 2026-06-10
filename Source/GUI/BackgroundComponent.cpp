@@ -1,20 +1,184 @@
 #include "BackgroundComponent.h"
+#include "BlurUtils.h"
+#include "Typography.h"
 #include "../Utils/Constants.h"
+
+using namespace OrientalConstants;
+
+BackgroundComponent::BackgroundComponent()
+{
+    startTimerHz(30); // animated halo
+}
+
+BackgroundComponent::~BackgroundComponent()
+{
+    stopTimer();
+}
+
+void BackgroundComponent::resized()
+{
+    rebuildCaches();
+}
+
+void BackgroundComponent::timerCallback()
+{
+    haloPhase += 0.045f;
+    if (haloPhase > juce::MathConstants<float>::twoPi)
+        haloPhase -= juce::MathConstants<float>::twoPi;
+    repaint();
+}
+
+void BackgroundComponent::rebuildCaches()
+{
+    auto b = getLocalBounds();
+    if (b.isEmpty())
+        return;
+
+    cachedSize = b;
+    cachedDesert = juce::Image(juce::Image::ARGB, b.getWidth(), b.getHeight(), true);
+    {
+        juce::Graphics g(cachedDesert);
+        auto bounds = b.toFloat();
+        drawDesertGradient(g, bounds);
+        drawStars(g, bounds);
+        drawPyramids(g, bounds);
+        drawDunes(g, bounds);
+        drawVignette(g, bounds);
+    }
+
+    // Frosted = desert + a soft sun baked in, then blurred. Used behind glass.
+    juce::Image warm = cachedDesert.createCopy();
+    {
+        juce::Graphics g(warm);
+        drawSun(g, b.getWidth() * 0.51f, b.getHeight() * 0.56f, 1.0f);
+    }
+    cachedFrosted = BlurUtils::frosted(warm, 17, 3);
+}
 
 void BackgroundComponent::paint(juce::Graphics& g)
 {
-    auto bounds = getLocalBounds().toFloat();
-    drawDesertGradient(g, bounds);
-    drawStars(g, bounds);
-    drawSun(g, bounds.getWidth() * 0.51f, bounds.getHeight() * 0.56f);
-    drawPyramids(g, bounds);
-    drawDunes(g, bounds);
-    drawVignette(g, bounds);
+    if (cachedDesert.isNull() || cachedSize != getLocalBounds())
+        rebuildCaches();
+
+    // Sharp desert
+    g.drawImageAt(cachedDesert, 0, 0);
+
+    // Live, breathing sun halo
+    float intensity = 0.82f + 0.18f * std::sin(haloPhase);
+    drawSun(g, getWidth() * 0.51f, getHeight() * 0.56f, intensity);
+
+    // Frosted glass relief + chrome
+    drawGlassPanels(g);
+    drawChrome(g);
 }
+
+// ════════════════════════════ GLASS PANELS ════════════════════════════
+
+void BackgroundComponent::drawGlassPanel(juce::Graphics& g, juce::Rectangle<int> r,
+                                          bool topEdge, bool leftEdge)
+{
+    auto rf = r.toFloat();
+
+    // 1) Frosted backdrop clipped to the panel
+    {
+        juce::Graphics::ScopedSaveState save(g);
+        g.reduceClipRegion(r);
+        if (cachedFrosted.isValid())
+            g.drawImageAt(cachedFrosted, 0, 0);
+    }
+
+    // 2) Translucent warm-dark tint for legibility (lower opacity than before
+    //    so the frosted desert glows through — true glassmorphism)
+    g.setColour(juce::Colour(0xA60C0906)); // ~65%
+    g.fillRect(rf);
+
+    // 3) Top sheen (specular sweep)
+    juce::ColourGradient sheen(juce::Colours::white.withAlpha(0.07f), rf.getX(), rf.getY(),
+                               juce::Colours::transparentWhite, rf.getX(), rf.getY() + 70.0f, false);
+    g.setGradientFill(sheen);
+    g.fillRect(rf.withHeight(70.0f));
+
+    // 4) Gradient gold border (bright top → dim bottom)
+    juce::ColourGradient border(juce::Colour(Colors::GOLD_LIGHT).withAlpha(0.45f), rf.getX(), rf.getY(),
+                                juce::Colour(Colors::GOLD_DIM).withAlpha(0.14f), rf.getX(), rf.getBottom(), false);
+    g.setGradientFill(border);
+    if (topEdge)
+        g.fillRect(rf.getX(), rf.getY(), rf.getWidth(), 1.0f);
+    if (leftEdge)
+        g.fillRect(rf.getX(), rf.getY(), 1.0f, rf.getHeight());
+    g.fillRect(rf.getRight() - 1.0f, rf.getY(), 1.0f, rf.getHeight());
+}
+
+void BackgroundComponent::drawGlassPanels(juce::Graphics& g)
+{
+    auto b = getLocalBounds();
+    b.removeFromTop(HEADER_HEIGHT);
+    b.removeFromBottom(PIANO_HEIGHT);
+
+    auto left   = b.removeFromLeft(LEFT_COL_WIDTH);
+    auto right  = b.removeFromRight(RIGHT_COL_WIDTH);
+    auto center = b;
+
+    drawGlassPanel(g, left,   true, false);
+    drawGlassPanel(g, center, true, true);
+    drawGlassPanel(g, right,  true, true);
+}
+
+// ════════════════════════════ CHROME ════════════════════════════
+
+void BackgroundComponent::drawChrome(juce::Graphics& g)
+{
+    auto bounds = getLocalBounds();
+    auto header = bounds.removeFromTop(HEADER_HEIGHT).toFloat();
+
+    // Header glass bar
+    g.setColour(juce::Colour(Colors::HEADER_BG));
+    g.fillRect(header);
+    juce::ColourGradient hdr(juce::Colour(Colors::GOLD).withAlpha(0.35f), header.getX(), header.getBottom(),
+                             juce::Colour(Colors::GOLD_DIM).withAlpha(0.10f), header.getRight(), header.getBottom(), false);
+    g.setGradientFill(hdr);
+    g.fillRect(header.getX(), header.getBottom() - 1.0f, header.getWidth(), 1.0f);
+
+    // Title — strong display hierarchy
+    g.setColour(juce::Colour(Colors::GOLD_LIGHT));
+    g.setFont(Typography::title());
+    g.drawText(Typography::tracked("ORIENTAL"), header.translated(-2.0f, 0.0f), juce::Justification::centred);
+
+    // Logo block (left)
+    g.setColour(juce::Colour(Colors::GOLD));
+    g.setFont(Typography::subtitle());
+    g.drawText("DJBILBOX", header.withWidth(150.0f).translated(16.0f, -7.0f),
+               juce::Justification::centredLeft);
+    g.setColour(juce::Colour(Colors::GOLD_DIM));
+    g.setFont(juce::Font(Typography::bodyFamily(), 8.0f, juce::Font::plain));
+    g.drawText(Typography::tracked("Maqam Engine Pro"),
+               header.withWidth(220.0f).translated(16.0f, 9.0f), juce::Justification::centredLeft);
+
+    // Section labels on the columns
+    auto main = bounds;
+    main.removeFromBottom(PIANO_HEIGHT);
+    auto left  = main.removeFromLeft(LEFT_COL_WIDTH);
+    auto right = main.removeFromRight(RIGHT_COL_WIDTH);
+
+    g.setColour(juce::Colour(Colors::GOLD_DIM));
+    g.setFont(Typography::sectionLabel());
+    g.drawText(Typography::tracked("Macro"), left.removeFromTop(18), juce::Justification::centred);
+    g.drawText(Typography::tracked("Effects"), right.removeFromTop(18), juce::Justification::centred);
+
+    // Piano divider
+    float pianoTop = static_cast<float>(getHeight() - PIANO_HEIGHT);
+    g.setColour(juce::Colour(Colors::GOLD_DIM));
+    g.drawLine(0.0f, pianoTop, static_cast<float>(getWidth()), pianoTop, 1.0f);
+
+    // Outer frame
+    g.setColour(juce::Colour(Colors::GOLD_DIM));
+    g.drawRect(getLocalBounds(), 1);
+}
+
+// ════════════════════════════ SCENE (cached) ════════════════════════════
 
 void BackgroundComponent::drawDesertGradient(juce::Graphics& g, juce::Rectangle<float> bounds)
 {
-    // Exact sky gradient from HTML SVG: #sky linearGradient
     juce::ColourGradient sky(juce::Colour(0xFF030008), 0, 0,
                              juce::Colour(0xFFC86010), 0, bounds.getHeight(), false);
     sky.addColour(0.08, juce::Colour(0xFF0A0115));
@@ -27,7 +191,6 @@ void BackgroundComponent::drawDesertGradient(juce::Graphics& g, juce::Rectangle<
     g.setGradientFill(sky);
     g.fillRect(bounds);
 
-    // Desert ground floor: #2a1406 opacity 0.7
     g.setColour(juce::Colour(0xB32A1406));
     g.fillRect(0.0f, bounds.getHeight() * 0.556f, bounds.getWidth(), bounds.getHeight() * 0.45f);
 }
@@ -37,15 +200,13 @@ void BackgroundComponent::drawStars(juce::Graphics& g, juce::Rectangle<float> bo
     float w = bounds.getWidth();
     float h = bounds.getHeight();
 
-    // Croissant de lune (from HTML: translate(88,44), r=11)
     float moonX = w * 0.09f;
     float moonY = h * 0.069f;
     g.setColour(juce::Colour(0xE0FFF8E0));
     g.fillEllipse(moonX - 11.0f, moonY - 11.0f, 22.0f, 22.0f);
-    g.setColour(juce::Colour(0xF20E0520)); // dark mask for crescent
+    g.setColour(juce::Colour(0xF20E0520));
     g.fillEllipse(moonX - 6.0f, moonY - 14.0f, 18.0f, 18.0f);
 
-    // Large stars (exact positions from HTML scaled to percentage)
     struct Star { float x; float y; float r; float alpha; };
     Star stars[] = {
         {0.059f, 0.034f, 1.4f, 0.85f}, {0.143f, 0.016f, 1.0f, 0.65f},
@@ -55,7 +216,6 @@ void BackgroundComponent::drawStars(juce::Graphics& g, juce::Rectangle<float> bo
         {0.709f, 0.066f, 1.0f, 0.68f}, {0.784f, 0.028f, 1.3f, 0.80f},
         {0.862f, 0.053f, 0.8f, 0.55f}, {0.937f, 0.019f, 1.1f, 0.72f},
         {0.971f, 0.081f, 0.9f, 0.60f},
-        // Smaller stars
         {0.080f, 0.102f, 0.7f, 0.50f}, {0.189f, 0.125f, 0.8f, 0.55f},
         {0.355f, 0.109f, 0.7f, 0.50f}, {0.490f, 0.086f, 0.6f, 0.60f},
         {0.665f, 0.113f, 0.9f, 0.58f}, {0.827f, 0.094f, 0.8f, 0.52f},
@@ -68,24 +228,20 @@ void BackgroundComponent::drawStars(juce::Graphics& g, juce::Rectangle<float> bo
         g.fillEllipse(s.x * w - s.r, s.y * h - s.r, s.r * 2.0f, s.r * 2.0f);
     }
 
-    // Shooting star (line from HTML: x1=160 y1=38 x2=220 y2=52)
     g.setColour(juce::Colours::white.withAlpha(0.4f));
     g.drawLine(w * 0.163f, h * 0.059f, w * 0.224f, h * 0.081f, 0.6f);
 }
 
-void BackgroundComponent::drawSun(juce::Graphics& g, float cx, float cy)
+void BackgroundComponent::drawSun(juce::Graphics& g, float cx, float cy, float intensity)
 {
-    // Sun halo: radialGradient #sunhalo cx=51% cy=58% r=40%
-    // #ffb840 alpha 0.65 → #f07010 alpha 0.35 → transparent
-    juce::ColourGradient halo(juce::Colour(0xA6FFB840), cx, cy,
+    juce::ColourGradient halo(juce::Colour(0xFFFFB840).withAlpha(0.65f * intensity), cx, cy,
                               juce::Colours::transparentBlack, cx, cy - 210.0f, true);
-    halo.addColour(0.25, juce::Colour(0x59F07010));
-    halo.addColour(0.60, juce::Colour(0x1F882010));
+    halo.addColour(0.25, juce::Colour(0xFFF07010).withAlpha(0.35f * intensity));
+    halo.addColour(0.60, juce::Colour(0xFF882010).withAlpha(0.12f * intensity));
     g.setGradientFill(halo);
     g.fillEllipse(cx - 320.0f, cy - 210.0f, 640.0f, 420.0f);
 
-    // Sun rays (very subtle, opacity 0.055)
-    g.setColour(juce::Colour(0x0EFFAA30));
+    g.setColour(juce::Colour(0xFFFFAA30).withAlpha(0.055f * intensity));
     float rayAngles[] = { -1.2f, -0.6f, -0.1f, 0.3f, 0.8f, 1.1f };
     for (float angle : rayAngles)
     {
@@ -94,7 +250,6 @@ void BackgroundComponent::drawSun(juce::Graphics& g, float cx, float cy)
         g.drawLine(cx, cy, endX, endY, 25.0f);
     }
 
-    // Sun core: radialGradient #suncore
     juce::ColourGradient core(juce::Colour(0xFAFFFBE0), cx, cy,
                               juce::Colours::transparentBlack, cx + 42.0f, cy, true);
     core.addColour(0.30, juce::Colour(0xD9FFD060));
@@ -102,10 +257,9 @@ void BackgroundComponent::drawSun(juce::Graphics& g, float cx, float cy)
     g.setGradientFill(core);
     g.fillEllipse(cx - 26.0f, cy - 26.0f, 52.0f, 52.0f);
 
-    // Corona rings
-    g.setColour(juce::Colour(0x4DFFCC40));
+    g.setColour(juce::Colour(0xFFFFCC40).withAlpha(0.30f * intensity));
     g.drawEllipse(cx - 32.0f, cy - 32.0f, 64.0f, 64.0f, 1.5f);
-    g.setColour(juce::Colour(0x26FFA830));
+    g.setColour(juce::Colour(0xFFFFA830).withAlpha(0.15f * intensity));
     g.drawEllipse(cx - 42.0f, cy - 42.0f, 84.0f, 84.0f, 0.8f);
 }
 
@@ -113,11 +267,9 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
 {
     float w = bounds.getWidth();
     float h = bounds.getHeight();
-    float baseY = h * 0.566f; // y=362 / 640
+    float baseY = h * 0.566f;
 
-    // Khufu — Grande Pyramide (points from HTML: 268,362 → 400,185 → 540,362)
     {
-        // Dark face (west)
         juce::Path darkFace;
         darkFace.startNewSubPath(w * 0.2735f, baseY);
         darkFace.lineTo(w * 0.4082f, h * 0.289f);
@@ -129,7 +281,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
         g.setGradientFill(darkGrad);
         g.fillPath(darkFace);
 
-        // Lit face (east) — pyra-lit gradient
         juce::Path litFace;
         litFace.startNewSubPath(w * 0.4082f, h * 0.289f);
         litFace.lineTo(w * 0.5510f, baseY);
@@ -141,15 +292,12 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
         g.setGradientFill(litGrad);
         g.fillPath(litFace);
 
-        // Ridge line
         g.setColour(juce::Colour(0x66503020));
         g.drawLine(w * 0.4082f, h * 0.289f, w * 0.4082f, baseY, 0.6f);
 
-        // Summit point
         g.setColour(juce::Colour(0xB3C8A060));
         g.fillEllipse(w * 0.4082f - 2.5f, h * 0.289f - 2.5f, 5.0f, 5.0f);
 
-        // Entrance
         juce::Path entrance;
         entrance.startNewSubPath(w * 0.365f, h * 0.50f);
         entrance.lineTo(w * 0.383f, h * 0.445f);
@@ -158,7 +306,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
         g.setColour(juce::Colour(0xE6080300));
         g.fillPath(entrance);
 
-        // Stone lines
         g.setColour(juce::Colour(0x4D1A0A02));
         for (float row = 0.1f; row < 0.9f; row += 0.1f)
         {
@@ -169,7 +316,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
         }
     }
 
-    // Khafre — 2nd pyramid (528,362 → 636,207 → 748,362)
     {
         juce::Path dark;
         dark.startNewSubPath(w * 0.539f, baseY);
@@ -192,7 +338,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
         g.setColour(juce::Colour(0x99C8A060));
         g.fillEllipse(w * 0.649f - 2.0f, h * 0.323f - 2.0f, 4.0f, 4.0f);
 
-        // Limestone cap
         juce::Path cap;
         cap.startNewSubPath(w * 0.649f, h * 0.323f);
         cap.lineTo(w * 0.674f, h * 0.375f);
@@ -202,7 +347,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
         g.fillPath(cap);
     }
 
-    // Menkaure — 3rd pyramid (718,362 → 778,265 → 838,362)
     {
         juce::Path dark;
         dark.startNewSubPath(w * 0.733f, baseY);
@@ -224,7 +368,6 @@ void BackgroundComponent::drawPyramids(juce::Graphics& g, juce::Rectangle<float>
         g.fillEllipse(w * 0.794f - 1.5f, h * 0.414f - 1.5f, 3.0f, 3.0f);
     }
 
-    // Giza plateau base
     g.setColour(juce::Colour(0xBF1A0C04));
     g.fillRect(w * 0.245f, baseY - 2.0f, w * 0.633f, 10.0f);
 }
@@ -234,7 +377,6 @@ void BackgroundComponent::drawDunes(juce::Graphics& g, juce::Rectangle<float> bo
     float w = bounds.getWidth();
     float h = bounds.getHeight();
 
-    // Dune layer A: gradient #da (c06818 → 4a1e04), opacity 0.78
     {
         juce::Path dune;
         dune.startNewSubPath(0, h * 0.606f);
@@ -252,7 +394,6 @@ void BackgroundComponent::drawDunes(juce::Graphics& g, juce::Rectangle<float> bo
         g.fillPath(dune);
     }
 
-    // Dune layer B: gradient #db (d87820 → 5e2608), opacity 0.85
     {
         juce::Path dune;
         dune.startNewSubPath(0, h * 0.669f);
@@ -270,7 +411,6 @@ void BackgroundComponent::drawDunes(juce::Graphics& g, juce::Rectangle<float> bo
         g.fillPath(dune);
     }
 
-    // Dune layer C: gradient #dc (e89030 → 6e3010), opacity 0.90
     {
         juce::Path dune;
         dune.startNewSubPath(0, h * 0.742f);
@@ -287,7 +427,6 @@ void BackgroundComponent::drawDunes(juce::Graphics& g, juce::Rectangle<float> bo
         g.fillPath(dune);
     }
 
-    // Dune layer D: gradient #dd (cf7828 → 361404), opacity 0.96
     {
         juce::Path dune;
         dune.startNewSubPath(0, h * 0.825f);
@@ -304,11 +443,9 @@ void BackgroundComponent::drawDunes(juce::Graphics& g, juce::Rectangle<float> bo
         g.fillPath(dune);
     }
 
-    // Bottom sand floor: #3a1c08 opacity 0.99
     g.setColour(juce::Colour(0xFC3A1C08));
     g.fillRect(0.0f, h * 0.930f, w, h * 0.07f);
 
-    // Caravan traces (dashed path)
     g.setColour(juce::Colour(0x664A2008));
     juce::Path caravan;
     caravan.startNewSubPath(w * 0.051f, h * 0.875f);
@@ -321,7 +458,6 @@ void BackgroundComponent::drawDunes(juce::Graphics& g, juce::Rectangle<float> bo
     caravanStroke.createDashedStroke(dashedCaravan, caravan, dashLengths, 2);
     g.fillPath(dashedCaravan);
 
-    // Dune crest highlights
     g.setColour(juce::Colour(0x2EE8A040));
     juce::Path crest1;
     crest1.startNewSubPath(0, h * 0.606f);
@@ -334,7 +470,6 @@ void BackgroundComponent::drawDunes(juce::Graphics& g, juce::Rectangle<float> bo
 
 void BackgroundComponent::drawVignette(juce::Graphics& g, juce::Rectangle<float> bounds)
 {
-    // Radial vignette: transparent center → 65% black edges
     float cx = bounds.getCentreX();
     float cy = bounds.getCentreY();
     float radius = bounds.getWidth() * 0.7f;

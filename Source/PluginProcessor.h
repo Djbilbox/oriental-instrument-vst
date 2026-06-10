@@ -67,6 +67,12 @@ private:
     std::atomic<float>* instrumentParam = nullptr;
     std::atomic<float>* presetParam = nullptr;
 
+    // ADSR parameter pointers
+    std::atomic<float>* attackParam  = nullptr;
+    std::atomic<float>* decayParam   = nullptr;
+    std::atomic<float>* sustainParam = nullptr;
+    std::atomic<float>* releaseParam = nullptr;
+
     // FX parameter pointers
     std::atomic<float>* reverbAmtParam = nullptr;
     std::atomic<float>* delayAmtParam  = nullptr;
@@ -80,7 +86,8 @@ private:
     std::atomic<float>* chorusOnParam  = nullptr;
     std::atomic<float>* distOnParam    = nullptr;
     std::atomic<float>* compOnParam    = nullptr;
-    std::atomic<float>* eqOnParam      = nullptr;
+    std::atomic<float>* eqOnParam       = nullptr;
+    std::atomic<float>* eqAmtParam      = nullptr;
     std::atomic<float>* phaserOnParam  = nullptr;
     std::atomic<float>* bitcrushOnParam = nullptr;
 

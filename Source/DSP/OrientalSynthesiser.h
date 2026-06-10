@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "OrientalVoice.h"
+#include "ADSREnvelope.h"
 #include "MaqamTuning.h"
 #include "../Data/InstrumentProfiles.h"
 #include "../Utils/Constants.h"
@@ -19,6 +20,9 @@ public:
     void setMaqam(MaqamTuning::Maqam maqam);
     void setRootNote(int midiNote);
     void setBaseTuning(float tuningHz);
+
+    // ADSR per-preset
+    void setADSR(const ADSREnvelope::Parameters& params);
 
     // Macro controls from UI
     void setGlide(float glideTime);

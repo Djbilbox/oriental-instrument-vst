@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "DSP/ADSREnvelope.h"
 
 OrientalInstrumentProcessor::OrientalInstrumentProcessor()
     : AudioProcessor(BusesProperties()
@@ -25,12 +26,18 @@ OrientalInstrumentProcessor::OrientalInstrumentProcessor()
     phaserAmtParam   = apvts.getRawParameterValue("phaserAmt");
     bitcrushAmtParam = apvts.getRawParameterValue("bitcrushAmt");
 
+    attackParam  = apvts.getRawParameterValue("attack");
+    decayParam   = apvts.getRawParameterValue("decay");
+    sustainParam = apvts.getRawParameterValue("sustain");
+    releaseParam = apvts.getRawParameterValue("release");
+
     reverbOnParam   = apvts.getRawParameterValue("reverbOn");
     delayOnParam    = apvts.getRawParameterValue("delayOn");
     chorusOnParam   = apvts.getRawParameterValue("chorusOn");
     distOnParam     = apvts.getRawParameterValue("distOn");
     compOnParam     = apvts.getRawParameterValue("compOn");
     eqOnParam       = apvts.getRawParameterValue("eqOn");
+    eqAmtParam      = apvts.getRawParameterValue("eqAmt");
     phaserOnParam   = apvts.getRawParameterValue("phaserOn");
     bitcrushOnParam = apvts.getRawParameterValue("bitcrushOn");
 
@@ -86,6 +93,21 @@ juce::AudioProcessorValueTreeState::ParameterLayout OrientalInstrumentProcessor:
         juce::ParameterID("phaserAmt", 1), "Phaser Amount", 0.0f, 100.0f, 30.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID("bitcrushAmt", 1), "Bitcrusher Amount", 0.0f, 100.0f, 8.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID("eqAmt", 1), "EQ Amount", 0.0f, 100.0f, 50.0f));
+
+    // ADSR per-preset (secondes / 0-1 pour sustain)
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID("attack", 1), "Attack",
+        juce::NormalisableRange<float>(0.001f, 3.0f, 0.001f, 0.3f), 0.10f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID("decay", 1), "Decay",
+        juce::NormalisableRange<float>(0.01f, 3.0f, 0.001f, 0.3f), 0.10f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID("sustain", 1), "Sustain", 0.0f, 1.0f, 0.70f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID("release", 1), "Release",
+        juce::NormalisableRange<float>(0.01f, 5.0f, 0.001f, 0.3f), 0.30f));
 
     // FX on/off toggles
     params.push_back(std::make_unique<juce::AudioParameterBool>(
@@ -181,6 +203,16 @@ void OrientalInstrumentProcessor::applyPresetToParameters(const PresetData& pres
     if (auto* p = apvts.getParameter("bitcrushAmt"))
         p->setValueNotifyingHost(p->convertTo0to1(preset.bitcrushAmount * 100.0f));
 
+    // ADSR per-preset
+    if (auto* p = apvts.getParameter("attack"))
+        p->setValueNotifyingHost(p->convertTo0to1(preset.attack));
+    if (auto* p = apvts.getParameter("decay"))
+        p->setValueNotifyingHost(p->convertTo0to1(preset.decay));
+    if (auto* p = apvts.getParameter("sustain"))
+        p->setValueNotifyingHost(preset.sustain); // 0-1, pas de conversion
+    if (auto* p = apvts.getParameter("release"))
+        p->setValueNotifyingHost(p->convertTo0to1(preset.release));
+
     // Switch instrument and maqam
     synthesiser.setInstrument(preset.instrument);
     synthesiser.setMaqam(MaqamTuning::maqamFromString(preset.maqam));
@@ -264,6 +296,14 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
     // DEPTH: envelope and harmonic richness
     synthesiser.setDepth(depth / 100.0f);
+
+    // ADSR — lecture atomique et propagation aux voix
+    ADSREnvelope::Parameters adsrParams;
+    adsrParams.attack  = attackParam->load();
+    adsrParams.decay   = decayParam->load();
+    adsrParams.sustain = sustainParam->load();
+    adsrParams.release = releaseParam->load();
+    synthesiser.setADSR(adsrParams);
 
     // SPACE: controls reverb room size + delay feedback together
     if (auto* reverb = fxChain.getReverb())

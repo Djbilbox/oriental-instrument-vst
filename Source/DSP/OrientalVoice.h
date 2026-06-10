@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include <array>
 #include "WavetableOscillator.h"
 #include "ADSREnvelope.h"
 #include "MaqamTuning.h"
@@ -26,16 +27,40 @@ public:
     void setFilterParams(float cutoff, float resonance);
     void setOrientAmount(float amount);
     void setDepth(float depth);
+    void setADSRParameters(const ADSREnvelope::Parameters& params);
 
     void prepareToPlay(double sampleRate, int samplesPerBlock);
 
 private:
-    WavetableOscillator oscillator;
+    static constexpr int kUnison = 3;
+
+    // ── Sources ──
+    std::array<WavetableOscillator, kUnison> oscillators; // detuned unison stack
+    WavetableOscillator subOsc;                            // one octave down (sine)
     WavetableOscillator vibratoLFO;
-    ADSREnvelope envelope;
+    float unisonPan[kUnison] = { 0.0f, -1.0f, 1.0f };      // centre, left, right
+    float unisonDetune[kUnison] = { 0.0f, -1.0f, 1.0f };   // cents multiplier
+
+    // Noise / breath layer
+    juce::Random rng;
+    float noiseLP = 0.0f;          // one-pole state for noise colouring
+    ADSREnvelope noiseEnv;
+
+    // Envelopes
+    ADSREnvelope envelope;         // amplitude
+    ADSREnvelope filterEnv;        // cutoff modulation
+
+    // ── Character chain ──
+    juce::dsp::StateVariableTPTFilter<float> svfL, svfR;   // resonant multimode filter (stereo)
+    juce::dsp::IIR::Filter<float> formant1L, formant1R;    // body resonance
+    juce::dsp::IIR::Filter<float> formant2L, formant2R;
+    bool hasFormant1 = false, hasFormant2 = false;
 
     const InstrumentProfile* currentProfile = nullptr;
     MaqamTuning maqamTuning;
+
+    ADSREnvelope::Parameters presetADSR;
+    bool hasPresetADSR = false;
 
     float targetFrequency = 440.0f;
     float currentFrequency = 440.0f;
@@ -44,18 +69,21 @@ private:
     float pitchBendFactor = 1.0f;
     float modWheelValue = 0.0f;
 
-    // Orient control: scales vibrato depth and maqam micro-tuning
-    float orientAmount = 0.5f;
+    float orientAmount = 0.5f;     // vibrato + detune + movement
+    float depthAmount = 0.7f;      // drive / grain intensity
 
-    // Depth control: scales envelope sustain level and harmonic content
-    float depthAmount = 0.7f;
+    // Filter macro state (base cutoff/reso from UI)
+    float baseCutoff = 4000.0f;
+    float baseResonance = 1.0f;
 
-    // Filter state
-    juce::dsp::IIR::Filter<float> filter;
-    float filterCutoff = 4000.0f;
-    float filterResonance = 1.0f;
+    // Per-note resolved values
+    float noteDrive = 1.0f;
+    float noteAsym = 0.12f;
 
     double sampleRate = 44100.0;
+
+    float shape(float x) const;    // asymmetric waveshaper (the "grain")
+    void updateFilterCoefficients(float cutoffHz);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OrientalVoice)
 };

@@ -1,5 +1,6 @@
 #include "KnobComponent.h"
 #include "../Utils/Constants.h"
+#include "Typography.h"
 
 using namespace OrientalConstants;
 
@@ -12,16 +13,16 @@ KnobComponent::KnobComponent(const juce::String& label)
     addAndMakeVisible(slider);
 
     // Label: font-family: Cinzel, font-size: 10px, font-weight: 600, color: #ccc
-    nameLabel.setText(label, juce::dontSendNotification);
+    nameLabel.setText(Typography::tracked(label), juce::dontSendNotification);
     nameLabel.setJustificationType(juce::Justification::centred);
     nameLabel.setColour(juce::Label::textColourId, juce::Colour(0xFFCCCCCC));
-    nameLabel.setFont(juce::Font("Cinzel", 10.0f, juce::Font::bold));
+    nameLabel.setFont(Typography::knobLabel());
     addAndMakeVisible(nameLabel);
 
-    // Value: font-family: Inter, font-size: 11px, font-weight: 500, color: var(--gold)
+    // Value: tabular gold readout
     valueLabel.setJustificationType(juce::Justification::centred);
     valueLabel.setColour(juce::Label::textColourId, juce::Colour(Colors::GOLD));
-    valueLabel.setFont(juce::Font("Inter", 11.0f, juce::Font::plain));
+    valueLabel.setFont(Typography::value());
     addAndMakeVisible(valueLabel);
 
     slider.onValueChange = [this]()

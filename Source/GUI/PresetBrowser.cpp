@@ -6,7 +6,7 @@ PresetBrowser::PresetBrowser(PresetManager& pm, juce::AudioProcessorValueTreeSta
 {
     listBox.setModel(this);
     listBox.setColour(juce::ListBox::backgroundColourId, juce::Colours::transparentBlack);
-    listBox.setRowHeight(28);
+    listBox.setRowHeight(40);
     addAndMakeVisible(listBox);
 
     searchBox.setTextToShowWhenEmpty("Search preset, city, key...", juce::Colour(0xFF555555));
@@ -16,10 +16,12 @@ PresetBrowser::PresetBrowser(PresetManager& pm, juce::AudioProcessorValueTreeSta
     searchBox.onTextChange = [this]() { searchFilter = searchBox.getText(); updateFilteredList(); };
     addAndMakeVisible(searchBox);
 
-    const char* tabNames[] = { "VIOLIN", "OUD", "NEY", "QANUN", "DARBUKA", "RABABAH", "MIZMAR" };
+    const char* tabNames[] = { "\xf0\x9f\x8e\xbb VLN", "\xf0\x9f\x8e\xb8 OUD", "\xf0\x9f\x8c\xac NEY", "\xf0\x9f\x8e\xb5 QAN", "\xf0\x9f\xa5\x81 DARB", "\xf0\x9f\xaa\x95 RAB", "\xf0\x9f\x8e\xba MIZ" };
     for (int i = 0; i < 7; ++i)
     {
         instrumentTabs[static_cast<size_t>(i)].setButtonText(tabNames[i]);
+        instrumentTabs[static_cast<size_t>(i)].setClickingTogglesState(true);
+        instrumentTabs[static_cast<size_t>(i)].setRadioGroupId(101); // groupe radio exclusif
         instrumentTabs[static_cast<size_t>(i)].setColour(juce::TextButton::buttonColourId, juce::Colour(0x66000000));
         instrumentTabs[static_cast<size_t>(i)].setColour(juce::TextButton::textColourOnId, juce::Colour(OrientalConstants::Colors::GOLD));
         instrumentTabs[static_cast<size_t>(i)].setColour(juce::TextButton::textColourOffId, juce::Colour(0xFFAAAAAA));
@@ -81,30 +83,37 @@ void PresetBrowser::paintListBoxItem(int rowNumber, juce::Graphics& g, int width
         g.drawRoundedRectangle(0.5f, 0.5f, static_cast<float>(width) - 1.0f, static_cast<float>(height) - 1.0f, 4.0f, 1.0f);
     }
 
-    // Number
-    g.setColour(juce::Colour(0xFF444444));
-    g.setFont(10.0f);
-    g.drawText(juce::String(rowNumber + 1), 4, 0, 18, height, juce::Justification::centredRight);
+    const int pad = 6;
+    const int numW = 18;
+    const int line1Y = 2;
+    const int line1H = 22;
+    const int line2Y = 22;
+    const int line2H = 16;
 
-    // Preset name
-    g.setColour(rowIsSelected ? juce::Colour(OrientalConstants::Colors::GOLD_LIGHT) : juce::Colour(0xFFDDDDDD));
-    g.setFont(12.0f);
-    g.drawText(preset.name, 28, 0, width - 130, height, juce::Justification::centredLeft);
+    // Numéro (centré verticalement)
+    g.setColour(juce::Colour(0xFF555555));
+    g.setFont(juce::Font(9.0f));
+    g.drawText(juce::String(rowNumber + 1), 0, 0, numW, height, juce::Justification::centred);
 
-    // City
-    g.setColour(juce::Colour(0xFF666666));
-    g.setFont(10.0f);
-    g.drawText(preset.city, width - 100, 0, 50, height, juce::Justification::centredLeft);
+    // ── Ligne 1 : Nom du preset (grand, Cinzel-like) ───────────────────────
+    g.setColour(rowIsSelected ? juce::Colour(OrientalConstants::Colors::GOLD_LIGHT)
+                              : juce::Colour(0xFFE8E8E8));
+    g.setFont(juce::Font("Cinzel", 13.0f, juce::Font::plain));
+    g.drawText(preset.name, numW + pad, line1Y, width - numW - pad * 2, line1H,
+               juce::Justification::bottomLeft);
 
-    // Key
-    g.setColour(juce::Colour(OrientalConstants::Colors::GOLD_DIM));
-    g.setFont(10.0f);
-    g.drawText(preset.key, width - 48, 0, 20, height, juce::Justification::centredLeft);
+    // ── Ligne 2 : City  •  Key  •  Maqam (petit, discret) ─────────────────
+    juce::String subLine = preset.city;
+    if (preset.key.isNotEmpty() && preset.key != "-")
+        subLine += "  \xe2\x80\xa2  " + preset.key;
+    if (preset.maqam.isNotEmpty() && preset.maqam != "-")
+        subLine += "  \xe2\x80\xa2  " + preset.maqam;
 
-    // Maqam
-    g.setColour(juce::Colour(0xFF444444));
-    g.setFont(9.0f);
-    g.drawText(preset.maqam, width - 26, 0, 24, height, juce::Justification::centredLeft);
+    g.setColour(juce::Colour(rowIsSelected ? OrientalConstants::Colors::GOLD_DIM
+                                           : 0xFF888888u));
+    g.setFont(juce::Font(9.5f));
+    g.drawText(subLine, numW + pad, line2Y, width - numW - pad * 2, line2H,
+               juce::Justification::topLeft);
 }
 
 void PresetBrowser::listBoxItemClicked(int row, const juce::MouseEvent&)

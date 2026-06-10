@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DJBILBOX◆BEATS — ORIENTAL INSTRUMENT — MAQAM EDITION</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0a0a0a;
+  --gold: #c8922a;
+  --gold-light: #e8b84b;
+  --gold-dim: #8a6018;
+  --red: #dc1e1e;
+  --red-glow: rgba(220,30,30,0.6);
+  --glass-bg: rgba(10,8,5,0.78);
+  --glass-border: rgba(200,146,42,0.22);
+  --knob-size: 54px;
+  --font-title: 'Cinzel', serif;
+  --font-ui: 'Inter', sans-serif;
+  --tr: 0.18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;}
+#vst-root{
+  width:980px;height:640px;position:relative;overflow:hidden;
+  font-family:var(--font-ui);margin:0 auto;display:flex;flex-direction:column;
+  border:1px solid var(--gold-dim);
+  box-shadow:0 0 80px rgba(200,146,42,0.22),0 0 160px rgba(0,0,0,0.95);
+}
+/* ── BACKGROUND ── */
+#bg-wrap{position:absolute;inset:0;z-index:0;pointer-events:none;}
+#bg-canvas{position:absolute;inset:0;width:100%;height:100%;}
+/* ── HEADER ── */
+#header{
+  position:relative;z-index:10;height:50px;
+  display:flex;align-items:center;gap:10px;padding:0 14px;
+  background:rgba(6,4,2,0.93);border-bottom:1px solid var(--gold-dim);flex-shrink:0;
+}
+.logo{display:flex;align-items:center;gap:8px;min-width:170px;}
+.logo-text{font-family:var(--font-title);font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.12em;line-height:1.2;text-transform:uppercase;}
+.logo-sub{font-size:8px;color:var(--gold-dim);display:block;letter-spacing:.2em;}
+.geo{display:flex;gap:3px;align-items:center;}
+.geo span{display:block;width:6px;height:6px;border:1px solid var(--gold-dim);transform:rotate(45deg);}
+.geo span:nth-child(2){background:var(--gold);}
+.hdr-title{
+  flex:1;text-align:center;font-family:var(--font-title);font-size:17px;font-weight:700;
+  color:var(--gold);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;
+  animation:goldGlow 3s ease-in-out infinite;
+}
+@keyframes goldGlow{0%,100%{text-shadow:0 0 20px rgba(200,146,42,.5);}50%{text-shadow:0 0 40px rgba(200,146,42,.95),0 0 80px rgba(200,146,42,.3);}}
+.preset-hdr{
+  display:flex;align-items:center;gap:6px;background:rgba(200,146,42,.08);
+  border:1px solid var(--gold-dim);border-radius:4px;padding:4px 10px;cursor:pointer;
+  min-width:170px;justify-content:center;transition:var(--tr);
+}
+.preset-hdr:hover{background:rgba(200,146,42,.16);border-color:var(--gold);}
+.phdr-name{font-family:var(--font-title);font-size:12px;color:var(--gold-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
+.phdr-cat{font-size:9px;color:var(--gold-dim);letter-spacing:.15em;}
+.hdr-btns{display:flex;gap:4px;}
+.hbtn{
+  font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:.1em;
+  color:#777;background:rgba(255,255,255,.04);border:1px solid #333;border-radius:3px;
+  padding:3px 7px;cursor:pointer;transition:var(--tr);white-space:nowrap;
+}
+.hbtn:hover,.hbtn.on{color:var(--gold);border-color:var(--gold-dim);background:rgba(200,146,42,.1);}
+.hbtn.rec.on{color:var(--red);border-color:var(--red);background:rgba(220,30,30,.1);animation:ledPulse 1s infinite;}
+.hbtn.panic{color:#ff6644;border-color:#883322;}
+.hbtn.panic:hover{background:rgba(220,60,20,.15);}
+@keyframes ledPulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+/* ── MAIN ── */
+#main{flex:1;display:flex;position:relative;z-index:5;overflow:hidden;min-height:0;}
+.glass{background:var(--glass-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);}
+/* ── LEFT COL ── */
+#col-left{width:170px;flex-shrink:0;padding:8px 6px;display:flex;flex-direction:column;gap:3px;border-right:1px solid var(--glass-border);}
+.col-lbl{font-family:var(--font-title);font-size:9px;font-weight:600;letter-spacing:.25em;color:var(--gold-dim);text-align:center;padding-bottom:4px;border-bottom:1px solid rgba(200,146,42,.12);text-transform:uppercase;margin-bottom:2px;}
+.knob-row{display:flex;flex-direction:column;align-items:center;padding:3px 0;cursor:ns-resize;flex:1;justify-content:center;}
+.knob-wrap{position:relative;width:var(--knob-size);height:var(--knob-size);user-select:none;}
+.knob-lbl{font-family:var(--font-title);font-size:10px;font-weight:600;letter-spacing:.15em;color:#ccc;margin-top:3px;text-align:center;text-transform:uppercase;}
+.knob-val{font-family:var(--font-ui);font-size:11px;font-weight:500;color:var(--gold);text-align:center;min-height:14px;}
+/* ── CENTER COL ── */
+#col-center{flex:1;display:flex;flex-direction:column;min-width:0;padding:7px 9px;gap:5px;border-right:1px solid var(--glass-border);}
+.srch{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.5);border:1px solid var(--gold-dim);border-radius:5px;padding:5px 10px;}
+.srch input{flex:1;background:none;border:none;outline:none;font-family:var(--font-ui);font-size:12px;color:#ccc;}
+.srch input::placeholder{color:#555;}
+.srch-ico{color:var(--gold-dim);font-size:13px;}
+.tabs{display:flex;gap:3px;flex-wrap:nowrap;overflow-x:auto;}
+.tabs::-webkit-scrollbar{height:2px;}
+.tabs::-webkit-scrollbar-thumb{background:var(--gold-dim);}
+.tab{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 7px;background:rgba(0,0,0,.4);border:1px solid #333;border-radius:5px;cursor:pointer;transition:var(--tr);}
+.tab:hover{border-color:var(--gold-dim);}
+.tab.on{background:rgba(200,146,42,.15);border-color:var(--gold);}
+.tab-emo{font-size:17px;line-height:1;}
+.tab-name{font-family:var(--font-title);font-size:9px;font-weight:600;letter-spacing:.08em;color:#aaa;text-transform:uppercase;white-space:nowrap;}
+.tab.on .tab-name{color:var(--gold);}
+#wave-canvas{width:100%;height:26px;border-radius:3px;background:rgba(0,0,0,.3);display:block;}
+.plist{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;min-height:0;}
+.plist::-webkit-scrollbar{width:4px;}
+.plist::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:2px;}
+.pitem{display:flex;align-items:center;gap:7px;padding:4px 7px;border-radius:4px;cursor:pointer;border:1px solid transparent;transition:var(--tr);}
+.pitem:hover{background:rgba(200,146,42,.08);border-color:rgba(200,146,42,.2);}
+.pitem.on{background:rgba(200,146,42,.14);border-color:var(--gold-dim);}
+.pnum{font-size:10px;color:#444;font-weight:600;width:16px;text-align:right;flex-shrink:0;}
+.pinfo{flex:1;min-width:0;}
+.pname{font-family:var(--font-title);font-size:12px;font-weight:600;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;}
+.pitem.on .pname{color:var(--gold-light);}
+.pmeta{font-size:10px;color:#555;display:flex;gap:6px;}
+.pcity{color:#666;}
+.pkey{color:var(--gold-dim);font-weight:600;font-size:10px;}
+.ptag{font-size:9px;color:#444;font-style:italic;}
+.pbar{height:2px;background:var(--gold-dim);border-radius:1px;width:0;transition:width .4s ease;}
+.cfooter{display:flex;align-items:center;justify-content:space-between;padding:3px 4px 0;border-top:1px solid rgba(200,146,42,.12);}
+.schip{display:flex;flex-direction:column;align-items:center;}
+.sval{font-family:var(--font-title);font-size:13px;font-weight:700;color:var(--gold);}
+.slbl{font-size:8px;color:#555;letter-spacing:.2em;text-transform:uppercase;}
+/* ── RIGHT COL ── */
+#col-right{width:162px;flex-shrink:0;padding:8px 7px;display:flex;flex-direction:column;gap:5px;}
+.fx-title{font-family:var(--font-title);font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--red);text-align:center;text-shadow:0 0 10px var(--red-glow);text-transform:uppercase;padding-bottom:4px;border-bottom:1px solid rgba(220,30,30,.2);}
+.fxlist{display:flex;flex-direction:column;gap:3px;flex:1;}
+.fxitem{display:flex;align-items:center;gap:7px;padding:4px 7px;border-radius:4px;background:rgba(0,0,0,.3);border:1px solid #222;cursor:pointer;transition:var(--tr);}
+.fxitem:hover{border-color:#444;}
+.fxitem.on{border-color:rgba(220,30,30,.3);background:rgba(220,30,30,.06);}
+.fxled{width:8px;height:8px;border-radius:50%;background:#333;flex-shrink:0;transition:var(--tr);}
+.fxitem.on .fxled{background:var(--red);box-shadow:0 0 6px var(--red-glow);animation:ledPulse 1.5s infinite;}
+.fxname{font-family:var(--font-title);font-size:11px;font-weight:600;letter-spacing:.1em;color:#888;text-transform:uppercase;}
+.fxitem.on .fxname{color:#ccc;}
+.fxval{font-family:var(--font-ui);font-size:10px;color:var(--gold-dim);margin-left:auto;}
+.fxitem.on .fxval{color:var(--gold);}
+.fxmix-wrap{display:flex;flex-direction:column;align-items:center;padding-top:4px;border-top:1px solid rgba(200,146,42,.12);gap:2px;}
+.fxmix-lbl{font-family:var(--font-title);font-size:9px;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;}
+/* ── PIANO ── */
+#piano{flex-shrink:0;height:148px;display:flex;flex-direction:column;position:relative;z-index:10;border-top:1px solid var(--gold-dim);background:rgba(5,4,2,.96);}
+#piano-hdr{height:24px;display:flex;align-items:center;gap:9px;padding:0 66px;background:rgba(0,0,0,.65);border-bottom:1px solid #222;}
+.pctrl{display:flex;align-items:center;gap:4px;}
+.pctrl-lbl{font-family:var(--font-title);font-size:9px;letter-spacing:.15em;color:#555;text-transform:uppercase;}
+.pctrl-val{font-family:var(--font-ui);font-size:11px;font-weight:600;color:var(--gold);min-width:28px;}
+.octbtn{width:15px;height:15px;background:rgba(200,146,42,.1);border:1px solid var(--gold-dim);border-radius:2px;color:var(--gold);font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--tr);}
+.octbtn:hover{background:rgba(200,146,42,.25);}
+.vel-wrap{flex:1;height:7px;background:rgba(0,0,0,.5);border:1px solid #333;border-radius:3px;overflow:hidden;align-self:center;max-width:110px;}
+.vel-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width .1s ease;border-radius:3px;}
+#piano-body{flex:1;display:flex;min-height:0;}
+.whl{width:54px;flex-shrink:0;background:rgba(5,4,2,.96);border:1px solid #1a1a1a;display:flex;flex-direction:column;align-items:center;padding:4px 0;cursor:ns-resize;user-select:none;}
+.whl-lbl{font-family:var(--font-title);font-size:8px;letter-spacing:.2em;color:var(--gold-dim);text-align:center;line-height:1;}
+.whl-inner{flex:1;width:38px;position:relative;border:1px solid #2a2a2a;border-radius:3px;overflow:hidden;background:#111;margin:4px 0;}
+.whl-inner::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 6px,rgba(255,255,255,.04) 6px,rgba(255,255,255,.04) 7px);z-index:1;}
+.whl-fill{position:absolute;bottom:0;left:0;right:0;height:0%;z-index:0;}
+.whl-ctr{position:absolute;top:50%;left:0;right:0;height:2px;background:var(--red);z-index:3;transform:translateY(-50%);opacity:.7;}
+.whl-thumb{position:absolute;left:50%;transform:translateX(-50%) translateY(-50%);top:50%;width:32px;height:17px;background:linear-gradient(180deg,#3a3a3a,#1a1a1a);border:1px solid #555;border-radius:3px;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 2px 6px rgba(0,0,0,.7);transition:top .05s ease;}
+.whl-tline{width:18px;height:1.5px;background:var(--gold);border-radius:1px;opacity:.9;}
+.whl-val{font-family:var(--font-ui);font-size:10px;font-weight:600;color:var(--gold);z-index:2;min-height:12px;line-height:1;}
+#keys{flex:1;position:relative;overflow:hidden;padding:4px 0 3px;}
+.wkeys{display:flex;height:100%;gap:1px;padding:0 2px;}
+.kw{flex:1;background:linear-gradient(180deg,#f5f0e8 0%,#e8e0d0 100%);border:1px solid #999;border-top:1px solid #bbb;border-radius:0 0 5px 5px;cursor:pointer;transition:background .05s;position:relative;min-width:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;box-shadow:inset 0 -2px 4px rgba(0,0,0,.15),1px 0 0 #aaa;}
+.kw:hover{background:linear-gradient(180deg,#fff8f0 0%,#f0e8d8 100%);}
+.kw.press{background:linear-gradient(180deg,var(--red) 0%,#8a1010 100%)!important;box-shadow:0 0 10px var(--red-glow),inset 0 2px 4px rgba(0,0,0,.3);}
+.kw .knote{font-size:7px;color:#888;font-family:var(--font-ui);pointer-events:none;font-weight:600;}
+.kw.press .knote{color:rgba(255,255,255,.9);}
+.bkeys{position:absolute;top:4px;left:0;right:0;height:57%;pointer-events:none;}
+.bkpos{position:absolute;top:0;pointer-events:all;}
+.kb{width:100%;height:100%;background:linear-gradient(180deg,#222,#111 60%,#1a1a1a);border:1px solid #444;border-top:1px solid #555;border-radius:0 0 3px 3px;cursor:pointer;box-shadow:2px 3px 6px rgba(0,0,0,.8);transition:background .05s;}
+.kb:hover{background:linear-gradient(180deg,#333,#222);}
+.kb.press{background:linear-gradient(180deg,var(--red),#6a0a0a)!important;box-shadow:0 0 8px var(--red-glow);}
+/* SOUND INDICATOR */
+.snd-ind{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0;transition:opacity .1s;}
+.pitem.on .snd-ind{opacity:1;animation:ledPulse 0.8s infinite;}
+</style>
+</head>
+<body>
+<div id="vst-root">
+
+<!-- ══ BACKGROUND HYPER-RÉALISTE ══ -->
+<div id="bg-wrap">
+<svg id="bg-svg" width="980" height="640" viewBox="0 0 980 640" xmlns="http://www.w3.org/2000/svg"
+     style="position:absolute;inset:0;width:100%;height:100%;">
+<defs>
+  <!-- SKY gradient: nuit violette → aube rouge → orange brûlant -->
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%"    stop-color="#030008"/>
+    <stop offset="8%"   stop-color="#0a0115"/>
+    <stop offset="22%"  stop-color="#1e0418"/>
+    <stop offset="36%"  stop-color="#380610"/>
+    <stop offset="52%"  stop-color="#6e1a06"/>
+    <stop offset="68%"  stop-color="#ae3c0a"/>
+    <stop offset="82%"  stop-color="#d85e14"/>
+    <stop offset="92%"  stop-color="#ee7c18"/>
+    <stop offset="100%" stop-color="#c86010"/>
+  </linearGradient>
+  <!-- SOLEIL halo large -->
+  <radialGradient id="sunhalo" cx="51%" cy="58%" r="40%">
+    <stop offset="0%"   stop-color="#ffb840" stop-opacity="0.65"/>
+    <stop offset="25%"  stop-color="#f07010" stop-opacity="0.35"/>
+    <stop offset="60%"  stop-color="#882010" stop-opacity="0.12"/>
+    <stop offset="100%" stop-color="#000"    stop-opacity="0"/>
+  </radialGradient>
+  <!-- SOLEIL coeur -->
+  <radialGradient id="suncore" cx="50%" cy="50%" r="50%">
+    <stop offset="0%"   stop-color="#fffbe0" stop-opacity="0.98"/>
+    <stop offset="30%"  stop-color="#ffd060" stop-opacity="0.85"/>
+    <stop offset="65%"  stop-color="#ff9020" stop-opacity="0.4"/>
+    <stop offset="100%" stop-color="#ff6000" stop-opacity="0"/>
+  </radialGradient>
+  <!-- DUNES dégradés -->
+  <linearGradient id="da" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#c06818"/><stop offset="100%" stop-color="#4a1e04"/>
+  </linearGradient>
+  <linearGradient id="db" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#d87820"/><stop offset="100%" stop-color="#5e2608"/>
+  </linearGradient>
+  <linearGradient id="dc" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#e89030"/><stop offset="100%" stop-color="#6e3010"/>
+  </linearGradient>
+  <linearGradient id="dd" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#cf7828"/><stop offset="100%" stop-color="#361404"/>
+  </linearGradient>
+  <!-- SABLE sol -->
+  <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#b86020"/><stop offset="100%" stop-color="#1e0800"/>
+  </linearGradient>
+  <!-- PYRAMIDE face éclairée -->
+  <linearGradient id="pyra-lit" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#2a1406" stop-opacity="0.98"/>
+    <stop offset="100%" stop-color="#3e2010" stop-opacity="0.95"/>
+  </linearGradient>
+  <!-- PYRAMIDE face sombre -->
+  <linearGradient id="pyra-dark" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#100602" stop-opacity="0.99"/>
+    <stop offset="100%" stop-color="#1a0a04" stop-opacity="0.97"/>
+  </linearGradient>
+  <!-- Brume chaleur -->
+  <filter id="heat"><feGaussianBlur stdDeviation="1.2"/></filter>
+  <filter id="soft"><feGaussianBlur stdDeviation="0.8"/></filter>
+  <!-- LUNE / étoile brillante -->
+  <radialGradient id="star1" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+    <stop offset="60%" stop-color="#ffe8a0" stop-opacity="0.5"/>
+    <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+
+<!-- ══ CIEL ══ -->
+<rect width="980" height="640" fill="url(#sky)"/>
+
+<!-- ══ VOIE LACTÉE / ÉTOILES ══ -->
+<g opacity="0.9">
+  <!-- grandes étoiles -->
+  <circle cx="58" cy="22" r="1.4" fill="#fff" opacity="0.85"/>
+  <circle cx="140" cy="10" r="1.0" fill="#fff" opacity="0.65"/>
+  <circle cx="225" cy="35" r="1.2" fill="#fff" opacity="0.75"/>
+  <circle cx="310" cy="15" r="0.9" fill="#ffe8b0" opacity="0.7"/>
+  <circle cx="390" cy="45" r="0.8" fill="#fff" opacity="0.6"/>
+  <circle cx="462" cy="8"  r="1.5" fill="#fff" opacity="0.9"/>
+  <circle cx="538" cy="28" r="0.9" fill="#ffe0a0" opacity="0.65"/>
+  <circle cx="618" cy="6"  r="1.1" fill="#fff" opacity="0.75"/>
+  <circle cx="695" cy="42" r="1.0" fill="#fff" opacity="0.68"/>
+  <circle cx="768" cy="18" r="1.3" fill="#ffe8b0" opacity="0.8"/>
+  <circle cx="845" cy="34" r="0.8" fill="#fff" opacity="0.55"/>
+  <circle cx="918" cy="12" r="1.1" fill="#fff" opacity="0.72"/>
+  <circle cx="952" cy="52" r="0.9" fill="#fff" opacity="0.6"/>
+  <!-- petites étoiles -->
+  <circle cx="78"  cy="65" r="0.7" fill="#fff" opacity="0.5"/>
+  <circle cx="185" cy="80" r="0.8" fill="#fff" opacity="0.55"/>
+  <circle cx="348" cy="70" r="0.7" fill="#fff" opacity="0.5"/>
+  <circle cx="480" cy="55" r="0.6" fill="#ffe0a0" opacity="0.6"/>
+  <circle cx="652" cy="72" r="0.9" fill="#fff" opacity="0.58"/>
+  <circle cx="810" cy="60" r="0.8" fill="#fff" opacity="0.52"/>
+  <circle cx="28"  cy="48" r="0.6" fill="#fff" opacity="0.45"/>
+  <circle cx="730" cy="85" r="0.7" fill="#fff" opacity="0.4"/>
+  <circle cx="880" cy="78" r="0.6" fill="#fff" opacity="0.45"/>
+  <!-- étoile filante -->
+  <line x1="160" y1="38" x2="220" y2="52" stroke="#fff" stroke-width="0.6" opacity="0.4"/>
+</g>
+
+<!-- CROISSANT DE LUNE -->
+<g transform="translate(88,44)">
+  <circle cx="0" cy="0" r="11" fill="#fff8e0" opacity="0.88"/>
+  <circle cx="5" cy="-3" r="9" fill="#0e0520" opacity="0.95"/>
+  <!-- reflet lunaire -->
+  <path d="M-9,-4 Q-11,2 -7,8" stroke="#fff8e0" stroke-width="0.8" fill="none" opacity="0.4"/>
+</g>
+
+<!-- ══ HALO SOLEIL ══ -->
+<ellipse cx="500" cy="358" rx="320" ry="210" fill="url(#sunhalo)"/>
+<!-- RAYONS SOLEIL -->
+<g opacity="0.055" stroke="#ffaa30" stroke-linecap="round">
+  <line x1="500" y1="358" x2="80"  y2="0"   stroke-width="70"/>
+  <line x1="500" y1="358" x2="270" y2="0"   stroke-width="35"/>
+  <line x1="500" y1="358" x2="490" y2="0"   stroke-width="20"/>
+  <line x1="500" y1="358" x2="640" y2="0"   stroke-width="28"/>
+  <line x1="500" y1="358" x2="840" y2="0"   stroke-width="45"/>
+  <line x1="500" y1="358" x2="980" y2="80"  stroke-width="30"/>
+</g>
+<!-- SOLEIL COEUR -->
+<circle cx="500" cy="358" r="26" fill="url(#suncore)"/>
+<!-- couronne solaire -->
+<circle cx="500" cy="358" r="32" fill="none" stroke="#ffcc40" stroke-width="1.5" opacity="0.3"/>
+<circle cx="500" cy="358" r="42" fill="none" stroke="#ffa830" stroke-width="0.8" opacity="0.15"/>
+
+<!-- ══ PYRAMIDES DE GIZEH — ULTRA DÉTAILLÉES ══ -->
+<!-- Khufu (Grande Pyramide) — centre gauche -->
+<!-- Face ouest (sombre) -->
+<polygon points="268,362 400,185 430,362" fill="url(#pyra-dark)" opacity="0.98"/>
+<!-- Face est (éclairée par soleil) -->
+<polygon points="400,185 540,362 430,362" fill="url(#pyra-lit)" opacity="0.96"/>
+<!-- Arête centrale -->
+<line x1="400" y1="185" x2="400" y2="362" stroke="#503020" stroke-width="0.6" opacity="0.4"/>
+<!-- Liseré sommet -->
+<circle cx="400" cy="185" r="2.5" fill="#c8a060" opacity="0.7"/>
+<!-- Entrée pyramide -->
+<polygon points="358,320 375,285 392,320" fill="#080300" opacity="0.9"/>
+<!-- Pierres (simulées) -->
+<g stroke="#1a0a02" stroke-width="0.4" opacity="0.3" fill="none">
+  <line x1="280" y1="350" x2="526" y2="350"/>
+  <line x1="285" y1="340" x2="520" y2="340"/>
+  <line x1="290" y1="328" x2="512" y2="328"/>
+  <line x1="296" y1="315" x2="503" y2="315"/>
+  <line x1="303" y1="300" x2="494" y2="300"/>
+  <line x1="310" y1="283" x2="484" y2="283"/>
+  <line x1="318" y1="264" x2="473" y2="264"/>
+  <line x1="326" y1="243" x2="462" y2="243"/>
+  <line x1="335" y1="220" x2="450" y2="220"/>
+</g>
+
+<!-- Khafre (2e pyramide) -->
+<polygon points="528,362 636,207 660,362" fill="#160804" opacity="0.94"/>
+<polygon points="636,207 748,362 660,362" fill="#241408" opacity="0.92"/>
+<line x1="636" y1="207" x2="636" y2="362" stroke="#503020" stroke-width="0.5" opacity="0.35"/>
+<circle cx="636" cy="207" r="2" fill="#c8a060" opacity="0.6"/>
+<!-- Calcaire poli au sommet (Khafre conservait son revêtement) -->
+<polygon points="636,207 660,240 612,240" fill="#8a7050" opacity="0.35"/>
+
+<!-- Menkaure (3e pyramide, petite) -->
+<polygon points="718,362 778,265 798,362" fill="#140602" opacity="0.90"/>
+<polygon points="778,265 838,362 798,362" fill="#201008" opacity="0.88"/>
+<circle cx="778" cy="265" r="1.5" fill="#c8a060" opacity="0.5"/>
+
+<!-- Plateau de Gizeh -->
+<rect x="240" y="358" width="620" height="10" fill="#1a0c04" opacity="0.75"/>
+
+<!-- ══ SPHINX ══ -->
+<g transform="translate(490,350)">
+  <!-- Corps allongé -->
+  <ellipse cx="0" cy="8" rx="55" ry="18" fill="#1e1006" opacity="0.92"/>
+  <!-- Pattes avant -->
+  <rect x="-40" y="14" width="14" height="20" rx="3" fill="#180c04" opacity="0.9"/>
+  <rect x="-22" y="14" width="14" height="20" rx="3" fill="#180c04" opacity="0.9"/>
+  <!-- Cou + tête -->
+  <rect x="-10" y="-16" width="22" height="26" rx="4" fill="#1a0e06" opacity="0.92"/>
+  <!-- Tête (nemes) -->
+  <ellipse cx="2" cy="-22" rx="18" ry="14" fill="#1e1206" opacity="0.94"/>
+  <!-- Coiffe nemes (côtés) -->
+  <path d="M-16,-18 Q-22,-10 -18,4 L-12,0 Q-14,-8 -12,-16Z" fill="#160c04" opacity="0.9"/>
+  <path d="M18,-18 Q24,-10 20,4 L14,0 Q16,-8 14,-16Z" fill="#160c04" opacity="0.9"/>
+  <!-- Visage -->
+  <ellipse cx="2" cy="-22" rx="12" ry="10" fill="#221408" opacity="0.9"/>
+  <!-- Yeux -->
+  <ellipse cx="-4" cy="-24" rx="3" ry="1.5" fill="#060200" opacity="0.95"/>
+  <ellipse cx="8"  cy="-24" rx="3" ry="1.5" fill="#060200" opacity="0.95"/>
+  <!-- Fard à l'oeil (kohol) -->
+  <path d="M-7,-24 L-10,-22" stroke="#040100" stroke-width="0.8" opacity="0.7"/>
+  <path d="M11,-24 L14,-22" stroke="#040100" stroke-width="0.8" opacity="0.7"/>
+  <!-- Nez (abîmé historiquement) -->
+  <path d="M0,-20 Q3,-18 2,-16 Q-1,-17 0,-20Z" fill="#100800" opacity="0.7"/>
+  <!-- Barbe royale -->
+  <rect x="-2" y="-12" width="6" height="10" rx="2" fill="#140a02" opacity="0.8"/>
+  <!-- Uraeus (cobra) -->
+  <path d="M2,-33 Q6,-30 4,-26 Q2,-24 2,-26 Q0,-28 2,-33Z" fill="#c09020" opacity="0.7"/>
+</g>
+
+<!-- ══ SOL DÉSERT ══ -->
+<rect x="0" y="356" width="980" height="290" fill="#2a1406" opacity="0.7"/>
+
+<!-- ══ DUNES STRATIFIÉES ══ -->
+<path d="M0,388 Q90,340 205,376 Q320,412 448,348 Q572,284 688,360 Q804,436 980,368 L980,462 L0,462Z" fill="url(#da)" opacity="0.78"/>
+<path d="M0,428 Q85,385 198,420 Q312,455 452,398 Q586,341 720,412 Q852,480 980,418 L980,530 L0,530Z" fill="url(#db)" opacity="0.85"/>
+<path d="M0,475 Q135,432 308,474 Q478,518 618,462 Q758,406 980,478 L980,570 L0,570Z" fill="url(#dc)" opacity="0.90"/>
+<path d="M0,528 Q175,495 378,528 Q562,560 740,516 Q868,484 980,525 L980,640 L0,640Z" fill="url(#dd)" opacity="0.96"/>
+<rect x="0" y="595" width="980" height="45" fill="#3a1c08" opacity="0.99"/>
+
+<!-- CRÊTES DES DUNES (reflets) -->
+<path d="M0,388 Q90,340 205,376 Q320,412 448,348 Q572,284 688,360 Q804,436 980,368" fill="none" stroke="#e8a040" stroke-width="0.8" opacity="0.18"/>
+<path d="M0,428 Q85,385 198,420 Q312,455 452,398 Q586,341 720,412 Q852,480 980,418" fill="none" stroke="#d08030" stroke-width="0.6" opacity="0.15"/>
+
+<!-- ══ TRACES DE CARAVANE ══ -->
+<path d="M50,560 Q200,542 380,552 Q520,560 680,535 Q800,515 950,540" fill="none" stroke="#4a2008" stroke-width="1.5" stroke-dasharray="6,8" opacity="0.4"/>
+
+<!-- ══ MUSICIENS GNAWA — très détaillés ══ -->
+<!-- M1 — Maître Mâalem (Guembri basse) -->
+<g transform="translate(100,462)" fill="#0c0502" opacity="0.95">
+  <!-- Djellaba longue -->
+  <path d="M0,0 Q-16,48 -20,96 L20,96 Q16,48 0,0Z" fill="#1a0c06"/>
+  <path d="M-8,28 Q-18,60 -20,96" stroke="#0c0602" stroke-width="0.6" fill="none" opacity="0.5"/>
+  <path d="M8,28 Q16,60 20,96"    stroke="#0c0602" stroke-width="0.6" fill="none" opacity="0.5"/>
+  <!-- Tête + turban -->
+  <circle cx="0" cy="-16" r="11"/>
+  <!-- Turban enroulé -->
+  <path d="M-11,-20 Q0,-35 11,-20 Q7,-22 0,-20 Q-7,-22 -11,-20Z" fill="#2a1808"/>
+  <ellipse cx="0" cy="-26" rx="10" ry="4" fill="#2a1808"/>
+  <rect x="-10" y="-29" width="20" height="4" rx="2" fill="#321e0a"/>
+  <!-- Visage -->
+  <circle cx="0" cy="-16" r="9" fill="#1a0e08"/>
+  <!-- Yeux -->
+  <ellipse cx="-3" cy="-17" rx="2" ry="1.2" fill="#040200"/>
+  <ellipse cx="3"  cy="-17" rx="2" ry="1.2" fill="#040200"/>
+  <!-- Barbe -->
+  <path d="M-5,-10 Q0,-6 5,-10 Q3,-8 0,-8 Q-3,-8 -5,-10Z" fill="#0a0602"/>
+  <!-- Bras gauche tenant le guembri -->
+  <path d="M-12,22 Q-28,28 -32,40 Q-26,44 -20,36 L-14,28Z" fill="#1a0c06"/>
+  <!-- Guembri (luth basse à 3 cordes) -->
+  <g transform="translate(-38,38)">
+    <!-- Corps du guembri -->
+    <ellipse cx="0" cy="0" rx="9" ry="12" fill="#2a1a0a" opacity="0.95"/>
+    <ellipse cx="0" cy="0" rx="7" ry="10" fill="#382210" opacity="0.9"/>
+    <!-- Rosette -->
+    <circle cx="0" cy="2" r="3" fill="#1a1006"/>
+    <!-- Manche -->
+    <rect x="-2" y="-22" width="4" height="24" rx="2" fill="#1e1206"/>
+    <!-- Cordes -->
+    <line x1="-2" y1="-22" x2="-3" y2="8" stroke="#7a6040" stroke-width="0.5" opacity="0.8"/>
+    <line x1="0"  y1="-22" x2="0"  y2="8" stroke="#7a6040" stroke-width="0.5" opacity="0.8"/>
+    <line x1="2"  y1="-22" x2="3"  y2="8" stroke="#7a6040" stroke-width="0.5" opacity="0.8"/>
+    <!-- Cheville -->
+    <rect x="-4" y="-26" width="8" height="5" rx="1" fill="#1a1008"/>
+  </g>
+  <!-- Main droite sur cordes -->
+  <path d="M10,24 Q26,30 28,36 L20,34 Q16,28 12,26Z" fill="#1a0c06"/>
+</g>
+
+<!-- M2 — Joueur de Qraqeb (crotales en fer) -->
+<g transform="translate(148,468)" fill="#0c0502" opacity="0.93">
+  <path d="M0,0 Q-14,42 -18,88 L18,88 Q14,42 0,0Z" fill="#140e08"/>
+  <circle cx="0" cy="-15" r="10" fill="#1a0e08"/>
+  <!-- Chéchia (bonnet rouge) -->
+  <path d="M-10,-22 Q0,-34 10,-22 Q6,-24 0,-22 Q-6,-24 -10,-22Z" fill="#8a1808"/>
+  <ellipse cx="0" cy="-27" rx="9" ry="4" fill="#8a1808"/>
+  <!-- Bras avec qraqeb -->
+  <path d="M-10,16 Q-24,6 -26,-4 L-18,0 Q-16,10 -12,18Z" fill="#140e08"/>
+  <path d="M10,16 Q24,6 26,-4 L18,0 Q16,10 12,18Z" fill="#140e08"/>
+  <!-- Qraqeb gauche (paire de crotales) -->
+  <g transform="translate(-26,-6)">
+    <circle cx="-4" cy="0" r="5.5" fill="#2a2418"/>
+    <circle cx="-4" cy="0" r="3.5" fill="#1a1810"/>
+    <circle cx="4"  cy="0" r="5.5" fill="#2a2418"/>
+    <circle cx="4"  cy="0" r="3.5" fill="#1a1810"/>
+    <rect x="-8" y="-1" width="16" height="2" rx="1" fill="#3a3020"/>
+  </g>
+  <!-- Qraqeb droite -->
+  <g transform="translate(26,-6)">
+    <circle cx="-4" cy="0" r="5.5" fill="#2a2418"/>
+    <circle cx="-4" cy="0" r="3.5" fill="#1a1810"/>
+    <circle cx="4"  cy="0" r="5.5" fill="#2a2418"/>
+    <circle cx="4"  cy="0" r="3.5" fill="#1a1810"/>
+    <rect x="-8" y="-1" width="16" height="2" rx="1" fill="#3a3020"/>
+  </g>
+</g>
+
+<!-- M3 — Danseur (Jilala) -->
+<g transform="translate(192,472)" fill="#0c0502" opacity="0.91">
+  <path d="M0,0 Q-12,36 -16,80 L16,80 Q12,36 0,0Z" fill="#180a04"/>
+  <circle cx="0" cy="-14" r="9.5" fill="#1a0e08"/>
+  <!-- Bonnet gnawa (koufiya) pointu -->
+  <path d="M-8,-18 Q0,-38 8,-18 Q4,-22 0,-20 Q-4,-22 -8,-18Z" fill="#601808"/>
+  <!-- Bras déployés en transe -->
+  <path d="M-10,14 Q-30,8 -34,2" stroke="#180a04" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M10,14 Q26,20 30,16"  stroke="#180a04" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- Jambe levée (danse) -->
+  <path d="M-8,80 Q-14,68 -6,60" stroke="#180a04" stroke-width="3" fill="none" opacity="0.7"/>
+  <!-- Houppes (liliyas) sur la djellaba -->
+  <circle cx="-6" cy="20" r="2" fill="#801808" opacity="0.8"/>
+  <circle cx="0"  cy="15" r="2" fill="#801808" opacity="0.8"/>
+  <circle cx="6"  cy="20" r="2" fill="#801808" opacity="0.8"/>
+</g>
+
+<!-- M4 — 2e joueur de Guembri -->
+<g transform="translate(234,476)" fill="#0c0502" opacity="0.87">
+  <path d="M0,0 Q-11,32 -14,72 L14,72 Q11,32 0,0Z" fill="#160c06"/>
+  <circle cx="0" cy="-13" r="9" fill="#1a0e08"/>
+  <path d="M-9,-18 Q0,-32 9,-18 Q5,-20 0,-18 Q-5,-20 -9,-18Z" fill="#1e1006"/>
+  <path d="M-10,14 Q-22,20 -24,28" stroke="#160c06" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M10,14 Q20,18 22,26" stroke="#160c06" stroke-width="5" fill="none" stroke-linecap="round"/>
+</g>
+
+<!-- ══ DROMADAIRE SELLE TOUAREG ══ -->
+<g transform="translate(700,425)" fill="#130900" opacity="0.96">
+  <ellipse cx="0" cy="0" rx="52" ry="28"/>
+  <!-- Bosse -->
+  <ellipse cx="-10" cy="-30" rx="20" ry="18"/>
+  <!-- Cou -->
+  <path d="M32,-12 Q48,-8 56,-24 Q60,-42 52,-48 Q46,-40 48,-26 Q42,-12 36,-10Z" fill="#110800"/>
+  <!-- Tête -->
+  <ellipse cx="56" cy="-50" rx="16" ry="11" transform="rotate(14,56,-50)" fill="#150a02"/>
+  <!-- Lèvre inférieure fendue (camélidé) -->
+  <path d="M62,-42 Q70,-40 68,-36 Q62,-35 58,-38Z" fill="#1e1208"/>
+  <!-- Narines -->
+  <ellipse cx="68" cy="-44" rx="2.5" ry="1.5" transform="rotate(12,68,-44)" fill="#0a0400"/>
+  <ellipse cx="64" cy="-44" rx="1.5" ry="1" transform="rotate(12,64,-44)" fill="#0a0400"/>
+  <!-- Oeil (reflet or) -->
+  <circle cx="52" cy="-54" r="2.2" fill="#060400"/>
+  <circle cx="52.6" cy="-54.6" r="1" fill="#b08820" opacity="0.9"/>
+  <!-- Cils caractéristiques -->
+  <path d="M50,-57 Q53,-60 56,-57" stroke="#1a1008" stroke-width="0.8" fill="none" opacity="0.8"/>
+  <!-- Oreilles -->
+  <path d="M44,-58 Q42,-68 48,-64 Q50,-58 46,-54Z" fill="#190a04"/>
+  <!-- Queue touffue -->
+  <path d="M-50,-4 Q-62,-10 -60,-18 Q-54,-12 -52,-4Z"/>
+  <!-- Jambes (genoux camélidés caractéristiques) -->
+  <rect x="24" y="20" width="9" height="16" rx="4"/><rect x="26" y="36" width="7" height="18" rx="3"/>
+  <rect x="36" y="20" width="9" height="14" rx="4"/><rect x="38" y="34" width="7" height="16" rx="3"/>
+  <rect x="-22" y="22" width="9" height="14" rx="4"/><rect x="-20" y="36" width="7" height="16" rx="3"/>
+  <rect x="-34" y="22" width="9" height="12" rx="4"/><rect x="-32" y="34" width="7" height="14" rx="3"/>
+  <!-- Sabots -->
+  <ellipse cx="28" cy="55" rx="6" ry="3" fill="#0a0500"/>
+  <ellipse cx="41" cy="51" rx="6" ry="3" fill="#0a0500"/>
+  <ellipse cx="-18" cy="53" rx="6" ry="3" fill="#0a0500"/>
+  <ellipse cx="-29" cy="49" rx="6" ry="3" fill="#0a0500"/>
+  <!-- Selle touareg (colorée) -->
+  <path d="M-14,-10 Q0,-38 14,-10 Q6,-8 -6,-8Z" fill="#3a2010" opacity="0.85"/>
+  <path d="M-12,-10 Q0,-36 12,-10" fill="none" stroke="#604020" stroke-width="1" opacity="0.7"/>
+  <!-- Tapis de selle -->
+  <ellipse cx="0" cy="-6" rx="16" ry="5" fill="#502a14" opacity="0.7"/>
+  <!-- Licol -->
+  <path d="M46,-34 Q54,-38 56,-46" stroke="#4a2810" stroke-width="1.8" fill="none" opacity="0.85"/>
+  <path d="M56,-46 Q60,-50 58,-54" stroke="#4a2810" stroke-width="1.5" fill="none" opacity="0.7"/>
+  <!-- Chargement (dattes/sel) -->
+  <rect x="-46" y="-8" width="14" height="10" rx="2" fill="#2e1808" opacity="0.8"/>
+  <rect x="34" y="-8"  width="14" height="10" rx="2" fill="#2e1808" opacity="0.8"/>
+</g>
+
+<!-- ══ AIGLE ROYAL EN VOL ══ -->
+<g transform="translate(780,110)">
+  <ellipse cx="0" cy="0" rx="22" ry="9" fill="#1c1208" opacity="0.97"/>
+  <circle cx="20" cy="-5" r="8"  fill="#180e06" opacity="0.96"/>
+  <path d="M26,-3 Q33,0 31,5 Q26,4 24,2Z" fill="#2a2008" opacity="0.96"/>
+  <circle cx="22" cy="-6" r="2.2" fill="#060402"/>
+  <circle cx="22.6" cy="-6.6" r="1" fill="#c89820" opacity="0.85"/>
+  <!-- Sourcil agressif -->
+  <path d="M18,-8 Q22,-10 26,-8" fill="#100c04" stroke="#100c04" stroke-width="1.5"/>
+  <!-- Queue -->
+  <path d="M-20,2 Q-32,9 -34,5 Q-28,0 -20,2Z" fill="#1a1006" opacity="0.9"/>
+  <path d="M-20,4 Q-34,15 -36,11 Q-30,5 -20,4Z" fill="#140c04" opacity="0.85"/>
+  <path d="M-20,0 Q-32,-5 -33,-10 Q-26,-6 -20,0Z" fill="#1a1006" opacity="0.9"/>
+  <!-- Aile gauche complète avec primaires -->
+  <path d="M-10,-5 Q-38,-24 -62,-20 Q-80,-16 -88,-9 Q-78,-7 -60,-14 Q-40,-18 -12,-3Z" fill="#1a1206" opacity="0.96"/>
+  <path d="M-60,-20 Q-68,-30 -64,-36 Q-58,-26 -60,-20" fill="#120c04" opacity="0.92"/>
+  <path d="M-68,-18 Q-78,-28 -74,-34 Q-66,-24 -68,-18" fill="#120c04" opacity="0.90"/>
+  <path d="M-76,-14 Q-88,-22 -84,-28 Q-76,-20 -76,-14" fill="#120c04" opacity="0.86"/>
+  <path d="M-82,-9  Q-96,-16 -92,-22 Q-84,-16 -82,-9"  fill="#120c04" opacity="0.80"/>
+  <!-- Aile droite -->
+  <path d="M12,-5 Q40,-24 64,-20 Q82,-16 90,-9 Q80,-7 62,-14 Q42,-18 14,-3Z"  fill="#1a1206" opacity="0.96"/>
+  <path d="M62,-20 Q70,-30 66,-36 Q60,-26 62,-20" fill="#120c04" opacity="0.92"/>
+  <path d="M70,-18 Q80,-28 76,-34 Q68,-24 70,-18" fill="#120c04" opacity="0.90"/>
+  <path d="M78,-14 Q90,-22 86,-28 Q78,-20 78,-14" fill="#120c04" opacity="0.86"/>
+  <path d="M84,-9  Q98,-16 94,-22 Q86,-16 84,-9"  fill="#120c04" opacity="0.80"/>
+  <!-- Serres -->
+  <path d="M5,7 Q8,14 5,18 Q3,14 5,7" fill="#1a1006" opacity="0.8"/>
+  <path d="M-4,7 Q-7,14 -4,18 Q-2,14 -4,7" fill="#1a1006" opacity="0.8"/>
+  <path d="M8,8 Q12,15 9,19 Q7,15 8,8" fill="#1a1006" opacity="0.7"/>
+</g>
+<!-- 2e aigle au loin -->
+<g transform="translate(192,88) scale(0.42)" opacity="0.5">
+  <ellipse cx="0" cy="0" rx="22" ry="9" fill="#1c1208"/>
+  <circle cx="20" cy="-5" r="8" fill="#180e06"/>
+  <path d="M-10,-5 Q-38,-24 -62,-20 Q-80,-16 -88,-9 Q-78,-7 -60,-14 Q-40,-18 -12,-3Z" fill="#1a1206"/>
+  <path d="M12,-5 Q40,-24 64,-20 Q82,-16 90,-9 Q80,-7 62,-14 Q42,-18 14,-3Z" fill="#1a1206"/>
+</g>
+
+<!-- ══ PALMERAIE LOINTAINE ══ -->
+<!-- Silhouettes de palmiers dattiers -->
+<g transform="translate(820,340)" fill="#0a0500" opacity="0.85">
+  <rect x="-3" y="0" width="6" height="28" rx="3"/>
+  <path d="M0,0 Q-18,-12 -22,-20" stroke="#0a0500" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M0,0 Q14,-14 16,-22"  stroke="#0a0500" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M0,0 Q-8,-18 -6,-26"  stroke="#0a0500" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M0,0 Q10,-16 8,-26"   stroke="#0a0500" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M0,2 Q0,-20 2,-28"    stroke="#0a0500" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</g>
+<g transform="translate(840,344)" fill="#0a0500" opacity="0.75">
+  <rect x="-2.5" y="0" width="5" height="22" rx="2.5"/>
+  <path d="M0,0 Q-14,-10 -17,-16" stroke="#0a0500" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M0,0 Q12,-10 13,-18"  stroke="#0a0500" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M0,0 Q0,-16 2,-22"    stroke="#0a0500" stroke-width="2" fill="none" stroke-linecap="round"/>
+</g>
+<g transform="translate(808,348)" fill="#0a0500" opacity="0.65">
+  <rect x="-2" y="0" width="4" height="18" rx="2"/>
+  <path d="M0,0 Q-10,-8 -12,-14" stroke="#0a0500" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M0,0 Q8,-8 10,-14"    stroke="#0a0500" stroke-width="2" fill="none" stroke-linecap="round"/>
+</g>
+
+<!-- ══ BRUME CHALEUR + VOILE DE SABLE ══ -->
+<rect x="0" y="340" width="980" height="28" fill="#c06010" opacity="0.06" filter="url(#heat)"/>
+<rect x="0" y="600" width="980" height="40" fill="#d07818" opacity="0.08" filter="url(#soft)"/>
+
+<!-- ══ VIGNETTAGE ══ -->
+<radialGradient id="vig" cx="50%" cy="50%" r="70%">
+  <stop offset="0%"   stop-color="#000" stop-opacity="0"/>
+  <stop offset="70%"  stop-color="#000" stop-opacity="0"/>
+  <stop offset="100%" stop-color="#000" stop-opacity="0.65"/>
+</radialGradient>
+<rect width="980" height="640" fill="url(#vig)"/>
+</svg>
+</div>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<div id="header" class="glass">
+  <div class="logo">
+    <div class="geo"><span></span><span></span><span></span></div>
+    <div>
+      <div class="logo-text">DJBILBOX<span style="color:var(--red)">◆</span>BEATS</div>
+      <div class="logo-sub">MAQAM ENGINE PRO</div>
+    </div>
+    <div class="geo"><span></span><span></span><span></span></div>
+  </div>
+  <div class="hdr-title">ORIENTAL INSTRUMENT — MAQAM EDITION</div>
+  <div class="preset-hdr" id="preset-hdr">
+    <div>
+      <div class="phdr-name" id="phdr-name">Mission Cléopâtre</div>
+      <div class="phdr-cat" id="phdr-cat">🎻 VIOLIN · Cairo · Dm</div>
+    </div>
+  </div>
+  <div class="hdr-btns">
+    <div class="hbtn" onclick="tb(this)">MIDI</div>
+    <div class="hbtn on" onclick="tb(this)">POLY</div>
+    <div class="hbtn" onclick="tb(this)">LEG</div>
+    <div class="hbtn" onclick="tb(this)">A/B</div>
+    <div class="hbtn rec" onclick="trec(this)">REC</div>
+    <div class="hbtn panic" onclick="panic()">PANIC</div>
+  </div>
+</div>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<div id="main">
+
+<!-- LEFT: MACRO KNOBS -->
+<div id="col-left" class="glass">
+  <div class="col-lbl">◆ MACRO ◆</div>
+  <div class="knob-row" data-k="glide" data-v="25"><div class="knob-wrap" id="kw-glide"></div><div class="knob-lbl">GLIDE</div><div class="knob-val" id="kv-glide">25</div></div>
+  <div class="knob-row" data-k="space" data-v="60"><div class="knob-wrap" id="kw-space"></div><div class="knob-lbl">SPACE</div><div class="knob-val" id="kv-space">60</div></div>
+  <div class="knob-row" data-k="filter" data-v="80"><div class="knob-wrap" id="kw-filter"></div><div class="knob-lbl">FILTER</div><div class="knob-val" id="kv-filter">80</div></div>
+  <div class="knob-row" data-k="orient" data-v="50"><div class="knob-wrap" id="kw-orient"></div><div class="knob-lbl">ORIENT</div><div class="knob-val" id="kv-orient">50</div></div>
+  <div class="knob-row" data-k="reso" data-v="35"><div class="knob-wrap" id="kw-reso"></div><div class="knob-lbl">RESO</div><div class="knob-val" id="kv-reso">35</div></div>
+  <div class="knob-row" data-k="depth" data-v="70"><div class="knob-wrap" id="kw-depth"></div><div class="knob-lbl">DEPTH</div><div class="knob-val" id="kv-depth">70</div></div>
+</div>
+
+<!-- CENTER: PRESET BROWSER -->
+<div id="col-center" class="glass">
+  <div class="srch">
+    <span class="srch-ico">⌕</span>
+    <input type="text" id="srch-in" placeholder="Chercher preset, ville, tonalité..." oninput="filterP()">
+  </div>
+  <div class="tabs" id="tabs">
+    <div class="tab on" data-i="violin" onclick="selTab(this,'violin')"><div class="tab-emo">🎻</div><div class="tab-name">VIOLIN</div></div>
+    <div class="tab"    data-i="oud"    onclick="selTab(this,'oud')">   <div class="tab-emo">🪕</div><div class="tab-name">OUD</div></div>
+    <div class="tab"    data-i="ney"    onclick="selTab(this,'ney')">   <div class="tab-emo">🎵</div><div class="tab-name">NEY</div></div>
+    <div class="tab"    data-i="qanun"  onclick="selTab(this,'qanun')"> <div class="tab-emo">🎹</div><div class="tab-name">QANUN</div></div>
+    <div class="tab"    data-i="darbuka" onclick="selTab(this,'darbuka')"><div class="tab-emo">🥁</div><div class="tab-name">DARBUKA</div></div>
+    <div class="tab"    data-i="rababah" onclick="selTab(this,'rababah')"><div class="tab-emo">🎸</div><div class="tab-name">RABABAH</div></div>
+    <div class="tab"    data-i="mizmar"  onclick="selTab(this,'mizmar')"> <div class="tab-emo">🎺</div><div class="tab-name">MIZMAR</div></div>
+  </div>
+  <canvas id="wave-canvas"></canvas>
+  <div class="plist" id="plist"></div>
+  <div class="cfooter">
+    <div class="schip"><div class="sval">70</div><div class="slbl">PRESETS</div></div>
+    <div class="schip"><div class="sval">7</div><div class="slbl">INSTR.</div></div>
+    <div class="schip"><div class="sval" id="bpm-d">128</div><div class="slbl">BPM</div></div>
+    <div style="display:flex;gap:4px;align-items:center">
+      <button onclick="chBpm(-1)" style="background:rgba(200,146,42,.1);border:1px solid var(--gold-dim);color:var(--gold);border-radius:2px;width:15px;height:15px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;">−</button>
+      <button onclick="chBpm(1)"  style="background:rgba(200,146,42,.1);border:1px solid var(--gold-dim);color:var(--gold);border-radius:2px;width:15px;height:15px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;">+</button>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT: FX CHAIN -->
+<div id="col-right" class="glass">
+  <div class="fx-title">⬡ FX CHAIN ⬡</div>
+  <div class="fxlist" id="fxlist">
+    <div class="fxitem on"  onclick="tFx(this)"><div class="fxled"></div><div class="fxname">Reverb</div><div class="fxval">72%</div></div>
+    <div class="fxitem"     onclick="tFx(this)"><div class="fxled"></div><div class="fxname">Echo</div><div class="fxval">45%</div></div>
+    <div class="fxitem on"  onclick="tFx(this)"><div class="fxled"></div><div class="fxname">Chorus</div><div class="fxval">38%</div></div>
+    <div class="fxitem"     onclick="tFx(this)"><div class="fxled"></div><div class="fxname">Distort</div><div class="fxval">18%</div></div>
+    <div class="fxitem on"  onclick="tFx(this)"><div class="fxled"></div><div class="fxname">Comprs</div><div class="fxval">60%</div></div>
+    <div class="fxitem"     onclick="tFx(this)"><div class="fxled"></div><div class="fxname">3-Band EQ</div><div class="fxval">—</div></div>
+    <div class="fxitem"     onclick="tFx(this)"><div class="fxled"></div><div class="fxname">Phaser</div><div class="fxval">30%</div></div>
+    <div class="fxitem"     onclick="tFx(this)"><div class="fxled"></div><div class="fxname">Bitcrsh</div><div class="fxval">8%</div></div>
+  </div>
+  <div class="fxmix-wrap">
+    <div class="fxmix-lbl">◆ FX MIX ◆</div>
+    <div class="knob-row" data-k="fxmix" data-v="50" style="flex:none;padding:3px 0 0;">
+      <div class="knob-wrap" id="kw-fxmix"></div>
+      <div class="knob-val" id="kv-fxmix" style="color:var(--red)">50</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ PIANO ══════════════ -->
+<div id="piano" class="glass">
+  <div id="piano-hdr">
+    <div class="pctrl">
+      <span class="pctrl-lbl">OCT</span>
+      <button class="octbtn" onclick="chOct(-1)">▼</button>
+      <span class="pctrl-val" id="oct-v">C4</span>
+      <button class="octbtn" onclick="chOct(1)">▲</button>
+    </div>
+    <div class="pctrl" style="margin-left:8px">
+      <span class="pctrl-lbl">KEY</span>
+      <span class="pctrl-val" id="key-v">Dm</span>
+    </div>
+    <div class="pctrl">
+      <span class="pctrl-lbl">MAQAM</span>
+      <span class="pctrl-val" id="maqam-v" style="font-size:10px;min-width:60px">Bayati</span>
+    </div>
+    <div class="pctrl">
+      <span class="pctrl-lbl">TUNE</span>
+      <span class="pctrl-val" id="tune-v">440</span>
+    </div>
+    <div class="pctrl" style="flex:1;">
+      <span class="pctrl-lbl">VEL</span>
+      <div class="vel-wrap"><div class="vel-fill" id="vel-f"></div></div>
+    </div>
+  </div>
+  <div id="piano-body">
+    <div class="whl" id="whl-pitch">
+      <div class="whl-lbl">PITCH</div>
+      <div class="whl-inner" id="pi">
+        <div class="whl-fill" id="pf"></div>
+        <div class="whl-ctr"></div>
+        <div class="whl-thumb" id="pt"><div class="whl-tline"></div><div class="whl-tline"></div><div class="whl-tline"></div></div>
+      </div>
+      <div class="whl-val" id="pv">0</div>
+      <div class="whl-lbl">BEND</div>
+    </div>
+    <div id="keys">
+      <div class="wkeys" id="wk"></div>
+      <div class="bkeys" id="bk"></div>
+    </div>
+    <div class="whl" id="whl-mod">
+      <div class="whl-lbl">MOD</div>
+      <div class="whl-inner" id="mi">
+        <div class="whl-fill" id="mf"></div>
+        <div class="whl-thumb" id="mt"><div class="whl-tline"></div><div class="whl-tline"></div><div class="whl-tline"></div></div>
+      </div>
+      <div class="whl-val" id="mv">0</div>
+      <div class="whl-lbl">WHEEL</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- #vst-root -->
+
+<script>
+/* ════════════════════════════════════════
+   PRESET DATA — 70 PRESETS (10 × 7 instruments)
+   Chaque preset a: name, city, key, maqam, sound, tags
+════════════════════════════════════════ */
+const PRESETS = {
+violin:[
+  {name:"Mission Cléopâtre",    city:"Cairo",   key:"Dm", maqam:"Rast",    sound:"Legato strings warm, vibrato egyptien", tags:"cinéma"},
+  {name:"Desert Cinema Score",  city:"Egypt",   key:"Am", maqam:"Hijaz",   sound:"Tremolo sul ponticello, tension drama",  tags:"score"},
+  {name:"Casablanca Nights",    city:"Morocco", key:"Fm", maqam:"Saba",    sound:"Pizzicato jazz oriental, swing arabe",   tags:"jazz"},
+  {name:"Atlas Tears",          city:"Algeria", key:"Bm", maqam:"Kurd",    sound:"Harmonique flageolet, larme berbère",    tags:"émotion"},
+  {name:"Beirut Lovers",        city:"Lebanon", key:"Cm", maqam:"Ajam",    sound:"Double corde romantique, vibrato lent",  tags:"amour"},
+  {name:"Oran Sunset Strings",  city:"Algeria", key:"Em", maqam:"Nahawand",sound:"Ensemble cordes, coucher de soleil",     tags:"ambient"},
+  {name:"Chaabi Wedding Strings",city:"Morocco",key:"Am", maqam:"Rast",    sound:"Staccato festif, ornements chaabi",      tags:"festif"},
+  {name:"Midnight Desert Scene",city:"Libya",   key:"Dm", maqam:"Hijaz Kar",sound:"Solo lent sur fond pad sombre",         tags:"mystère"},
+  {name:"Oriental Drama",       city:"Jordan",  key:"Fm", maqam:"Saba Zamzam",sound:"Tutti cordes dramatique, fff",        tags:"drama"},
+  {name:"Aleppo Lament",        city:"Syria",   key:"Gm", maqam:"Bayati",  sound:"Solo plaintif, portamento douloureux",  tags:"nostalgie"},
+],
+oud:[
+  {name:"Aladin Night Market",  city:"Morocco", key:"Bm", maqam:"Hijaz",   sound:"Oud sec et percussif, attaque claquée", tags:"groove"},
+  {name:"Thousand Nights Story",city:"Iraq",    key:"Dm", maqam:"Maqam Rast",sound:"Taqsim improvisation pur, libre",      tags:"classique"},
+  {name:"Umm Kulthum Tribute",  city:"Egypt",   key:"Gm", maqam:"Bayati",  sound:"Cordes métalliques brillantes, tarab",  tags:"tarab"},
+  {name:"Babylon Gate",         city:"Iraq",    key:"Dm", maqam:"Siga",    sound:"Oud basse profonde, grave mésopotamien",tags:"ancestral"},
+  {name:"Desert Caravan",       city:"Saudi",   key:"Dm", maqam:"Hijaz",   sound:"Tremolo oud sous le vent de sable",      tags:"voyage"},
+  {name:"Fes Medina",           city:"Morocco", key:"Bm", maqam:"Rahat al-Arwah",sound:"Picking andalou raffiné, medina",  tags:"andalou"},
+  {name:"Palmyra Ghost",        city:"Syria",   key:"Fm", maqam:"Nawa Athar",sound:"Harmoniques spectraux, réverbéré",     tags:"éthéré"},
+  {name:"Salalah Rain",         city:"Oman",    key:"Dm", maqam:"Rast",    sound:"Notes perlées sous la pluie d'Oman",    tags:"pluie"},
+  {name:"Amman Dusk",           city:"Jordan",  key:"Em", maqam:"Kurd",    sound:"Oud électroacoustique, filtre ouvert",  tags:"fusion"},
+  {name:"Tangier Port",         city:"Morocco", key:"Fm", maqam:"Jiharkah",sound:"Cordes en soie, port méditerranéen",    tags:"mer"},
+],
+ney:[
+  {name:"Desert Wind Whisper",  city:"Algeria", key:"Gm", maqam:"Rast",    sound:"Souffle ney quasi-flûte, pp pianissimo",tags:"méditation"},
+  {name:"Luxor Temple Wind",    city:"Egypt",   key:"Dm", maqam:"Hijaz",   sound:"Ney pharaonique grave, air chaud",       tags:"temple"},
+  {name:"Istanbul Bridge",      city:"Turkey",  key:"Bm", maqam:"Segah",   sound:"Ney ottoman classique Derviche",         tags:"soufi"},
+  {name:"Wadi Rum Sunrise",     city:"Jordan",  key:"Am", maqam:"Rast",    sound:"Ney solo aube dans le wadi",             tags:"aube"},
+  {name:"Medina Minarets",      city:"Saudi",   key:"Am", maqam:"Saba",    sound:"Appel spirituel, maqam saba doux",       tags:"sacré"},
+  {name:"Atlas Mountain Air",   city:"Morocco", key:"Bm", maqam:"Kurd",    sound:"Air de haute altitude, ambiant 4000m",   tags:"montagne"},
+  {name:"Euphrates Breeze",     city:"Iraq",    key:"Am", maqam:"Nawa Athar",sound:"Brise fluviale entre roseaux verts",   tags:"fleuve"},
+  {name:"Musandam Cliffs",      city:"Oman",    key:"Em", maqam:"Nahawand",sound:"Écho sur falaises omaniennes",           tags:"falaise"},
+  {name:"Carthage Ruins",       city:"Tunisia", key:"Bm", maqam:"Zanjaran",sound:"Vent dans les colonnes antiques",        tags:"ruines"},
+  {name:"Sinai Whisper",        city:"Egypt",   key:"Gm", maqam:"Bayati",  sound:"Ney bédouin campement nuit étoilée",    tags:"nuit"},
+],
+qanun:[
+  {name:"Alexandria Elegance",  city:"Egypt",   key:"Gm", maqam:"Hijaz Kar",sound:"Qanun crystal clair, ornements rapides",tags:"élégance"},
+  {name:"Damascus Ornament",    city:"Syria",   key:"Dm", maqam:"Bayati",  sound:"Mordants et trilles damascènes raffinés",tags:"classique"},
+  {name:"Tunis Malouf",         city:"Tunisia", key:"Bm", maqam:"Rast",    sound:"Malouf traditionnel, nouba tunisienne",  tags:"malouf"},
+  {name:"Baghdad Maqam",        city:"Iraq",    key:"Em", maqam:"Hijaz",   sound:"Maqam irakien authentique, profond",     tags:"maqam"},
+  {name:"Andalus Revival",      city:"Morocco", key:"Cm", maqam:"Rast",    sound:"Musique andalouse mozarabique",          tags:"andalou"},
+  {name:"Beirut Jazz Fusion",   city:"Lebanon", key:"Gm", maqam:"Nahawand",sound:"Qanun électrique jazz-oriental fusion",  tags:"jazz"},
+  {name:"Tarab Trance",         city:"Egypt",   key:"Fm", maqam:"Bayati",  sound:"Tarab intense, émotion collective",      tags:"tarab"},
+  {name:"Sultanate Strings",    city:"Oman",    key:"Dm", maqam:"Ajam",    sound:"Qanun royal oman, palais sultanat",      tags:"royal"},
+  {name:"Gulf Pearl",           city:"Bahrain", key:"Am", maqam:"Hijaz",   sound:"Son perlé du golfe, chant des pêcheurs", tags:"golfe"},
+  {name:"Byblos Ancient",       city:"Lebanon", key:"Dm", maqam:"Kurd",    sound:"Résonances phéniciennes antiques",       tags:"antique"},
+],
+darbuka:[
+  {name:"Chaabi Rooftop",       city:"Algeria", key:"Dm", maqam:"—",       sound:"Doum-tek groovy chaabi toit d'Alger",    tags:"chaabi"},
+  {name:"Casbah Party",         city:"Algeria", key:"Am", maqam:"—",       sound:"Rythme festif casbah 140bpm",            tags:"fête"},
+  {name:"Raï Boulevard",        city:"Oran",    key:"Bm", maqam:"—",       sound:"Groove raï électro-acoustique",          tags:"raï"},
+  {name:"Doumbek Drill",        city:"Lebanon", key:"Fm", maqam:"—",       sound:"Tek-ka-doum ultra précis, main droite",  tags:"technique"},
+  {name:"Fes Festival Gnawa",   city:"Morocco", key:"Am", maqam:"—",       sound:"Percussions gnawa lilas et jilala",       tags:"gnawa"},
+  {name:"Baghdad Funk",         city:"Iraq",    key:"Am", maqam:"—",       sound:"Darbuka groove funky maqam irakien",     tags:"funk"},
+  {name:"Nubian Pulse",         city:"Sudan",   key:"Fm", maqam:"—",       sound:"Pulsation nubienne chaleur intense",     tags:"nubian"},
+  {name:"Riyadh Trap",          city:"Saudi",   key:"Fm", maqam:"—",       sound:"Hi-hat trap arabe 808 orientalisé",      tags:"trap"},
+  {name:"Tripoli Trance",       city:"Libya",   key:"Cm", maqam:"—",       sound:"Transe hypnotique répétitive 99bpm",     tags:"transe"},
+  {name:"Sousse Riddim",        city:"Tunisia", key:"Fm", maqam:"—",       sound:"Riddim tunisien basse saturée",          tags:"riddim"},
+],
+rababah:[
+  {name:"Bedouin Fire",         city:"Jordan",  key:"Gm", maqam:"Hijaz",   sound:"Rababah bédouine autour du feu",         tags:"feu"},
+  {name:"Sinai Nomad",          city:"Egypt",   key:"Em", maqam:"Kurd",    sound:"Archet long, plaine désertique vaste",   tags:"nomade"},
+  {name:"Nejd Plains",          city:"Saudi",   key:"Cm", maqam:"Hijaz Kar",sound:"Plainte des plaines du Nejd",           tags:"plainte"},
+  {name:"Hadhramaut Valley",    city:"Yemen",   key:"Cm", maqam:"Bayati",  sound:"Rababah yéménite grave et rauque",       tags:"yemen"},
+  {name:"Palmyra Caravan",      city:"Syria",   key:"Dm", maqam:"Rast",    sound:"Mélopée de caravane sous les étoiles",   tags:"caravane"},
+  {name:"Wahiba Sands",         city:"Oman",    key:"Am", maqam:"Saba",    sound:"Sables infinis wahiba, echo lointain",   tags:"sable"},
+  {name:"Rub al Khali Soul",    city:"Saudi",   key:"Fm", maqam:"Hijaz",   sound:"Âme du quart vide, instrument unique",   tags:"âme"},
+  {name:"Wadi Hadramawt",       city:"Yemen",   key:"Am", maqam:"Nahawand",sound:"Profondeur du wadi, corde résineuse",    tags:"profond"},
+  {name:"Tabuk Desert",         city:"Saudi",   key:"Bm", maqam:"Rast",    sound:"Solitude absolue, note tenue 8 sec",     tags:"solitude"},
+  {name:"Sahara Storyteller",   city:"Algeria", key:"Am", maqam:"Bayati",  sound:"Griot saharien, histoire orale chantée", tags:"griot"},
+],
+mizmar:[
+  {name:"Aswan Festival",       city:"Egypt",   key:"Gm", maqam:"Hijaz Kar",sound:"Mizmar procession festival Assouan",    tags:"procession"},
+  {name:"Wedding Procession",   city:"Morocco", key:"Em", maqam:"Rast",    sound:"Hautbois double mariage marocain",       tags:"mariage"},
+  {name:"Luxor Procession",     city:"Egypt",   key:"Cm", maqam:"Bayati",  sound:"Cortège pharaonique sur le Nil",         tags:"nil"},
+  {name:"Jeddah Seafront",      city:"Saudi",   key:"Fm", maqam:"Hijaz",   sound:"Mizmar port de Jeddah, mers chaudes",    tags:"mer"},
+  {name:"Giza Dawn",            city:"Egypt",   key:"Dm", maqam:"Saba",    sound:"Aube aux pyramides, premiers rayons",    tags:"aube"},
+  {name:"Khartoum Sufi",        city:"Sudan",   key:"Em", maqam:"Kurd",    sound:"Zikr soufi khartoum, cercle de prière",  tags:"soufi"},
+  {name:"Jerash Ruins",         city:"Jordan",  key:"Cm", maqam:"Nahawand",sound:"Écho romain-arabe ruines de Jerash",     tags:"ruines"},
+  {name:"Sfax Coastal",         city:"Tunisia", key:"Dm", maqam:"Rast",    sound:"Brise côtière, mizmar de pêcheur",       tags:"côte"},
+  {name:"Aden Harbor",          city:"Yemen",   key:"Am", maqam:"Hijaz",   sound:"Port d'Aden, croisement d'océans",       tags:"port"},
+  {name:"Omdurman Dust",        city:"Sudan",   key:"Bm", maqam:"Bayati",  sound:"Poussière d'Omdurman, vent chaud sec",   tags:"vent"},
+],
+};
+
+const EMO = {violin:'🎻',oud:'🪕',ney:'🎵',qanun:'🎹',darbuka:'🥁',rababah:'🎸',mizmar:'🎺'};
+let curInst='violin', curIdx=0, bpm=128, octave=4;
+const ks={};
+
+/* ══ KNOBS ══ */
+function buildKnob(id,val,red){
+  const el=document.getElementById('kw-'+id); if(!el)return;
+  const sz=54,cx=sz/2,cy=sz/2,r=sz/2-6;
+  const a=(val/100)*270-135;
+  const rad=(a-90)*Math.PI/180;
+  const ix=cx+r*Math.cos(rad),iy=cy+r*Math.sin(rad);
+  const ar=r+3;
+  const sa=(-135-90)*Math.PI/180,ea=(a-90)*Math.PI/180;
+  const la=(a+135)>180?1:0;
+  const sx=cx+ar*Math.cos(sa),sy=cy+ar*Math.sin(sa);
+  const ex=cx+ar*Math.cos(ea),ey=cy+ar*Math.sin(ea);
+  const acc=red?'#dc1e1e':'#c8922a', gl=red?'rgba(220,30,30,.55)':'rgba(200,146,42,.5)';
+  el.innerHTML=`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">
+  <defs>
+    <radialGradient id="g${id}" cx="38%" cy="32%" r="65%">
+      <stop offset="0%" stop-color="#3c3530"/><stop offset="100%" stop-color="#100d08"/>
+    </radialGradient>
+    <filter id="f${id}"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <circle cx="${cx}" cy="${cy}" r="${ar+2}" fill="none" stroke="#1a1a1a" stroke-width="5"/>
+  <path d="M${sx},${sy} A${ar},${ar} 0 ${la} 1 ${ex},${ey}" fill="none" stroke="${acc}" stroke-width="2.8" stroke-linecap="round" filter="url(#f${id})" style="filter:drop-shadow(0 0 4px ${gl})"/>
+  <circle cx="${cx}" cy="${cy}" r="${r-2}" fill="url(#g${id})"/>
+  <circle cx="${cx}" cy="${cy}" r="${r-2}" fill="none" stroke="#2a2520" stroke-width="1.5"/>
+  <path d="M${cx-r*.55} ${cy-r*.45} A${r} ${r} 0 0 1 ${cx+r*.55} ${cy-r*.45}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1.8"/>
+  <line x1="${cx+(r-9)*Math.cos(rad)}" y1="${cy+(r-9)*Math.sin(rad)}" x2="${ix}" y2="${iy}" stroke="${acc}" stroke-width="2.3" stroke-linecap="round" style="filter:drop-shadow(0 0 3px ${gl})"/>
+  <circle cx="${cx}" cy="${cy}" r="3" fill="#0a0a0a"/>
+  <circle cx="${cx}" cy="${cy}" r="1.4" fill="${acc}" opacity=".55"/>
+  </svg>`;
+}
+
+function initKnobs(){
+  document.querySelectorAll('.knob-row').forEach(row=>{
+    const id=row.dataset.k, iv=parseInt(row.dataset.v), red=(id==='fxmix');
+    ks[id]=iv; buildKnob(id,iv,red);
+    let drag=false,sy=0,sv=0;
+    row.addEventListener('mousedown',e=>{drag=true;sy=e.clientY;sv=ks[id];e.preventDefault();});
+    document.addEventListener('mousemove',e=>{
+      if(!drag)return;
+      const nv=Math.max(0,Math.min(100,Math.round(sv+(sy-e.clientY)*.8)));
+      if(nv!==ks[id]){ks[id]=nv;buildKnob(id,nv,red);const ve=document.getElementById('kv-'+id);if(ve)ve.textContent=nv;}
+    });
+    document.addEventListener('mouseup',()=>{drag=false;});
+  });
+}
+
+/* ══ PRESETS ══ */
+function renderP(inst,term){
+  const list=document.getElementById('plist'); list.innerHTML='';
+  const ps=PRESETS[inst]||[], t=(term||'').toLowerCase();
+  ps.forEach((p,i)=>{
+    if(t&&!p.name.toLowerCase().includes(t)&&!p.city.toLowerCase().includes(t)&&!p.key.toLowerCase().includes(t)&&!p.maqam.toLowerCase().includes(t))return;
+    const d=document.createElement('div');
+    d.className='pitem'+(i===curIdx&&inst===curInst?' on':'');
+    d.innerHTML=`<div class="pnum">${i+1}</div>
+    <div class="pinfo">
+      <div class="pname">${p.name}</div>
+      <div class="pmeta"><span class="pcity">${p.city}</span><span class="pkey">${p.key}</span><span class="ptag">${p.maqam}</span></div>
+      <div style="font-size:9px;color:#484030;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.sound}</div>
+    </div>
+    <div class="pbar" id="pb-${inst}-${i}"></div>`;
+    d.addEventListener('click',()=>selP(inst,i));
+    list.appendChild(d);
+  });
+}
+
+function selP(inst,idx){
+  curInst=inst; curIdx=idx;
+  const p=PRESETS[inst][idx];
+  document.getElementById('phdr-name').textContent=p.name;
+  document.getElementById('phdr-cat').textContent=`${EMO[inst]} ${inst.toUpperCase()} · ${p.city} · ${p.key}`;
+  document.getElementById('key-v').textContent=p.key;
+  document.getElementById('maqam-v').textContent=p.maqam;
+  const bar=document.getElementById('pb-'+inst+'-'+idx);
+  if(bar){bar.style.width='0';setTimeout(()=>{bar.style.width='100%';},10);setTimeout(()=>{bar.style.width='0';},600);}
+  // Animate knobs per preset
+  const vs=[Math.random()*65+15,Math.random()*75+15,Math.random()*85+20,Math.random()*60+20,Math.random()*55+10,Math.random()*75+15];
+  ['glide','space','filter','orient','reso','depth'].forEach((k,i)=>setTimeout(()=>{ks[k]=Math.round(vs[i]);buildKnob(k,ks[k],false);document.getElementById('kv-'+k).textContent=ks[k];},i*60));
+  renderP(inst);
+}
+
+function selTab(el,inst){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on'); curInst=inst; curIdx=0;
+  renderP(inst,document.getElementById('srch-in').value);
+}
+
+function filterP(){renderP(curInst,document.getElementById('srch-in').value);}
+
+/* ══ UI BUTTONS ══ */
+function tb(el){
+  if(el.textContent==='POLY'||el.textContent==='LEG'){document.querySelectorAll('.hbtn:not(.rec):not(.panic)').forEach(b=>{if(b.textContent==='POLY'||b.textContent==='LEG')b.classList.remove('on')});el.classList.add('on');}
+  else el.classList.toggle('on');
+}
+function trec(el){el.classList.toggle('on');}
+function tFx(el){el.classList.toggle('on');}
+function panic(){document.querySelectorAll('.kw,.kb').forEach(k=>k.classList.remove('press'));}
+function chBpm(d){bpm=Math.max(60,Math.min(240,bpm+d));document.getElementById('bpm-d').textContent=bpm;}
+
+/* ══ PIANO ══ */
+const NOTES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const BLK=[false,true,false,true,false,false,true,false,true,false,true,false];
+
+function buildPiano(){
+  const WK=document.getElementById('wk'), BK=document.getElementById('bk');
+  WK.innerHTML=''; BK.innerHTML='';
+  const oct=octave-1; let tw=0;
+  for(let o=0;o<3;o++){
+    for(let n=0;n<12;n++){
+      if(!BLK[n]){
+        const d=document.createElement('div'); d.className='kw'; d.dataset.note=NOTES[n]+(oct+o);
+        if(n===0)d.innerHTML=`<span class="knote">C${oct+o}</span>`;
+        d.addEventListener('mousedown',e=>{pressK(d);e.preventDefault();});
+        d.addEventListener('mouseup',()=>relK(d)); d.addEventListener('mouseleave',()=>relK(d));
+        WK.appendChild(d); tw++;
+      }
+    }
+  }
+  const ww=100/tw;
+  for(let o=0;o<3;o++){
+    for(let n=0;n<12;n++){
+      if(BLK[n]){
+        const pos=document.createElement('div'); pos.className='bkpos';
+        const bk=document.createElement('div'); bk.className='kb';
+        bk.dataset.note=NOTES[n]+(oct+o);
+        let wb=0; for(let i=0;i<n;i++) if(!BLK[i])wb++;
+        const gw=o*7+wb;
+        pos.style.cssText=`left:${(gw+0.6)*ww}%;top:0;width:${ww*.65}%;height:100%;`;
+        bk.style.cssText='width:100%;height:100%;';
+        bk.addEventListener('mousedown',e=>{pressK(bk);e.preventDefault();});
+        bk.addEventListener('mouseup',()=>relK(bk)); bk.addEventListener('mouseleave',()=>relK(bk));
+        pos.appendChild(bk); BK.appendChild(pos);
+      }
+    }
+  }
+}
+
+/* ══ WEB AUDIO ENGINE ══ */
+let actx=null;
+const activeNodes={};
+
+function getCtx(){
+  if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended') actx.resume();
+  return actx;
+}
+
+// Note name → MIDI number
+function noteToMidi(noteName){
+  const nm=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  const oct=parseInt(noteName.slice(-1));
+  const note=noteName.slice(0,-1);
+  return (oct+1)*12+nm.indexOf(note);
+}
+
+// MIDI → frequency
+function midiToHz(midi){ return 440*Math.pow(2,(midi-69)/12); }
+
+// Instrument tone profiles
+const TONE_PROFILES={
+  violin:{type:'sawtooth', vibrato:5.5, vibratoDepth:0.012, attack:0.12, decay:0.1, sustain:0.75, release:0.45, filterFreq:3800, filterQ:1.2, harmonics:[1,0.7,0.4,0.25,0.15]},
+  oud:   {type:'triangle', vibrato:0,   vibratoDepth:0,     attack:0.006,decay:0.4, sustain:0.35, release:0.8,  filterFreq:2800, filterQ:1.8, harmonics:[1,0.5,0.3,0.2,0.1,0.06]},
+  ney:   {type:'sine',     vibrato:6,   vibratoDepth:0.018, attack:0.08, decay:0.05,sustain:0.8,  release:0.6,  filterFreq:2200, filterQ:0.8, harmonics:[1,0.3,0.15,0.08]},
+  qanun: {type:'triangle', vibrato:0,   vibratoDepth:0,     attack:0.004,decay:0.5, sustain:0.25, release:1.0,  filterFreq:5000, filterQ:2.2, harmonics:[1,0.6,0.4,0.3,0.2,0.1]},
+  darbuka:{type:'sine',    vibrato:0,   vibratoDepth:0,     attack:0.002,decay:0.18,sustain:0.05, release:0.25, filterFreq:800,  filterQ:3.0, harmonics:[1,0.4,0.2]},
+  rababah:{type:'sawtooth',vibrato:4.5, vibratoDepth:0.015, attack:0.15, decay:0.1, sustain:0.7,  release:0.55, filterFreq:2600, filterQ:1.4, harmonics:[1,0.6,0.35,0.2,0.1]},
+  mizmar: {type:'square',  vibrato:5,   vibratoDepth:0.02,  attack:0.05, decay:0.08,sustain:0.72, release:0.35, filterFreq:3200, filterQ:1.6, harmonics:[1,0.5,0.25,0.12]},
+};
+
+function playNote(noteName, velocity=0.7){
+  const ctx=getCtx();
+  const midi=noteToMidi(noteName);
+  const freq=midiToHz(midi);
+  const prof=TONE_PROFILES[curInst]||TONE_PROFILES.violin;
+  const now=ctx.currentTime;
+
+  // Stop existing note on same key
+  stopNote(noteName);
+
+  // Master gain
+  const masterGain=ctx.createGain();
+  masterGain.gain.setValueAtTime(0,now);
+  masterGain.gain.linearRampToValueAtTime(velocity*0.55,now+prof.attack);
+  masterGain.gain.linearRampToValueAtTime(velocity*prof.sustain*0.55,now+prof.attack+prof.decay);
+
+  // Filter (instrument character)
+  const filt=ctx.createBiquadFilter();
+  filt.type='lowpass';
+  filt.frequency.value=prof.filterFreq*(ks.filter/100)*1.5+200;
+  filt.Q.value=prof.filterQ+(ks.reso/100)*4;
+
+  // Reverb (convolution-style via delay+feedback)
+  const reverbGain=ctx.createGain();
+  reverbGain.gain.value=ks.space/200;
+  const delay1=ctx.createDelay(2);
+  delay1.delayTime.value=0.06+(ks.space/1000);
+  const delay2=ctx.createDelay(2);
+  delay2.delayTime.value=0.12+(ks.space/800);
+  const fbGain=ctx.createGain();
+  fbGain.gain.value=0.35+(ks.space/500);
+
+  // Build additive synthesis with harmonics
+  const oscNodes=[];
+  prof.harmonics.forEach((amp,h)=>{
+    const osc=ctx.createOscillator();
+    osc.type=h===0?prof.type:'sine';
+    const hFreq=freq*(h+1);
+    osc.frequency.value=hFreq;
+
+    // Vibrato LFO
+    if(prof.vibrato>0 && h===0){
+      const lfo=ctx.createOscillator();
+      const lfoGain=ctx.createGain();
+      lfo.frequency.value=prof.vibrato;
+      lfoGain.gain.setValueAtTime(0,now);
+      lfoGain.gain.linearRampToValueAtTime(hFreq*prof.vibratoDepth, now+0.3);
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.frequency);
+      lfo.start(now);
+      oscNodes.push({osc:lfo,gain:lfoGain});
+    }
+
+    const hGain=ctx.createGain();
+    hGain.gain.value=amp/(h+1)*0.6;
+
+    osc.connect(hGain);
+    hGain.connect(filt);
+    osc.start(now);
+    oscNodes.push({osc,gain:hGain});
+  });
+
+  // Chorus for depth
+  if(ks.space>20){
+    const chDelay=ctx.createDelay(0.05);
+    chDelay.delayTime.value=0.018;
+    const chLfo=ctx.createOscillator();
+    const chLfoG=ctx.createGain();
+    chLfo.frequency.value=0.8;
+    chLfoG.gain.value=0.006;
+    chLfo.connect(chLfoG);
+    chLfoG.connect(chDelay.delayTime);
+    filt.connect(chDelay);
+    chDelay.connect(masterGain);
+    chLfo.start(now);
+    oscNodes.push({osc:chLfo,gain:chLfoG});
+  }
+
+  filt.connect(masterGain);
+  masterGain.connect(delay1);
+  delay1.connect(delay2);
+  delay2.connect(fbGain);
+  fbGain.connect(delay1);
+  delay2.connect(reverbGain);
+  reverbGain.connect(ctx.destination);
+  masterGain.connect(ctx.destination);
+
+  // Glide effect
+  if(ks.glide>5){
+    const glideTime=ks.glide/300;
+    oscNodes.filter(n=>n.osc.type!==undefined).forEach(n=>{
+      if(n.osc.frequency) n.osc.frequency.setValueAtTime(freq*1.15,now);
+      if(n.osc.frequency) n.osc.frequency.linearRampToValueAtTime(freq,now+glideTime);
+    });
+  }
+
+  activeNodes[noteName]={oscNodes,masterGain,filt,ctx,prof};
+}
+
+function stopNote(noteName){
+  const node=activeNodes[noteName];
+  if(!node) return;
+  const ctx=node.ctx, now=ctx.currentTime, rel=node.prof.release;
+  node.masterGain.gain.cancelScheduledValues(now);
+  node.masterGain.gain.setValueAtTime(node.masterGain.gain.value,now);
+  node.masterGain.gain.linearRampToValueAtTime(0,now+rel);
+  node.oscNodes.forEach(n=>{try{n.osc.stop(now+rel+0.05);}catch(e){}});
+  delete activeNodes[noteName];
+}
+
+function pressK(el){
+  el.classList.add('press');
+  const note=el.dataset.note;
+  const v=Math.floor(Math.random()*45+55)/100;
+  if(note) playNote(note, v);
+  document.getElementById('vel-f').style.width=(v*100)+'%';
+  setTimeout(()=>{document.getElementById('vel-f').style.width='0';},400);
+}
+function relK(el){
+  el.classList.remove('press');
+  const note=el.dataset.note;
+  if(note) stopNote(note);
+}
+function chOct(d){octave=Math.max(1,Math.min(7,octave+d));document.getElementById('oct-v').textContent='C'+octave;buildPiano();}
+
+/* ══ KEYBOARD QWERTY → PIANO ══ */
+const KB_MAP={
+  'a':'C','w':'C#','s':'D','e':'D#','d':'E','f':'F',
+  't':'F#','g':'G','y':'G#','h':'A','u':'A#','j':'B',
+  'k':'C','o':'C#','l':'D','p':'D#',';':'E'
+};
+const heldKeys={};
+document.addEventListener('keydown',e=>{
+  if(e.repeat||heldKeys[e.key]) return;
+  const note=KB_MAP[e.key.toLowerCase()];
+  if(!note) return;
+  heldKeys[e.key]=true;
+  const oct2=note==='C'&&e.key.toLowerCase()==='k'?octave+1:octave;
+  const noteName=note+oct2;
+  const keys=document.querySelectorAll('.kw,.kb');
+  keys.forEach(k=>{if(k.dataset.note===noteName){pressK(k);}});
+});
+document.addEventListener('keyup',e=>{
+  delete heldKeys[e.key];
+  const note=KB_MAP[e.key.toLowerCase()];
+  if(!note) return;
+  const oct2=note==='C'&&e.key.toLowerCase()==='k'?octave+1:octave;
+  const noteName=note+oct2;
+  const keys=document.querySelectorAll('.kw,.kb');
+  keys.forEach(k=>{if(k.dataset.note===noteName){relK(k);}});
+});
+
+/* ══ PITCH WHEEL (spring return) ══ */
+(function(){
+  const wrap=document.getElementById('whl-pitch'),thumb=document.getElementById('pt'),
+        valEl=document.getElementById('pv'),fill=document.getElementById('pf');
+  let drag=false,sy=0,cur=0,sv=0,anim=null;
+  function upd(v){
+    v=Math.max(-100,Math.min(100,v)); cur=v; valEl.textContent=Math.round(v);
+    const pct=50-(v/100)*40; thumb.style.top=pct+'%';
+    if(v>0){fill.style.bottom='50%';fill.style.height=(v/100)*40+'%';fill.style.background='linear-gradient(0deg,rgba(200,146,42,.3),rgba(200,146,42,.1))';}
+    else if(v<0){fill.style.bottom=(50+(v/100)*40)+'%';fill.style.height=(-v/100)*40+'%';fill.style.background='linear-gradient(0deg,rgba(220,30,30,.1),rgba(220,30,30,.3))';}
+    else fill.style.height='0';
+  }
+  function spring(){
+    if(anim)cancelAnimationFrame(anim);
+    function step(){cur*=0.8;if(Math.abs(cur)<0.5){upd(0);return;}upd(cur);anim=requestAnimationFrame(step);}
+    step();
+  }
+  wrap.addEventListener('mousedown',e=>{drag=true;sy=e.clientY;sv=cur;if(anim)cancelAnimationFrame(anim);e.preventDefault();});
+  document.addEventListener('mousemove',e=>{if(!drag)return;upd(sv+(sy-e.clientY)*1.2);});
+  document.addEventListener('mouseup',()=>{if(!drag)return;drag=false;spring();});
+  upd(0);
+})();
+
+/* ══ MOD WHEEL ══ */
+(function(){
+  const wrap=document.getElementById('whl-mod'),thumb=document.getElementById('mt'),
+        valEl=document.getElementById('mv'),fill=document.getElementById('mf');
+  let drag=false,sy=0,cur=0,sv=0;
+  function upd(v){
+    v=Math.max(0,Math.min(100,v)); cur=v; valEl.textContent=Math.round(v);
+    const pct=90-(v/100)*80; thumb.style.top=pct+'%';
+    fill.style.height=(v*.8)+'%';fill.style.background='linear-gradient(0deg,rgba(200,146,42,.5),rgba(200,146,42,.15))';fill.style.bottom='0';
+  }
+  wrap.addEventListener('mousedown',e=>{drag=true;sy=e.clientY;sv=cur;e.preventDefault();});
+  document.addEventListener('mousemove',e=>{if(!drag)return;upd(sv+(sy-e.clientY)*.8);});
+  document.addEventListener('mouseup',()=>{drag=false;});
+  upd(0);
+})();
+
+/* ══ WAVEFORM CANVAS ══ */
+(function(){
+  const cv=document.getElementById('wave-canvas'), ctx=cv.getContext('2d');
+  let ph=0;
+  function resize(){cv.width=cv.offsetWidth;cv.height=cv.offsetHeight;}
+  resize();
+  function draw(){
+    const w=cv.width,h=cv.height;
+    ctx.clearRect(0,0,w,h);
+    ctx.beginPath(); ctx.strokeStyle='#c8922a'; ctx.lineWidth=1.5; ctx.shadowColor='#c8922a'; ctx.shadowBlur=5;
+    for(let x=0;x<=w;x++){const t=(x/w)*Math.PI*8+ph;const y=h/2+Math.sin(t)*5+Math.sin(t*2.3+1)*3+Math.sin(t*.7)*4;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.stroke();
+    ctx.beginPath(); ctx.strokeStyle='rgba(220,30,30,.35)'; ctx.lineWidth=1; ctx.shadowBlur=0;
+    for(let x=0;x<=w;x++){const t=(x/w)*Math.PI*6+ph*1.3+1;const y=h/2+Math.sin(t)*3+Math.sin(t*3)*2;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.stroke(); ctx.shadowBlur=0;
+    ph+=0.038; requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══ INIT ══ */
+initKnobs();
+buildPiano();
+renderP('violin');
+</script>
+</body>
+</html>

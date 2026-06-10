@@ -21,6 +21,12 @@ struct PresetData
     float depth   = 70.0f;
     float fxMix   = 50.0f;
 
+    // ADSR — indépendants par preset (en secondes / 0-1 pour sustain)
+    float attack  = 0.10f;
+    float decay   = 0.10f;
+    float sustain = 0.70f;
+    float release = 0.30f;
+
     // FX on/off states
     bool reverbOn     = true;
     bool echoOn       = false;

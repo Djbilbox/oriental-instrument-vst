@@ -58,72 +58,11 @@ OrientalInstrumentEditor::~OrientalInstrumentEditor()
     setLookAndFeel(nullptr);
 }
 
-void OrientalInstrumentEditor::paint(juce::Graphics& g)
+void OrientalInstrumentEditor::paint(juce::Graphics&)
 {
-    // Background is drawn by BackgroundComponent (z-order behind everything)
-
-    auto bounds = getLocalBounds();
-
-    // ── HEADER glass panel: rgba(6,4,2,0.93), border-bottom: 1px solid var(--gold-dim) ──
-    auto headerBounds = bounds.removeFromTop(HEADER_HEIGHT).toFloat();
-    g.setColour(juce::Colour(Colors::HEADER_BG));
-    g.fillRect(headerBounds);
-    g.setColour(juce::Colour(Colors::GOLD_DIM));
-    g.drawLine(headerBounds.getX(), headerBounds.getBottom(),
-               headerBounds.getRight(), headerBounds.getBottom(), 1.0f);
-
-    // Header title: "ORIENTAL INSTRUMENT — MAQAM EDITION"
-    g.setColour(juce::Colour(Colors::GOLD));
-    g.setFont(juce::Font("Cinzel", 17.0f, juce::Font::bold));
-    g.drawText("ORIENTAL INSTRUMENT", headerBounds, juce::Justification::centred);
-
-    // Logo left
-    g.setFont(juce::Font("Cinzel", 11.0f, juce::Font::bold));
-    g.drawText("DJBILBOX", headerBounds.withWidth(140.0f).translated(14.0f, -6.0f),
-               juce::Justification::centredLeft);
-    g.setColour(juce::Colour(Colors::GOLD_DIM));
-    g.setFont(juce::Font("Cinzel", 8.0f, juce::Font::plain));
-    g.drawText("MAQAM ENGINE PRO", headerBounds.withWidth(140.0f).translated(14.0f, 8.0f),
-               juce::Justification::centredLeft);
-
-    // Remove piano area for glass panels calculation
-    auto pianoAreaRef = bounds.removeFromBottom(PIANO_HEIGHT);
-    (void)pianoAreaRef;
-
-    // ── LEFT COLUMN glass: var(--glass-bg) 78%, border-right ──
-    auto leftBounds = bounds.removeFromLeft(LEFT_COL_WIDTH).toFloat();
-    g.setColour(juce::Colour(Colors::GLASS_BG));
-    g.fillRect(leftBounds);
-    g.setColour(juce::Colour(Colors::GLASS_BORDER));
-    g.drawLine(leftBounds.getRight(), leftBounds.getY(),
-               leftBounds.getRight(), leftBounds.getBottom(), 1.0f);
-
-    // Left column label: "MACRO"
-    g.setColour(juce::Colour(Colors::GOLD_DIM));
-    g.setFont(juce::Font("Cinzel", 9.0f, juce::Font::bold));
-    g.drawText("MACRO", leftBounds.removeFromTop(18.0f), juce::Justification::centred);
-
-    // ── RIGHT COLUMN glass ──
-    auto rightBounds = bounds.removeFromRight(RIGHT_COL_WIDTH).toFloat();
-    g.setColour(juce::Colour(Colors::GLASS_BG));
-    g.fillRect(rightBounds);
-    g.setColour(juce::Colour(Colors::GLASS_BORDER));
-    g.drawLine(rightBounds.getX(), rightBounds.getY(),
-               rightBounds.getX(), rightBounds.getBottom(), 1.0f);
-
-    // ── CENTER glass ──
-    auto centerBounds = bounds.toFloat();
-    g.setColour(juce::Colour(Colors::GLASS_BG));
-    g.fillRect(centerBounds);
-
-    // ── PIANO border top: 1px solid var(--gold-dim) ──
-    float pianoTop = static_cast<float>(getHeight() - PIANO_HEIGHT);
-    g.setColour(juce::Colour(Colors::GOLD_DIM));
-    g.drawLine(0.0f, pianoTop, static_cast<float>(getWidth()), pianoTop, 1.0f);
-
-    // Plugin border: 1px solid var(--gold-dim) + outer shadow
-    g.setColour(juce::Colour(Colors::GOLD_DIM));
-    g.drawRect(getLocalBounds(), 1);
+    // All backdrop, glass relief and chrome are rendered by BackgroundComponent,
+    // which sits behind every control. The editor itself paints nothing — its
+    // graphics would otherwise be hidden under that child component.
 }
 
 void OrientalInstrumentEditor::resized()

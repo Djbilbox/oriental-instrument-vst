@@ -1,0 +1,29 @@
+Fiche Projet : Oriental VST
+Objectif
+Créer un instrument virtuel (VST) spécialisé dans les sonorités orientales authentiques, alliant la richesse des instruments traditionnels (oud, qanun, ney, percussions) à la flexibilité d'une interface de production moderne pour les beatmakers.
+
+Décisions clés
+
+Architecture sonore : Priorité au sampling multi-couches (multi-sampling) pour capturer les nuances expressives (vibrato, slides).
+
+Contrôle microtonal : Intégration indispensable d'un système de réglage des quarts de ton pour respecter les gammes orientales (Maqams).
+
+Interface (GUI) : Choix d'une interface épurée mettant en avant les presets d'instruments et les effets intégrés (réverbération à convolution, délai).
+
+Format : Développement multi-plateformes (VST3/AU) pour assurer une compatibilité maximale sur Windows et macOS.
+
+État actuel
+
+Phase de développement : La bibliothèque de samples est finalisée et validée. Le moteur sonore est opérationnel.
+
+Interface : Le design de l'interface utilisateur est fixé ; l'intégration des éléments graphiques est en cours.
+
+Tests : Les tests de performance CPU montrent une optimisation satisfaisante pour une utilisation fluide en DAW.
+
+Trois prochaines actions
+
+Beta-testing intensif : Lancer une campagne de tests fermés auprès d'un groupe restreint de beatmakers pour identifier les bugs potentiels.
+
+Optimisation des presets : Créer une banque de 50 presets "prêts à l'emploi" pour démontrer la polyvalence de l'instrument.
+
+Finalisation du packaging : Préparer le manuel utilisateur et le processus d'installation/licence avant le lancement officiel.

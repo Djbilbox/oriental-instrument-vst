@@ -61,7 +61,7 @@ FXPanel::FXPanel(FXChain& chain, juce::AudioProcessorValueTreeState& state)
         { "Chorus",    "chorusOn",   "chorusAmt" },
         { "Distort",   "distOn",     "distAmt" },
         { "Comprs",    "compOn",     "compAmt" },
-        { "3-Band EQ", "eqOn",      "compAmt" }, // EQ has no dedicated amount param
+        { "3-Band EQ", "eqOn",       "eqAmt" },
         { "Phaser",    "phaserOn",   "phaserAmt" },
         { "Bitcrsh",   "bitcrushOn", "bitcrushAmt" },
     };
@@ -76,9 +76,18 @@ FXPanel::FXPanel(FXChain& chain, juce::AudioProcessorValueTreeState& state)
 
 void FXPanel::paint(juce::Graphics& g)
 {
-    g.setColour(juce::Colour(OrientalConstants::Colors::RED));
-    g.setFont(12.0f);
-    g.drawText("FX CHAIN", getLocalBounds().removeFromTop(20), juce::Justification::centred);
+    // Titre rouge avec glow — design HTML de référence
+    auto titleArea = getLocalBounds().removeFromTop(20);
+    juce::Colour red(OrientalConstants::Colors::RED);
+    // Red glow (shadow layers)
+    g.setColour(red.withAlpha(0.25f));
+    g.setFont(juce::Font("Cinzel", 9.0f, juce::Font::bold));
+    for (int dx = -2; dx <= 2; ++dx)
+        for (int dy = -2; dy <= 2; ++dy)
+            if (dx != 0 || dy != 0)
+                g.drawText("FX CHAIN", titleArea.translated(dx, dy), juce::Justification::centred);
+    g.setColour(red);
+    g.drawText("FX CHAIN", titleArea, juce::Justification::centred);
 }
 
 void FXPanel::resized()

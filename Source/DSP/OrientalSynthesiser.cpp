@@ -63,6 +63,13 @@ void OrientalSynthesiser::setBaseTuning(float tuningHz)
             voice->setMaqamTuning(maqamTuning);
 }
 
+void OrientalSynthesiser::setADSR(const ADSREnvelope::Parameters& params)
+{
+    for (int i = 0; i < synth.getNumVoices(); ++i)
+        if (auto* voice = dynamic_cast<OrientalVoice*>(synth.getVoice(i)))
+            voice->setADSRParameters(params);
+}
+
 void OrientalSynthesiser::setGlide(float glideTime)
 {
     for (int i = 0; i < synth.getNumVoices(); ++i)
