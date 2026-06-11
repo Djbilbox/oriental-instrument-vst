@@ -1,5 +1,6 @@
 #include "PianoComponent.h"
 #include "../Utils/Constants.h"
+#include "Typography.h"
 
 PianoComponent::PianoComponent(OrientalSynthesiser& synth)
     : synthesiser(synth),
@@ -31,6 +32,13 @@ void PianoComponent::paint(juce::Graphics& g)
     g.fillRect(getLocalBounds());
     g.setColour(juce::Colour(OrientalConstants::Colors::GOLD_DIM));
     g.drawRect(getLocalBounds(), 1);
+
+    // Dedication — discreet, engraved gold caps in the strip above the keys.
+    auto strip = getLocalBounds().removeFromTop(24);
+    g.setColour(juce::Colour(OrientalConstants::Colors::GOLD_DIM));
+    g.setFont(Typography::display(8.5f, true));
+    g.drawText(Typography::tracked(juce::String(juce::CharPointer_UTF8("D\xC3\xA9""dicace \xC3\xA0 Mourad Attalah"))),
+               strip, juce::Justification::centred);
 }
 
 void PianoComponent::resized()

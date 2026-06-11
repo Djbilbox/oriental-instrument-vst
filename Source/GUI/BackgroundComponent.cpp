@@ -55,8 +55,11 @@ void BackgroundComponent::rebuildCaches()
         drawStars(g, bounds);
         drawSun(g, b.getWidth() * 0.51f, b.getHeight() * 0.56f, 1.0f);
         drawPyramids(g, bounds);
+        drawMonument(g, sx, sy);     // Maqam Echahid (Monument des Martyrs, Alger)
         drawSphinx(g, sx, sy);
         drawDunes(g, bounds);
+        drawAlgerianFlag(g, sx, sy); // planted on the dune, foreground
+
         drawMusicians(g, sx, sy);
         drawCamel(g, sx, sy);
         drawEagles(g, sx, sy);
@@ -170,26 +173,25 @@ void BackgroundComponent::drawChrome(juce::Graphics& g)
     auto titleZone = header.withTrimmedLeft(170.0f).withTrimmedRight(270.0f);
     g.setColour(juce::Colour(Colors::GOLD_LIGHT));
     g.setFont(Typography::headerTitle());
-    g.drawText(juce::String(juce::CharPointer_UTF8("ORIENTAL INSTRUMENT \xE2\x80\x94 MAQAM EDITION")),
-               titleZone.withTrimmedTop(6.0f), juce::Justification::centredTop);
-    // ── By-line: "DJBILBOX BEATS" in West-Coast / Chicano blackletter ──
-    // Chrome-gold lowrider treatment: dark drop shadow for depth, then a
-    // vertical gradient fill (light gold top → bronze bottom) + thin dark outline.
+    g.drawText("ORIENTAL INSTRUMENT",
+               titleZone.withTrimmedTop(8.0f), juce::Justification::centredTop);
+
+    // ── By-line: sober, luxurious, legible — Cinzel tracked caps in gold,
+    //    framed by two thin gold rules (engraved-plate look). ──
     {
-        const juce::String byline ("DJBILBOX BEATS");
-        auto blz = titleZone.withTrimmedTop(26.0f).withTrimmedBottom(2.0f);
-        g.setFont(Typography::chicanoFont(17.0f));
-
-        // Drop shadow (offset down-right, soft dark).
-        g.setColour(juce::Colour(0xCC000000));
-        g.drawText(byline, blz.translated(1.0f, 1.5f), juce::Justification::centredTop);
-
-        // Chrome-gold gradient body.
-        juce::ColourGradient chrome(juce::Colour(0xFFFFF3C4), blz.getX(), blz.getY(),
-                                    juce::Colour(0xFF9A6B1E), blz.getX(), blz.getBottom(), false);
-        chrome.addColour(0.5, juce::Colour(0xFFE8B84B)); // bright gold midband
-        g.setGradientFill(chrome);
+        auto blz = titleZone.withTrimmedTop(28.0f).withTrimmedBottom(2.0f);
+        g.setColour(juce::Colour(Colors::GOLD_DIM));
+        g.setFont(Typography::display(8.5f, true));
+        const juce::String byline = Typography::tracked("DJBILBOX BEATS");
         g.drawText(byline, blz, juce::Justification::centredTop);
+
+        // Thin gold rules flanking the name.
+        const float ty = blz.getY() + 6.0f;
+        const float tw = g.getCurrentFont().getStringWidthFloat(byline);
+        const float cx = blz.getCentreX();
+        g.setColour(juce::Colour(Colors::GOLD_DIM).withAlpha(0.55f));
+        g.fillRect(cx - tw * 0.5f - 22.0f, ty, 16.0f, 1.0f);
+        g.fillRect(cx + tw * 0.5f + 6.0f,  ty, 16.0f, 1.0f);
     }
 
     // (Transport buttons are real interactive components in the editor.)
@@ -228,6 +230,101 @@ void BackgroundComponent::drawDesertGradient(juce::Graphics& g, juce::Rectangle<
 
     g.setColour(juce::Colour(0xB32A1406));
     g.fillRect(0.0f, bounds.getHeight() * 0.556f, bounds.getWidth(), bounds.getHeight() * 0.45f);
+}
+
+// ── Maqam Echahid (Monument des Martyrs, Alger) — three concrete palm fronds
+//    curving up to a shared apex, sheltering an eternal flame. Drawn as a
+//    backlit silhouette with a warm gold rim against the sun. ──
+void BackgroundComponent::drawMonument(juce::Graphics& g, float sx, float sy)
+{
+    auto P = [&](float x, float y) { return juce::Point<float>(x * sx, y * sy); };
+
+    const float cx = 360.0f;     // scene-space centre (980x640 reference)
+    const float baseY = 366.0f;  // foot on the horizon
+    const float apexY = 226.0f;  // fronds meet here
+
+    const juce::Colour body(0xFF140A05);                       // dark backlit silhouette
+    const juce::Colour rim(juce::Colour(Colors::GOLD_LIGHT));  // sun rim-light
+
+    // Base platform
+    g.setColour(body);
+    g.fillRect(P(cx - 34.0f, baseY).x, P(cx - 34.0f, baseY).y, 68.0f * sx, 12.0f * sy);
+
+    // Three fronds: left, centre, right, all leaning into the apex.
+    for (int i = -1; i <= 1; ++i)
+    {
+        const float foot = cx + i * 24.0f;
+        const float fw   = 11.0f;
+        const float midY = (baseY + apexY) * 0.5f;
+
+        juce::Path fr;
+        fr.startNewSubPath(P(foot - fw, baseY));
+        fr.quadraticTo(P(foot - i * 10.0f - 12.0f, midY), P(cx - i * 3.0f, apexY));
+        fr.quadraticTo(P(foot - i * 10.0f + 8.0f,  midY), P(foot + fw, baseY));
+        fr.closeSubPath();
+
+        g.setColour(body);
+        g.fillPath(fr);
+        g.setColour(rim.withAlpha(0.45f));
+        g.strokePath(fr, juce::PathStrokeType(1.2f));
+    }
+
+    // Eternal flame at the apex
+    auto flame = P(cx, apexY - 6.0f);
+    juce::ColourGradient fg(rim.withAlpha(0.9f), flame.x, flame.y,
+                            rim.withAlpha(0.0f), flame.x, flame.y - 14.0f * sy, false);
+    g.setGradientFill(fg);
+    g.fillEllipse(flame.x - 4.0f * sx, flame.y - 12.0f * sy, 8.0f * sx, 16.0f * sy);
+}
+
+// ── Algerian flag on a pole, planted on the dune (green/white split, red
+//    crescent + five-point star). ──
+void BackgroundComponent::drawAlgerianFlag(juce::Graphics& g, float sx, float sy)
+{
+    auto P = [&](float x, float y) { return juce::Point<float>(x * sx, y * sy); };
+
+    const float px = 656.0f;     // pole x
+    const float topY = 300.0f;   // flag top
+    const float baseY = 372.0f;  // pole foot on the dune
+    const float fw = 50.0f, fh = 32.0f;
+
+    // Pole
+    g.setColour(juce::Colour(0xFF2A2018));
+    g.fillRect(P(px, topY - 6.0f).x, P(px, topY - 6.0f).y, 2.0f * sx, (baseY - topY + 6.0f) * sy);
+
+    auto fl = juce::Rectangle<float>(P(px + 2.0f, topY).x, P(px + 2.0f, topY).y, fw * sx, fh * sy);
+
+    // Green (left) + white (right) halves
+    g.setColour(juce::Colour(0xFF006233));
+    g.fillRect(fl.withWidth(fl.getWidth() * 0.5f));
+    g.setColour(juce::Colour(0xFFF2F2EE));
+    g.fillRect(fl.withTrimmedLeft(fl.getWidth() * 0.5f));
+
+    // Red crescent (centred on the seam) — outer disc minus an offset disc.
+    const juce::Colour red(Colors::RED);
+    const float ccx = fl.getCentreX(), ccy = fl.getCentreY();
+    const float r = fh * 0.30f * sy;
+    juce::Path crescent;
+    crescent.setUsingNonZeroWinding(false);
+    crescent.addEllipse(ccx - r, ccy - r, r * 2.0f, r * 2.0f);
+    crescent.addEllipse(ccx - r + r * 0.55f, ccy - r * 0.82f, r * 1.64f, r * 1.64f);
+    g.setColour(red);
+    g.fillPath(crescent);
+
+    // Five-point star in the crescent opening.
+    juce::Path star;
+    const float sr = r * 0.62f, srIn = sr * 0.42f;
+    const float starCx = ccx + r * 0.55f, starCy = ccy;
+    for (int k = 0; k < 10; ++k)
+    {
+        const float ang = -juce::MathConstants<float>::halfPi + k * juce::MathConstants<float>::pi / 5.0f;
+        const float rad = (k % 2 == 0) ? sr : srIn;
+        const auto pt = juce::Point<float>(starCx + std::cos(ang) * rad, starCy + std::sin(ang) * rad);
+        if (k == 0) star.startNewSubPath(pt); else star.lineTo(pt);
+    }
+    star.closeSubPath();
+    g.setColour(red);
+    g.fillPath(star);
 }
 
 void BackgroundComponent::drawStars(juce::Graphics& g, juce::Rectangle<float> bounds)

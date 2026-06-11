@@ -34,6 +34,8 @@ private:
     void drawSun(juce::Graphics& g, float cx, float cy, float intensity);
     void drawHalo(juce::Graphics& g, float cx, float cy, float alpha);
     void drawPyramids(juce::Graphics& g, juce::Rectangle<float> bounds);
+    void drawMonument(juce::Graphics& g, float sx, float sy);      // Maqam Echahid, Alger
+    void drawAlgerianFlag(juce::Graphics& g, float sx, float sy);
     void drawSphinx(juce::Graphics& g, float sx, float sy);
     void drawDunes(juce::Graphics& g, juce::Rectangle<float> bounds);
     void drawMusicians(juce::Graphics& g, float sx, float sy);

@@ -18,9 +18,9 @@ std::vector<InstrumentProfile> InstrumentProfiles::createProfiles()
         v.attack = 0.12f; v.decay = 0.10f; v.sustain = 0.78f; v.release = 0.45f;
         v.filterFreq = 4200.0f; v.filterQ = 1.2f;
         v.harmonics = { 1.0f, 0.78f, 0.55f, 0.42f, 0.32f, 0.24f, 0.18f, 0.13f, 0.09f, 0.06f };
-        v.drive = 2.2f; v.driveAsym = 0.18f; v.subLevel = 0.10f;
+        v.drive = 1.45f; v.driveAsym = 0.14f; v.subLevel = 0.10f;
         v.detuneCents = 7.0f; v.unisonMix = 0.55f;
-        v.noiseAmount = 0.10f; v.noiseColor = 0.7f; v.noiseDecay = 0.30f; v.noiseSustains = true;
+        v.noiseAmount = 0.05f; v.noiseColor = 0.5f; v.noiseDecay = 0.30f; v.noiseSustains = true;
         v.filterEnvAmt = 1.2f; v.filterEnvDecay = 0.35f; v.filterEnvSust = 0.45f;
         v.keyTrack = 0.5f; v.velToFilter = 0.7f; v.velToDrive = 0.6f;
         v.formant1 = { 550.0f, 3.5f, 0.30f };   // bridge resonance
@@ -36,9 +36,9 @@ std::vector<InstrumentProfile> InstrumentProfiles::createProfiles()
         v.attack = 0.004f; v.decay = 0.45f; v.sustain = 0.30f; v.release = 0.80f;
         v.filterFreq = 3000.0f; v.filterQ = 1.6f;
         v.harmonics = { 1.0f, 0.62f, 0.45f, 0.34f, 0.26f, 0.18f, 0.12f, 0.08f };
-        v.drive = 1.8f; v.driveAsym = 0.22f; v.subLevel = 0.18f;
+        v.drive = 1.4f; v.driveAsym = 0.18f; v.subLevel = 0.18f;
         v.detuneCents = 4.0f; v.unisonMix = 0.35f;       // courses slightly detuned
-        v.noiseAmount = 0.28f; v.noiseColor = 0.85f; v.noiseDecay = 0.05f; v.noiseSustains = false; // pluck chiff
+        v.noiseAmount = 0.15f; v.noiseColor = 0.75f; v.noiseDecay = 0.05f; v.noiseSustains = false; // pluck chiff
         v.filterEnvAmt = 2.6f; v.filterEnvDecay = 0.40f; v.filterEnvSust = 0.10f; // bright attack → dark
         v.keyTrack = 0.45f; v.velToFilter = 1.1f; v.velToDrive = 0.7f;
         v.formant1 = { 320.0f, 2.5f, 0.45f };   // soundbox
@@ -54,9 +54,9 @@ std::vector<InstrumentProfile> InstrumentProfiles::createProfiles()
         v.attack = 0.09f; v.decay = 0.06f; v.sustain = 0.82f; v.release = 0.55f;
         v.filterFreq = 2400.0f; v.filterQ = 0.9f;
         v.harmonics = { 1.0f, 0.10f, 0.32f, 0.06f, 0.14f, 0.04f, 0.06f }; // odd-dominant, hollow
-        v.drive = 1.4f; v.driveAsym = 0.10f; v.subLevel = 0.05f;
+        v.drive = 1.15f; v.driveAsym = 0.08f; v.subLevel = 0.05f;
         v.detuneCents = 3.0f; v.unisonMix = 0.25f;
-        v.noiseAmount = 0.45f; v.noiseColor = 0.55f; v.noiseDecay = 0.20f; v.noiseSustains = true; // sustained breath
+        v.noiseAmount = 0.26f; v.noiseColor = 0.45f; v.noiseDecay = 0.20f; v.noiseSustains = true; // sustained breath
         v.filterEnvAmt = 0.8f; v.filterEnvDecay = 0.30f; v.filterEnvSust = 0.60f;
         v.keyTrack = 0.6f; v.velToFilter = 0.5f; v.velToDrive = 0.3f;
         v.formant1 = { 800.0f, 2.0f, 0.25f };   // air column
@@ -72,9 +72,9 @@ std::vector<InstrumentProfile> InstrumentProfiles::createProfiles()
         v.attack = 0.003f; v.decay = 0.55f; v.sustain = 0.22f; v.release = 0.70f;
         v.filterFreq = 5400.0f; v.filterQ = 2.0f;
         v.harmonics = { 1.0f, 0.7f, 0.55f, 0.45f, 0.38f, 0.30f, 0.24f, 0.18f, 0.13f, 0.09f };
-        v.drive = 1.6f; v.driveAsym = 0.15f; v.subLevel = 0.06f;
+        v.drive = 1.3f; v.driveAsym = 0.12f; v.subLevel = 0.06f;
         v.detuneCents = 9.0f; v.unisonMix = 0.5f;        // triple-string courses
-        v.noiseAmount = 0.22f; v.noiseColor = 1.0f; v.noiseDecay = 0.03f; v.noiseSustains = false;
+        v.noiseAmount = 0.12f; v.noiseColor = 0.9f; v.noiseDecay = 0.03f; v.noiseSustains = false;
         v.filterEnvAmt = 2.2f; v.filterEnvDecay = 0.50f; v.filterEnvSust = 0.08f;
         v.keyTrack = 0.5f; v.velToFilter = 1.0f; v.velToDrive = 0.6f;
         v.formant1 = { 1200.0f, 3.0f, 0.30f };
@@ -90,9 +90,9 @@ std::vector<InstrumentProfile> InstrumentProfiles::createProfiles()
         v.attack = 0.001f; v.decay = 0.16f; v.sustain = 0.0f; v.release = 0.20f;
         v.filterFreq = 1200.0f; v.filterQ = 1.4f;
         v.harmonics = { 1.0f, 0.5f, 0.28f, 0.16f };
-        v.drive = 2.6f; v.driveAsym = 0.25f; v.subLevel = 0.45f;
+        v.drive = 2.1f; v.driveAsym = 0.20f; v.subLevel = 0.45f;
         v.detuneCents = 0.0f; v.unisonMix = 0.0f;
-        v.noiseAmount = 0.7f; v.noiseColor = 0.9f; v.noiseDecay = 0.02f; v.noiseSustains = false; // slap/tek
+        v.noiseAmount = 0.5f; v.noiseColor = 0.8f; v.noiseDecay = 0.02f; v.noiseSustains = false; // slap/tek
         v.filterEnvAmt = 3.0f; v.filterEnvDecay = 0.06f; v.filterEnvSust = 0.0f;  // sharp click
         v.keyTrack = 0.3f; v.velToFilter = 1.4f; v.velToDrive = 1.0f;
         v.formant1 = { 180.0f, 1.5f, 0.40f };   // body boom
@@ -108,9 +108,9 @@ std::vector<InstrumentProfile> InstrumentProfiles::createProfiles()
         v.attack = 0.14f; v.decay = 0.10f; v.sustain = 0.72f; v.release = 0.55f;
         v.filterFreq = 2800.0f; v.filterQ = 1.4f;
         v.harmonics = { 1.0f, 0.82f, 0.6f, 0.48f, 0.38f, 0.30f, 0.22f, 0.16f, 0.10f };
-        v.drive = 2.8f; v.driveAsym = 0.28f; v.subLevel = 0.12f;   // raspy
+        v.drive = 1.7f; v.driveAsym = 0.18f; v.subLevel = 0.12f;   // reedy, not fuzzy
         v.detuneCents = 8.0f; v.unisonMix = 0.5f;
-        v.noiseAmount = 0.35f; v.noiseColor = 0.6f; v.noiseDecay = 0.30f; v.noiseSustains = true; // bow scrape
+        v.noiseAmount = 0.20f; v.noiseColor = 0.55f; v.noiseDecay = 0.30f; v.noiseSustains = true; // bow scrape
         v.filterEnvAmt = 1.0f; v.filterEnvDecay = 0.35f; v.filterEnvSust = 0.5f;
         v.keyTrack = 0.5f; v.velToFilter = 0.8f; v.velToDrive = 0.8f;
         v.formant1 = { 480.0f, 3.0f, 0.35f };
@@ -126,9 +126,9 @@ std::vector<InstrumentProfile> InstrumentProfiles::createProfiles()
         v.attack = 0.05f; v.decay = 0.08f; v.sustain = 0.74f; v.release = 0.35f;
         v.filterFreq = 3400.0f; v.filterQ = 1.8f;
         v.harmonics = { 1.0f, 0.4f, 0.7f, 0.3f, 0.5f, 0.22f, 0.35f, 0.16f, 0.22f }; // strong odd → nasal
-        v.drive = 3.2f; v.driveAsym = 0.30f; v.subLevel = 0.0f;     // most aggressive
+        v.drive = 1.9f; v.driveAsym = 0.22f; v.subLevel = 0.0f;     // bright, reedy
         v.detuneCents = 5.0f; v.unisonMix = 0.4f;
-        v.noiseAmount = 0.25f; v.noiseColor = 0.8f; v.noiseDecay = 0.18f; v.noiseSustains = true;
+        v.noiseAmount = 0.16f; v.noiseColor = 0.7f; v.noiseDecay = 0.18f; v.noiseSustains = true;
         v.filterEnvAmt = 1.4f; v.filterEnvDecay = 0.25f; v.filterEnvSust = 0.55f;
         v.keyTrack = 0.55f; v.velToFilter = 0.9f; v.velToDrive = 0.9f;
         v.formant1 = { 1400.0f, 4.0f, 0.40f };  // nasal honk

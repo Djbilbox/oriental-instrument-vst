@@ -211,7 +211,9 @@ void OrientalVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer,
     }
 
     const float detuneSpread = prof.detuneCents * (0.6f + orientAmount * 0.8f);
-    const float driveAmt = noteDrive * (0.6f + depthAmount * 1.4f);
+    // Gentler drive mapping — keep the waveshaper in its musical "warmth" zone
+    // instead of fuzzing out. depth now glides 0.85x..1.35x of the profile drive.
+    const float driveAmt = noteDrive * (0.85f + depthAmount * 0.5f);
     const float keyOct = prof.keyTrack * std::log2(juce::jmax(20.0f, currentFrequency) / 440.0f);
     const float velOct = prof.velToFilter * velocity;
     const float ampMakeup = 0.5f;
