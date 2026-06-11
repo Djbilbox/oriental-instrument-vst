@@ -1,121 +1,95 @@
 /*
-    ORIENTAL INSTRUMENT — Cmajor port (v1) of the C++ JUCE engine.
+    ORIENTAL INSTRUMENT — Cmajor port (v1-mono) for Amorph.
 
-    Signal chain per voice (mirrors Source/DSP/OrientalVoice.cpp):
+    Single-processor, monophonic (last-note priority). Matches Amorph's
+    proven template shape: one processor, raw MIDI in, audio out, [[ ]]
+    parameter annotations. No graph / VoiceAllocator yet (v2 = polyphony).
+
+    Signal chain (mirrors Source/DSP/OrientalVoice.cpp):
         3-osc unison + sub + white noise
           -> ADAA antialiased waveshaper (asym soft saturation)
-          -> TPT state-variable lowpass (resonant, env + key + vel)
-          -> 2 parallel formant bandpass (body resonance)
+          -> TPT state-variable lowpass (resonant)
+          -> 2 parallel formant bandpass (Oud body resonance)
           -> ADSR amp + final tanh
 
-    v1 scope: full voice chain + 8 macro params, polyphonic (8 voices).
-    NOT yet ported: 7 instrument profiles table, maqam tuning, vibrato LFO.
-    Those land in v2 once this compiles + sounds right in Amorph.
-
-    Verify by pressing COMPILE in Amorph; report errors back to iterate.
+    Press COMPILE in Amorph; report errors to iterate.
 */
 
-graph OrientalInstrument  [[ main ]]
+processor OrientalInstrument
 {
     input event std::midi::Message midiIn;
     output stream float out;
 
-    // ── Macro parameters (match the C++ "character" controls) ──
-    input event float driveParam   [[ name: "Drive",      min: 1.0,   max: 4.0,    init: 1.8,  ]];
-    input event float asymParam    [[ name: "Asym",       min: 0.0,   max: 0.4,    init: 0.22, ]];
-    input event float subParam     [[ name: "Sub",        min: 0.0,   max: 1.0,    init: 0.18, ]];
-    input event float noiseParam   [[ name: "Noise",      min: 0.0,   max: 1.0,    init: 0.20, ]];
-    input event float detuneParam  [[ name: "Detune",     min: 0.0,   max: 20.0,   init: 4.0,  unit: "cents" ]];
-    input event float cutoffParam  [[ name: "Cutoff",     min: 100.0, max: 12000.0,init: 3000.0,unit: "Hz" ]];
-    input event float resoParam    [[ name: "Resonance",  min: 0.5,   max: 8.0,    init: 1.6,  ]];
-    input event float waveParam    [[ name: "Wave",       min: 0.0,   max: 3.0,    init: 1.0,  ]]; // 0 sin 1 tri 2 saw 3 sqr
+    // ── Macro parameters (no trailing comma before ]] — Amorph syntax) ──
+    input event float driveParam   [[ name: "Drive",     min: 1.0,   max: 4.0,     init: 1.8 ]];
+    input event float asymParam    [[ name: "Asym",      min: 0.0,   max: 0.4,     init: 0.22 ]];
+    input event float subParam     [[ name: "Sub",       min: 0.0,   max: 1.0,     init: 0.18 ]];
+    input event float noiseParam   [[ name: "Noise",     min: 0.0,   max: 1.0,     init: 0.20 ]];
+    input event float detuneParam  [[ name: "Detune",    min: 0.0,   max: 20.0,    init: 4.0 ]];
+    input event float cutoffParam  [[ name: "Cutoff",    min: 100.0, max: 12000.0, init: 3000.0 ]];
+    input event float resoParam    [[ name: "Resonance", min: 0.5,   max: 8.0,     init: 1.6 ]];
+    input event float waveParam    [[ name: "Wave",      min: 0.0,   max: 3.0,     init: 1.0 ]];
+    input event float attackParam  [[ name: "Attack",    min: 0.001, max: 2.0,     init: 0.004 ]];
+    input event float decayParam   [[ name: "Decay",     min: 0.01,  max: 3.0,     init: 0.45 ]];
+    input event float sustainParam [[ name: "Sustain",   min: 0.0,   max: 1.0,     init: 0.30 ]];
+    input event float releaseParam [[ name: "Release",   min: 0.01,  max: 4.0,     init: 0.80 ]];
 
-    // ── ADSR (amp) ──
-    input event float attackParam  [[ name: "Attack",     min: 0.001, max: 2.0,    init: 0.004,unit: "s" ]];
-    input event float decayParam   [[ name: "Decay",      min: 0.01,  max: 3.0,    init: 0.45, unit: "s" ]];
-    input event float sustainParam [[ name: "Sustain",    min: 0.0,   max: 1.0,    init: 0.30, ]];
-    input event float releaseParam [[ name: "Release",    min: 0.01,  max: 4.0,    init: 0.80, unit: "s" ]];
-
-    node
-    {
-        midiParser = std::midi::MPEConverter;
-        voices     = OrientalVoice[8];
-        allocator  = std::voices::VoiceAllocator (8);
-    }
-
-    connection
-    {
-        // MIDI -> note events -> round-robin voice allocation -> voices
-        midiIn        -> midiParser;
-        midiParser    -> allocator;
-        allocator     -> voices;
-
-        // Broadcast macro params to every voice
-        driveParam   -> voices.driveIn;
-        asymParam    -> voices.asymIn;
-        subParam     -> voices.subIn;
-        noiseParam   -> voices.noiseIn;
-        detuneParam  -> voices.detuneIn;
-        cutoffParam  -> voices.cutoffIn;
-        resoParam    -> voices.resoIn;
-        waveParam    -> voices.waveIn;
-
-        attackParam  -> voices.attackIn;
-        decayParam   -> voices.decayIn;
-        sustainParam -> voices.sustainIn;
-        releaseParam -> voices.releaseIn;
-
-        // Sum voices to output
-        voices -> out;
-    }
-}
-
-//==============================================================================
-processor OrientalVoice
-{
-    input event (std::notes::NoteOn, std::notes::NoteOff) eventIn;
-
-    input event float driveIn, asymIn, subIn, noiseIn, detuneIn,
-                      cutoffIn, resoIn, waveIn,
-                      attackIn, decayIn, sustainIn, releaseIn;
-
-    output stream float out;
-
-    // ── Parameter state (smoothed targets are simple here; ramped by Amorph host) ──
+    // ── Parameter state ──
     float drive = 1.8f, asym = 0.22f, subLevel = 0.18f, noiseAmt = 0.20f,
           detuneCents = 4.0f, cutoffHz = 3000.0f, reso = 1.6f;
     int   waveType = 1;
     float attackS = 0.004f, decayS = 0.45f, sustainLvl = 0.30f, releaseS = 0.80f;
 
-    event driveIn  (float v) { drive = v; }
-    event asymIn   (float v) { asym = v; }
-    event subIn    (float v) { subLevel = v; }
-    event noiseIn  (float v) { noiseAmt = v; }
-    event detuneIn (float v) { detuneCents = v; }
-    event cutoffIn (float v) { cutoffHz = v; }
-    event resoIn   (float v) { reso = v; }
-    event waveIn   (float v) { waveType = int (v + 0.5f); }
-    event attackIn (float v) { attackS = v; }
-    event decayIn  (float v) { decayS = v; }
-    event sustainIn(float v) { sustainLvl = v; }
-    event releaseIn(float v) { releaseS = v; }
+    event driveParam   (float v) { drive = v; }
+    event asymParam    (float v) { asym = v; }
+    event subParam     (float v) { subLevel = v; }
+    event noiseParam   (float v) { noiseAmt = v; }
+    event detuneParam  (float v) { detuneCents = v; }
+    event cutoffParam  (float v) { cutoffHz = v; }
+    event resoParam    (float v) { reso = v; }
+    event waveParam    (float v) { waveType = int (v + 0.5f); }
+    event attackParam  (float v) { attackS = v; }
+    event decayParam   (float v) { decayS = v; }
+    event sustainParam (float v) { sustainLvl = v; }
+    event releaseParam (float v) { releaseS = v; }
 
-    // ── Per-note state ──
+    // ── MIDI decode (mono, last-note priority) ──
+    int   currentNote = -1;
     float noteFreq = 440.0f;
     float velocity = 0.0f;
-    bool  gate = false;
 
-    // ── Envelope state (0 idle, 1 attack, 2 decay, 3 sustain, 4 release) ──
+    event midiIn (std::midi::Message m)
+    {
+        let packed = m.message;
+        let status = (packed >> 16) & 0xf0;
+        let data1  = (packed >> 8)  & 0x7f;
+        let data2  =  packed        & 0x7f;
+
+        if (status == 0x90 && data2 > 0)          // note on
+        {
+            currentNote = data1;
+            noteFreq = float (440.0 * pow (2.0, (float (data1) - 69.0) / 12.0));
+            velocity = float (data2) / 127.0f;
+            startNote();
+        }
+        else if (status == 0x80 || (status == 0x90 && data2 == 0)) // note off
+        {
+            if (data1 == currentNote)
+                envStage = 4;                      // release
+        }
+    }
+
+    // ── Envelope (0 idle, 1 attack, 2 decay, 3 sustain, 4 release) ──
     int   envStage = 0;
     float envLevel = 0.0f;
 
-    // ── Oscillator phases (3 unison + sub) ──
+    // ── Oscillator phases ──
     float ph0 = 0.0f, ph1 = 0.0f, ph2 = 0.0f, phSub = 0.0f;
 
-    // ── ADAA waveshaper memory (per voice, mono here) ──
+    // ── ADAA waveshaper memory ──
     float adaaX1 = 0.0f, adaaF1 = 0.0f;
 
-    // ── Noise one-pole + RNG ──
+    // ── Noise one-pole + xorshift RNG ──
     float noiseLP = 0.0f;
     int64 rngState = 0x2545F4914F6CDD1D;
 
@@ -128,28 +102,18 @@ processor OrientalVoice
 
     let twoPi = 6.28318530717959f;
 
-    event eventIn (std::notes::NoteOn n)
+    void startNote()
     {
-        noteFreq = float (440.0 * pow (2.0, (float (n.note) - 69.0f) / 12.0f));
-        velocity = float (n.velocity);
-        gate = true;
         envStage = 1;
-        // reset per-note continuous state
         ph0 = 0.0f; ph1 = 0.33f; ph2 = 0.66f; phSub = 0.0f;
         adaaX1 = 0.0f; adaaF1 = 0.0f;
         noiseLP = 0.0f;
         svfIc1 = 0.0f; svfIc2 = 0.0f;
-        f1x1 = f1x2 = f1y1 = f1y2 = 0.0f;
-        f2x1 = f2x2 = f2y1 = f2y2 = 0.0f;
+        f1x1 = 0.0f; f1x2 = 0.0f; f1y1 = 0.0f; f1y2 = 0.0f;
+        f2x1 = 0.0f; f2x2 = 0.0f; f2y1 = 0.0f; f2y2 = 0.0f;
     }
 
-    event eventIn (std::notes::NoteOff n)
-    {
-        gate = false;
-        envStage = 4;
-    }
-
-    // ── Asymmetric soft-saturation waveshaper + its antiderivative (for ADAA) ──
+    // ── Waveshaper + antiderivative (ADAA) ──
     float shape (float x)          { return tanh (x + asym) - tanh (asym); }
     float shapeAntideriv (float x) { return log (cosh (x + asym)) - tanh (asym) * x; }
 
@@ -167,59 +131,54 @@ processor OrientalVoice
         return y;
     }
 
-    // ── White noise in [-1, 1] (xorshift) ──
+    // ── White noise [-1, 1] (xorshift) ──
     float nextNoise()
     {
-        rngState ^= rngState << 13;
-        rngState ^= rngState >> 7;
-        rngState ^= rngState << 17;
+        rngState = rngState ^ (rngState << 13);
+        rngState = rngState ^ (rngState >> 7);
+        rngState = rngState ^ (rngState << 17);
         return float (rngState) / 9.223372e18f;
     }
 
-    // ── Naive band-limited-ish oscillator by wave type ──
+    // ── Oscillator by wave type ──
     float oscSample (float phase)
     {
-        if (waveType == 0)      return sin (phase * twoPi);                    // sine
+        if (waveType == 0)      return sin (phase * twoPi);                     // sine
         else if (waveType == 1) return 2.0f * abs (2.0f * phase - 1.0f) - 1.0f; // triangle
-        else if (waveType == 2) return 2.0f * phase - 1.0f;                   // saw
-        else                    return phase < 0.5f ? 1.0f : -1.0f;           // square
+        else if (waveType == 2) return 2.0f * phase - 1.0f;                     // saw
+        else                    return phase < 0.5f ? 1.0f : -1.0f;             // square
     }
 
-    void advanceEnvelope()
+    void advanceEnvelope (float sr)
     {
-        let sr = float (processor.frequency);
-        if (envStage == 1) // attack
+        if (envStage == 1)        // attack
         {
-            let step = 1.0f / (max (attackS, 0.0001f) * sr);
-            envLevel += step;
+            envLevel += 1.0f / (max (attackS, 0.0001f) * sr);
             if (envLevel >= 1.0f) { envLevel = 1.0f; envStage = 2; }
         }
-        else if (envStage == 2) // decay
+        else if (envStage == 2)   // decay
         {
-            let step = (1.0f - sustainLvl) / (max (decayS, 0.0001f) * sr);
-            envLevel -= step;
+            envLevel -= (1.0f - sustainLvl) / (max (decayS, 0.0001f) * sr);
             if (envLevel <= sustainLvl) { envLevel = sustainLvl; envStage = 3; }
         }
-        else if (envStage == 4) // release
+        else if (envStage == 4)   // release
         {
-            let step = envLevel / (max (releaseS, 0.0001f) * sr);
-            envLevel -= step;
+            envLevel -= envLevel / (max (releaseS, 0.0001f) * sr);
             if (envLevel <= 0.0001f) { envLevel = 0.0f; envStage = 0; }
         }
     }
 
-    // ── One-pole formant bandpass coefficients computed inline per call ──
     void main()
     {
         let sr = float (processor.frequency);
 
-        // Static formant peaks (Oud body, from InstrumentProfiles.cpp).
+        // Oud body formants (from InstrumentProfiles.cpp).
         let f1Freq = 320.0f, f1Q = 2.5f, f1Gain = 0.45f;
         let f2Freq = 900.0f, f2Q = 3.0f, f2Gain = 0.28f;
 
         loop
         {
-            advanceEnvelope();
+            advanceEnvelope (sr);
 
             if (envStage == 0)
             {
@@ -242,7 +201,7 @@ processor OrientalVoice
             ph1 += inc1; if (ph1 >= 1.0f) ph1 -= 1.0f;
             ph2 += inc2; if (ph2 >= 1.0f) ph2 -= 1.0f;
 
-            // Sub oscillator (one octave down, sine)
+            // Sub oscillator (octave down, sine)
             if (subLevel > 0.0f)
             {
                 sig += sin (phSub * twoPi) * subLevel;
@@ -261,8 +220,8 @@ processor OrientalVoice
             sig = adaaShape (sig * drive);
 
             // ── TPT state-variable lowpass ──
-            let g = tan (3.14159265f * clamp (cutoffHz, 20.0f, sr * 0.45f) / sr);
-            let k = 1.0f / max (reso, 0.0001f);
+            let g  = tan (3.14159265f * clamp (cutoffHz, 20.0f, sr * 0.45f) / sr);
+            let k  = 1.0f / max (reso, 0.0001f);
             let a1 = 1.0f / (1.0f + g * (g + k));
             let a2 = g * a1;
             let v3 = sig - svfIc2;
@@ -270,13 +229,35 @@ processor OrientalVoice
             let v2 = svfIc2 + g * v1;
             svfIc1 = 2.0f * v1 - svfIc1;
             svfIc2 = 2.0f * v2 - svfIc2;
-            let lp = v2;
-            sig = lp;
+            sig = v2;   // lowpass output
 
-            // ── Parallel formant bandpass (RBJ biquad, constant skirt gain) ──
+            // ── Parallel formant bandpass 1 (RBJ, constant 0 dB peak) ──
             let dry = sig;
-            float band1 = formantBP (dry, f1Freq, f1Q, sr, f1x1, f1x2, f1y1, f1y2);
-            float band2 = formantBP (dry, f2Freq, f2Q, sr, f2x1, f2x2, f2y1, f2y2);
+            float band1;
+            {
+                let w0 = twoPi * f1Freq / sr;
+                let alpha = sin (w0) / (2.0f * f1Q);
+                let b0 = alpha, b2 = -alpha;
+                let a0 = 1.0f + alpha, aa1 = -2.0f * cos (w0), aa2 = 1.0f - alpha;
+                band1 = (b0 / a0) * dry + (b2 / a0) * f1x2
+                        - (aa1 / a0) * f1y1 - (aa2 / a0) * f1y2;
+                f1x2 = f1x1; f1x1 = dry;
+                f1y2 = f1y1; f1y1 = band1;
+            }
+
+            // ── Parallel formant bandpass 2 ──
+            float band2;
+            {
+                let w0 = twoPi * f2Freq / sr;
+                let alpha = sin (w0) / (2.0f * f2Q);
+                let b0 = alpha, b2 = -alpha;
+                let a0 = 1.0f + alpha, aa1 = -2.0f * cos (w0), aa2 = 1.0f - alpha;
+                band2 = (b0 / a0) * dry + (b2 / a0) * f2x2
+                        - (aa1 / a0) * f2y1 - (aa2 / a0) * f2y2;
+                f2x2 = f2x1; f2x1 = dry;
+                f2y2 = f2y1; f2y1 = band2;
+            }
+
             sig = dry + band1 * f1Gain + band2 * f2Gain;
 
             // ── Amp + final cohesion clip ──
@@ -285,29 +266,5 @@ processor OrientalVoice
 
             advance();
         }
-    }
-
-    // RBJ bandpass (constant 0 dB peak), Direct Form I with external state.
-    float formantBP (float x, float freq, float q, float sr,
-                     float& x1, float& x2, float& y1, float& y2)
-    {
-        let w0 = twoPi * freq / sr;
-        let cs = cos (w0);
-        let sn = sin (w0);
-        let alpha = sn / (2.0f * q);
-
-        let b0 =  alpha;
-        let b1 =  0.0f;
-        let b2 = -alpha;
-        let a0 =  1.0f + alpha;
-        let a1 = -2.0f * cs;
-        let a2 =  1.0f - alpha;
-
-        let y = (b0 / a0) * x + (b1 / a0) * x1 + (b2 / a0) * x2
-                - (a1 / a0) * y1 - (a2 / a0) * y2;
-
-        x2 = x1; x1 = x;
-        y2 = y1; y1 = y;
-        return y;
     }
 }
