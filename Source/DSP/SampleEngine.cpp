@@ -35,18 +35,24 @@ juce::File SampleEngine::samplesRoot()
 }
 
 // Parse a MIDI root note from a filename. Returns -1 if none found.
+// Scientific pitch: C4 = 60. Takes the LAST note-name token in the name, so
+// messy library names ("STR_B3RockRot_D#1", "MIXO_A_3(L)ogg") resolve to the
+// real root at the end, not a stray letter+digit earlier in the string.
 int SampleEngine::parseRootNote(const juce::String& name)
 {
-    // 1) Note name like C3, A#2, Gb4 (octave -1..9). Scientific pitch, C4 = 60.
+    const std::string s = name.toStdString();
+
+    // 1) Note name: letter, optional accidental, optional separator, octave.
     {
-        static const std::regex re(R"((^|[^A-Za-z])([A-Ga-g])([#bB]?)(-?\d))");
-        std::string s = name.toStdString();
-        std::smatch m;
-        if (std::regex_search(s, m, re))
+        static const std::regex re(R"(([A-Ga-g])([#bB]?)[ _\-]?(-?\d))");
+        int best = -1;
+        for (auto it = std::sregex_iterator(s.begin(), s.end(), re);
+             it != std::sregex_iterator(); ++it)
         {
-            const char letter = static_cast<char>(std::toupper(m[2].str()[0]));
-            const std::string acc = m[3].str();
-            const int octave = std::stoi(m[4].str());
+            const auto& m = *it;
+            const char letter = static_cast<char>(std::toupper(m[1].str()[0]));
+            const std::string acc = m[2].str();
+            const int octave = std::stoi(m[3].str());
 
             static const int semis[7] = { 9, 11, 0, 2, 4, 5, 7 }; // A B C D E F G
             int pc = semis[letter - 'A'];
@@ -55,14 +61,15 @@ int SampleEngine::parseRootNote(const juce::String& name)
 
             const int midi = (octave + 1) * 12 + pc; // C-1 = 0 → C4 = 60
             if (midi >= 0 && midi <= 127)
-                return midi;
+                best = midi; // keep last valid
         }
+        if (best >= 0)
+            return best;
     }
 
     // 2) A bare midi number token, e.g. "_57" or "-60".
     {
         static const std::regex re(R"((^|[ _\-])(\d{1,3})($|[ _\-.]))");
-        std::string s = name.toStdString();
         std::smatch m;
         if (std::regex_search(s, m, re))
         {
