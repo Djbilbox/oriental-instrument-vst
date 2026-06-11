@@ -12,12 +12,14 @@
           -> 2 parallel formant bandpass (Oud body resonance)
           -> ADSR amp + final tanh
 
-    NOTE: Amorph wraps this code in its own `processor { ... }`. So this file
-    is the processor BODY only — no `processor {` wrapper, no outer braces.
+    Amorph expects a top-level `processor` (or graph/namespace). No bare `{ }`
+    block scopes inside functions — Cmajor doesn't allow them.
 
     Press COMPILE in Amorph; report errors to iterate.
 */
 
+processor OrientalInstrument
+{
     input event std::midi::Message midiIn;
     output stream float out;
 
@@ -234,30 +236,25 @@
 
             // ── Parallel formant bandpass 1 (RBJ, constant 0 dB peak) ──
             let dry = sig;
-            float band1;
-            {
-                let w0 = twoPi * f1Freq / sr;
-                let alpha = sin (w0) / (2.0f * f1Q);
-                let b0 = alpha, b2 = -alpha;
-                let a0 = 1.0f + alpha, aa1 = -2.0f * cos (w0), aa2 = 1.0f - alpha;
-                band1 = (b0 / a0) * dry + (b2 / a0) * f1x2
-                        - (aa1 / a0) * f1y1 - (aa2 / a0) * f1y2;
-                f1x2 = f1x1; f1x1 = dry;
-                f1y2 = f1y1; f1y1 = band1;
-            }
+
+            let f1w0    = twoPi * f1Freq / sr;
+            let f1alpha = sin (f1w0) / (2.0f * f1Q);
+            let f1a0    = 1.0f + f1alpha;
+            let band1   = (f1alpha / f1a0) * dry - (f1alpha / f1a0) * f1x2
+                          + (2.0f * cos (f1w0) / f1a0) * f1y1
+                          - ((1.0f - f1alpha) / f1a0) * f1y2;
+            f1x2 = f1x1; f1x1 = dry;
+            f1y2 = f1y1; f1y1 = band1;
 
             // ── Parallel formant bandpass 2 ──
-            float band2;
-            {
-                let w0 = twoPi * f2Freq / sr;
-                let alpha = sin (w0) / (2.0f * f2Q);
-                let b0 = alpha, b2 = -alpha;
-                let a0 = 1.0f + alpha, aa1 = -2.0f * cos (w0), aa2 = 1.0f - alpha;
-                band2 = (b0 / a0) * dry + (b2 / a0) * f2x2
-                        - (aa1 / a0) * f2y1 - (aa2 / a0) * f2y2;
-                f2x2 = f2x1; f2x1 = dry;
-                f2y2 = f2y1; f2y1 = band2;
-            }
+            let f2w0    = twoPi * f2Freq / sr;
+            let f2alpha = sin (f2w0) / (2.0f * f2Q);
+            let f2a0    = 1.0f + f2alpha;
+            let band2   = (f2alpha / f2a0) * dry - (f2alpha / f2a0) * f2x2
+                          + (2.0f * cos (f2w0) / f2a0) * f2y1
+                          - ((1.0f - f2alpha) / f2a0) * f2y2;
+            f2x2 = f2x1; f2x1 = dry;
+            f2y2 = f2y1; f2y1 = band2;
 
             sig = dry + band1 * f1Gain + band2 * f2Gain;
 
@@ -268,3 +265,4 @@
             advance();
         }
     }
+}
