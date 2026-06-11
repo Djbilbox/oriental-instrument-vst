@@ -31,6 +31,13 @@ namespace Typography
             BinaryData::InterBold_ttf, (size_t) BinaryData::InterBold_ttfSize);
         return tf;
     }
+    // Blackletter — West-Coast / Chicano lowrider lettering (UnifrakturCook, OFL).
+    inline juce::Typeface::Ptr chicano()
+    {
+        static auto tf = juce::Typeface::createSystemTypefaceFor(
+            BinaryData::UnifrakturCookBold_ttf, (size_t) BinaryData::UnifrakturCookBold_ttfSize);
+        return tf;
+    }
 
     inline juce::Font display(float height, bool bold)
     {
@@ -41,6 +48,12 @@ namespace Typography
     inline juce::Font body(float height, bool bold)
     {
         juce::Font f(bold ? interBold() : interRegular());
+        f.setHeight(height);
+        return f;
+    }
+    inline juce::Font chicanoFont(float height)
+    {
+        juce::Font f(chicano());
         f.setHeight(height);
         return f;
     }

@@ -65,6 +65,7 @@ juce_add_binary_data(OrientalBinaryData
         Resources/Fonts/CinzelRegular.ttf
         Resources/Fonts/InterBold.ttf
         Resources/Fonts/InterRegular.ttf
+        Resources/Fonts/UnifrakturCookBold.ttf
 )
 
 target_include_directories(OrientalInstrument

@@ -7,8 +7,9 @@ PianoComponent::PianoComponent(OrientalSynthesiser& synth)
 {
     keyboardState.addListener(this);
 
-    keyboard.setAvailableRange(48, 84); // C3 to C6
+    keyboard.setAvailableRange(36, 96); // C2 to C7 — full span across the bottom
     keyboard.setOctaveForMiddleC(4);
+    keyboard.setScrollButtonsVisible(false);
 
     // Custom colors matching prototype
     keyboard.setColour(juce::MidiKeyboardComponent::whiteNoteColourId, juce::Colour(0xFFF5F0E8));
@@ -36,7 +37,21 @@ void PianoComponent::resized()
 {
     auto bounds = getLocalBounds();
     bounds.removeFromTop(24);
-    keyboard.setBounds(bounds.reduced(54, 0));
+
+    // Stretch the keys so the keyboard fills the full width — no empty gap on
+    // the right. Key width = available width / number of white keys in range.
+    const int lo = 36, hi = 96;
+    int whiteKeys = 0;
+    for (int n = lo; n <= hi; ++n)
+    {
+        const int pc = n % 12;
+        if (pc != 1 && pc != 3 && pc != 6 && pc != 8 && pc != 10)
+            ++whiteKeys;
+    }
+    if (whiteKeys > 0)
+        keyboard.setKeyWidth(static_cast<float>(bounds.getWidth()) / static_cast<float>(whiteKeys));
+
+    keyboard.setBounds(bounds);
 }
 
 void PianoComponent::handleNoteOn(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)

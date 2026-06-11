@@ -172,10 +172,25 @@ void BackgroundComponent::drawChrome(juce::Graphics& g)
     g.setFont(Typography::headerTitle());
     g.drawText(juce::String(juce::CharPointer_UTF8("ORIENTAL INSTRUMENT \xE2\x80\x94 MAQAM EDITION")),
                titleZone.withTrimmedTop(6.0f), juce::Justification::centredTop);
-    g.setColour(juce::Colour(Colors::GOLD_DIM));
-    g.setFont(Typography::body(8.0f, false));
-    g.drawText(Typography::tracked("by DJBILBOX BEATS"),
-               titleZone.withTrimmedTop(28.0f).withTrimmedBottom(4.0f), juce::Justification::centredTop);
+    // ── By-line: "DJBILBOX BEATS" in West-Coast / Chicano blackletter ──
+    // Chrome-gold lowrider treatment: dark drop shadow for depth, then a
+    // vertical gradient fill (light gold top → bronze bottom) + thin dark outline.
+    {
+        const juce::String byline ("DJBILBOX BEATS");
+        auto blz = titleZone.withTrimmedTop(26.0f).withTrimmedBottom(2.0f);
+        g.setFont(Typography::chicanoFont(17.0f));
+
+        // Drop shadow (offset down-right, soft dark).
+        g.setColour(juce::Colour(0xCC000000));
+        g.drawText(byline, blz.translated(1.0f, 1.5f), juce::Justification::centredTop);
+
+        // Chrome-gold gradient body.
+        juce::ColourGradient chrome(juce::Colour(0xFFFFF3C4), blz.getX(), blz.getY(),
+                                    juce::Colour(0xFF9A6B1E), blz.getX(), blz.getBottom(), false);
+        chrome.addColour(0.5, juce::Colour(0xFFE8B84B)); // bright gold midband
+        g.setGradientFill(chrome);
+        g.drawText(byline, blz, juce::Justification::centredTop);
+    }
 
     // (Transport buttons are real interactive components in the editor.)
 
