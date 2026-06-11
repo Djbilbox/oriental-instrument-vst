@@ -15,12 +15,17 @@ private:
     FXChain& fxChain;
     juce::AudioProcessorValueTreeState& apvts;
 
-    struct FXSlot : public juce::Component
+    struct FXSlot : public juce::Component,
+                    private juce::Timer
     {
         FXSlot(const juce::String& name, const juce::String& paramOnId,
                const juce::String& paramAmtId, juce::AudioProcessorValueTreeState& apvts);
+        ~FXSlot() override;
         void paint(juce::Graphics& g) override;
+        void resized() override;
         void mouseDown(const juce::MouseEvent&) override;
+        void timerCallback() override; // refresh % when preset/host changes it
+        void nudge(float deltaPercent);
 
         juce::String fxName;
         juce::String onParamId;
@@ -29,6 +34,9 @@ private:
 
         std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> buttonAttach;
         juce::ToggleButton toggleBtn;
+        juce::TextButton minusBtn { "-" };
+        juce::TextButton plusBtn  { "+" };
+        float lastShownAmt = -1.0f;
     };
 
     juce::OwnedArray<FXSlot> slots;

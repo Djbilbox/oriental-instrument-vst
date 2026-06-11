@@ -6,14 +6,23 @@ PresetManager::PresetManager()
     loadFactoryPresets();
 }
 
-// Helper : retourne l'ADSR du profil d'instrument pour initialiser les presets
-static void applyInstrumentADSR(PresetData& p)
+// Derive a DISTINCT ADSR per preset from its own macro personality, anchored on
+// the instrument's base envelope. Previously every preset of an instrument got
+// the identical profile ADSR → all 10 sounded the same. Now glide lengthens the
+// attack (legato vs pluck), space stretches the release (long reverb tails),
+// depth feeds sustain (richer = fuller body), filter shapes the decay.
+static void deriveADSR(PresetData& p)
 {
-    const auto& profile = InstrumentProfiles::getProfile(p.instrument);
-    p.attack  = profile.attack;
-    p.decay   = profile.decay;
-    p.sustain = profile.sustain;
-    p.release = profile.release;
+    const auto& prof = InstrumentProfiles::getProfile(p.instrument);
+    const float g  = p.glide  / 100.0f;
+    const float sp = p.space  / 100.0f;
+    const float fl = p.filter / 100.0f;
+    const float de = p.depth  / 100.0f;
+
+    p.attack  = juce::jlimit(0.001f, 2.5f, prof.attack  * (0.45f + g  * 2.2f));
+    p.decay   = juce::jlimit(0.01f,  3.0f, prof.decay   * (0.65f + (1.0f - fl) * 0.9f));
+    p.sustain = juce::jlimit(0.0f,   1.0f, prof.sustain * (0.55f + de * 0.7f));
+    p.release = juce::jlimit(0.01f,  4.0f, prof.release * (0.55f + sp * 1.7f));
 }
 
 void PresetManager::loadFactoryPresets()
@@ -45,7 +54,7 @@ void PresetManager::loadFactoryPresets()
         p.reverbOn     = revOn;  p.echoOn   = echoOn; p.chorusOn = choOn;
         p.distortOn    = distOn; p.compressorOn = compOn; p.phaserOn = phasOn;
         p.reverbAmount = revAmt; p.echoAmount = echoAmt; p.chorusAmount = choAmt;
-        applyInstrumentADSR(p);
+        deriveADSR(p);
         factoryPresets.push_back(p);
     };
 
