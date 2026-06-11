@@ -250,6 +250,7 @@ void OrientalInstrumentProcessor::prepareToPlay(double sampleRate, int samplesPe
 {
     synthesiser.prepare(sampleRate, samplesPerBlock);
     fxChain.prepare(sampleRate, samplesPerBlock);
+    masterLimiter.prepare(sampleRate, samplesPerBlock);
 }
 
 void OrientalInstrumentProcessor::releaseResources() {}
@@ -338,6 +339,9 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
     // Process FX chain
     fxChain.process(buffer);
+
+    // Master output protection — guarantees |out| <= ceiling on every sample
+    masterLimiter.process(buffer);
 }
 
 void OrientalInstrumentProcessor::setPitchBend(float normalizedValue)

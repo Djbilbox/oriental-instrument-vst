@@ -2,6 +2,7 @@
 #include <JuceHeader.h>
 #include "DSP/OrientalSynthesiser.h"
 #include "DSP/FXChain/FXChain.h"
+#include "DSP/MasterLimiter.h"
 #include "Data/PresetManager.h"
 #include "Utils/Constants.h"
 
@@ -56,6 +57,7 @@ public:
 private:
     OrientalSynthesiser synthesiser;
     FXChain fxChain;
+    MasterLimiter masterLimiter;   // final output protection (soft limiter + hard ceiling)
     PresetManager presetManager;
 
     juce::AudioProcessorValueTreeState apvts;
