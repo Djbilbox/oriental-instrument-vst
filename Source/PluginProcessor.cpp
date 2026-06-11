@@ -353,6 +353,21 @@ void OrientalInstrumentProcessor::setModWheel(float normalizedValue)
     synthesiser.setModWheel(normalizedValue);
 }
 
+void OrientalInstrumentProcessor::panicAllNotes()
+{
+    synthesiser.allNotesOff();
+}
+
+void OrientalInstrumentProcessor::setMonoMode(bool mono)
+{
+    synthesiser.setMonoMode(mono);
+}
+
+void OrientalInstrumentProcessor::setLegato(bool legato)
+{
+    synthesiser.setLegato(legato);
+}
+
 bool OrientalInstrumentProcessor::hasEditor() const { return true; }
 
 juce::AudioProcessorEditor* OrientalInstrumentProcessor::createEditor()

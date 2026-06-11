@@ -48,6 +48,11 @@ public:
     void setPitchBend(float normalizedValue);
     void setModWheel(float normalizedValue);
 
+    // Transport / voice-mode actions from the header buttons
+    void panicAllNotes();
+    void setMonoMode(bool mono);
+    void setLegato(bool legato);
+
 private:
     OrientalSynthesiser synthesiser;
     FXChain fxChain;

@@ -117,6 +117,24 @@ fallback gracieux vers la police système.
 
 ---
 
+### 3.6 Polices embarquées (BinaryData)
+Cinzel + Inter (statiques, OFL) dans `Resources/Fonts/`, compilées via
+`juce_add_binary_data(OrientalBinaryData …)`. `Typography.h` charge les typefaces
+depuis `BinaryData::CinzelBold_ttf` etc. (cache `static`), rendu identique sur
+toute machine. La cible est liée au plugin dans `target_link_libraries`.
+
+### 3.7 Header interactif
+- **Nom du preset courant** : `juce::Label` enfant de l'éditeur, rafraîchi par un
+  `Timer` (6 Hz) lisant `PresetManager::getCurrentPreset()` (nom · instrument · tonalité).
+- **Boutons transport** : vrais `TextButton`. **Fonctionnels** : POLY (poly/mono),
+  LEG (legato), PANIC (all-notes-off). **Cosmétiques** : MIDI / A·B / REC.
+
+### 3.8 Moteur monophonique / legato
+`OrientalSynthesiser` gagne un chemin mono (priorité dernière note) qui pilote
+directement la voix 0 (`renderMono`/`handleMonoMessage`), hors du `juce::Synthesiser`
+polyphonique. En legato, `OrientalVoice::changeNoteLegato()` retune sans relancer les
+enveloppes (vrai legato sans ré-attaque) ; le glide gère le portamento.
+
 ## 4. Fichiers touchés cette session
 **DSP** : `InstrumentProfiles.{h,cpp}`, `OrientalVoice.{h,cpp}`.
 **UI** : `BackgroundComponent.{h,cpp}`, `OrientalLookAndFeel.cpp`, `KnobComponent.cpp`,

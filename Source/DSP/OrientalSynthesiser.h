@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include <vector>
 #include "OrientalVoice.h"
 #include "ADSREnvelope.h"
 #include "MaqamTuning.h"
@@ -35,6 +36,10 @@ public:
     void setPitchWheel(int pitchWheelValue);
     void setModWheel(float normalizedValue);
 
+    // Voice mode
+    void setMonoMode(bool shouldBeMono);
+    void setLegato(bool shouldBeLegato);
+
     void noteOn(int channel, int midiNote, float velocity);
     void noteOff(int channel, int midiNote, float velocity);
     void allNotesOff();
@@ -49,6 +54,19 @@ private:
     float currentFilterQ = 1.0f;
 
     void updateVoices();
+
+    // ── Monophonic / legato mode ──
+    void renderMono(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi,
+                    int startSample, int numSamples);
+    void handleMonoMessage(const juce::MidiMessage& m);
+
+    bool monoMode = false;
+    bool legatoMode = false;
+    class OrientalVoice* monoVoice = nullptr;     // synth voice 0, driven directly in mono
+    juce::SynthesiserSound* soundPtr = nullptr;
+    struct HeldNote { int note; float vel; };
+    std::vector<HeldNote> monoStack;              // press order, last = priority
+    int monoPitchWheel = 8192;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OrientalSynthesiser)
 };

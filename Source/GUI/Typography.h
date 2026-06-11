@@ -1,30 +1,65 @@
 #pragma once
 #include <JuceHeader.h>
+#include "BinaryData.h"
 
-// Centralised typographic hierarchy. A single source of truth for every font
-// in the UI so weights/sizes stay consistent and "premium".
-//
-// NOTE on BinaryData: once the real .ttf files (Cinzel, Inter) are dropped into
-// Resources/Fonts and registered via juce_add_binary_data() in CMakeLists.txt,
-// swap the named-typeface lookups below for:
-//     juce::Typeface::createSystemTypefaceFor(BinaryData::Cinzel_ttf, BinaryData::Cinzel_ttfSize);
-// cached in a static. Until then we fall back to the system-resolved name, which
-// degrades gracefully to the default sans serif if the family is absent.
+// Centralised typographic hierarchy. Fonts are embedded via BinaryData
+// (Cinzel for display/titles, Inter for body/labels) so the look is identical
+// on every machine, regardless of installed system fonts.
 namespace Typography
 {
-    inline const juce::String& displayFamily() { static juce::String f = "Cinzel"; return f; } // titles
-    inline const juce::String& bodyFamily()    { static juce::String f = "Inter";  return f; } // labels/values
+    inline juce::Typeface::Ptr cinzelRegular()
+    {
+        static auto tf = juce::Typeface::createSystemTypefaceFor(
+            BinaryData::CinzelRegular_ttf, (size_t) BinaryData::CinzelRegular_ttfSize);
+        return tf;
+    }
+    inline juce::Typeface::Ptr cinzelBold()
+    {
+        static auto tf = juce::Typeface::createSystemTypefaceFor(
+            BinaryData::CinzelBold_ttf, (size_t) BinaryData::CinzelBold_ttfSize);
+        return tf;
+    }
+    inline juce::Typeface::Ptr interRegular()
+    {
+        static auto tf = juce::Typeface::createSystemTypefaceFor(
+            BinaryData::InterRegular_ttf, (size_t) BinaryData::InterRegular_ttfSize);
+        return tf;
+    }
+    inline juce::Typeface::Ptr interBold()
+    {
+        static auto tf = juce::Typeface::createSystemTypefaceFor(
+            BinaryData::InterBold_ttf, (size_t) BinaryData::InterBold_ttfSize);
+        return tf;
+    }
+
+    inline juce::Font display(float height, bool bold)
+    {
+        juce::Font f(bold ? cinzelBold() : cinzelRegular());
+        f.setHeight(height);
+        return f;
+    }
+    inline juce::Font body(float height, bool bold)
+    {
+        juce::Font f(bold ? interBold() : interRegular());
+        f.setHeight(height);
+        return f;
+    }
+
+    // Legacy family names kept for any remaining call sites.
+    inline const juce::String& displayFamily() { static juce::String f = "Cinzel"; return f; }
+    inline const juce::String& bodyFamily()    { static juce::String f = "Inter";  return f; }
 
     // ── Hierarchy ──
-    inline juce::Font title()       { return juce::Font(displayFamily(), 22.0f, juce::Font::bold); }
-    inline juce::Font subtitle()    { return juce::Font(displayFamily(),  9.0f, juce::Font::bold); }
-    inline juce::Font sectionLabel(){ return juce::Font(bodyFamily(),     9.0f, juce::Font::bold); }
-    inline juce::Font knobLabel()   { return juce::Font(bodyFamily(),    10.0f, juce::Font::bold); }
-    inline juce::Font value()       { return juce::Font(bodyFamily(),    12.0f, juce::Font::plain); }
-    inline juce::Font tab()         { return juce::Font(displayFamily(),  9.0f, juce::Font::bold); }
+    inline juce::Font title()        { return display(22.0f, true); }
+    inline juce::Font headerTitle()  { return display(15.0f, true); }
+    inline juce::Font subtitle()     { return display( 9.0f, true); }
+    inline juce::Font sectionLabel() { return body(    9.0f, true); }
+    inline juce::Font knobLabel()    { return body(   10.0f, true); }
+    inline juce::Font value()        { return body(   12.0f, false); }
+    inline juce::Font tab()          { return display( 9.0f, true); }
 
-    // Uppercase + tracked spacing helper for labels (JUCE has no letter-spacing,
-    // so we inject thin spaces between glyphs for the "tracked caps" look).
+    // Uppercase + tracked spacing helper (JUCE has no letter-spacing, so we
+    // inject thin spaces between glyphs for the "tracked caps" look).
     inline juce::String tracked(const juce::String& text)
     {
         juce::String out;

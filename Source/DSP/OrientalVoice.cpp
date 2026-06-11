@@ -352,3 +352,11 @@ void OrientalVoice::setADSRParameters(const ADSREnvelope::Parameters& params)
     presetADSR = params;
     hasPresetADSR = true;
 }
+
+void OrientalVoice::changeNoteLegato(int midiNoteNumber)
+{
+    // Slur to the new pitch without restarting the envelopes (true legato).
+    targetFrequency = maqamTuning.getFrequencyForNote(midiNoteNumber);
+    if (glideRate <= 0.0f)
+        currentFrequency = targetFrequency; // no portamento → jump cleanly
+}

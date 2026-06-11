@@ -156,53 +156,28 @@ void BackgroundComponent::drawChrome(juce::Graphics& g)
                                                           cx + i * 8.0f, cy - 9.0f));
         }
         g.setColour(juce::Colour(Colors::GOLD));
-        g.setFont(juce::Font(Typography::displayFamily(), 11.0f, juce::Font::bold));
+        g.setFont(Typography::display(11.0f, true));
         g.drawText("DJBILBOX", juce::Rectangle<float>(12.0f, cy - 2.0f, 150.0f, 14.0f),
                    juce::Justification::centredLeft);
         g.setColour(juce::Colour(Colors::GOLD_DIM));
-        g.setFont(juce::Font(Typography::bodyFamily(), 7.5f, juce::Font::plain));
+        g.setFont(Typography::body(7.5f, false));
         g.drawText(Typography::tracked("Maqam Engine Pro"),
                    juce::Rectangle<float>(12.0f, cy + 9.0f, 200.0f, 10.0f), juce::Justification::centredLeft);
     }
 
-    // ── Title (center) + by-line ──
+    // ── Title (center) + by-line — centred in the open middle area so it clears
+    //    the logo (left) and the preset label + transport buttons (right) ──
+    auto titleZone = header.withTrimmedLeft(170.0f).withTrimmedRight(270.0f);
     g.setColour(juce::Colour(Colors::GOLD_LIGHT));
-    g.setFont(juce::Font(Typography::displayFamily(), 15.0f, juce::Font::bold));
+    g.setFont(Typography::headerTitle());
     g.drawText("ORIENTAL INSTRUMENT \xE2\x80\x94 MAQAM EDITION",
-               header.withTrimmedTop(6.0f), juce::Justification::centredTop);
+               titleZone.withTrimmedTop(6.0f), juce::Justification::centredTop);
     g.setColour(juce::Colour(Colors::GOLD_DIM));
-    g.setFont(juce::Font(Typography::bodyFamily(), 8.0f, juce::Font::plain));
+    g.setFont(Typography::body(8.0f, false));
     g.drawText(Typography::tracked("by DJBILBOX BEATS"),
-               header.withTrimmedTop(28.0f).withTrimmedBottom(4.0f), juce::Justification::centredTop);
+               titleZone.withTrimmedTop(28.0f).withTrimmedBottom(4.0f), juce::Justification::centredTop);
 
-    // ── Transport chips (right) ──
-    {
-        struct Btn { const char* t; juce::Colour col; bool on; };
-        Btn btns[] = {
-            { "MIDI",  juce::Colour(Colors::GOLD_DIM), false },
-            { "POLY",  juce::Colour(Colors::GOLD),     true  },
-            { "LEG",   juce::Colour(Colors::GOLD_DIM), false },
-            { "A/B",   juce::Colour(Colors::GOLD_DIM), false },
-            { "REC",   juce::Colour(Colors::RED),      true  },
-            { "PANIC", juce::Colour(0xFFFF6644),       false },
-        };
-        float ch = 17.0f, gap = 4.0f, rx = header.getRight() - 10.0f, cy = header.getCentreY() - ch * 0.5f;
-        for (int i = (int)(sizeof(btns) / sizeof(btns[0])) - 1; i >= 0; --i)
-        {
-            const auto& bn = btns[i];
-            float cw = (juce::String(bn.t).length() >= 4) ? 36.0f : 30.0f;
-            rx -= cw;
-            juce::Rectangle<float> r(rx, cy, cw, ch);
-            g.setColour(bn.on ? bn.col.withAlpha(0.12f) : rgbA(0xFFFFFF, 0.04f));
-            g.fillRoundedRectangle(r, 3.0f);
-            g.setColour(bn.on ? bn.col : rgbA(0x333333, 1.0f));
-            g.drawRoundedRectangle(r, 3.0f, 1.0f);
-            g.setColour(bn.on ? bn.col : rgbA(0x888888, 1.0f));
-            g.setFont(juce::Font(Typography::bodyFamily(), 8.5f, juce::Font::bold));
-            g.drawFittedText(bn.t, r.toNearestInt(), juce::Justification::centred, 1);
-            rx -= gap;
-        }
-    }
+    // (Transport buttons are real interactive components in the editor.)
 
     // ── Section label (left "MACRO"; the right column's FX title is drawn by FXPanel) ──
     auto main = bounds;

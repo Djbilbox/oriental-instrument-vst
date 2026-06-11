@@ -29,6 +29,9 @@ public:
     void setDepth(float depth);
     void setADSRParameters(const ADSREnvelope::Parameters& params);
 
+    // Legato pitch change: retunes without re-triggering the envelopes.
+    void changeNoteLegato(int midiNoteNumber);
+
     void prepareToPlay(double sampleRate, int samplesPerBlock);
 
 private:

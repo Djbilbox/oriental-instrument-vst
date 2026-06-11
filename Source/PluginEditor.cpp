@@ -1,4 +1,5 @@
 #include "PluginEditor.h"
+#include "GUI/Typography.h"
 
 using namespace OrientalConstants;
 
@@ -51,10 +52,57 @@ OrientalInstrumentEditor::OrientalInstrumentEditor(OrientalInstrumentProcessor& 
     resoAttach   = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "reso", knobReso.getSlider());
     depthAttach  = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "depth", knobDepth.getSlider());
     fxMixAttach  = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "fxmix", knobFxMix.getSlider());
+
+    // ── Header: live preset name ──
+    presetNameLabel.setJustificationType(juce::Justification::centredRight);
+    presetNameLabel.setColour(juce::Label::textColourId, juce::Colour(Colors::GOLD_LIGHT));
+    presetNameLabel.setFont(Typography::display(11.0f, true));
+    addAndMakeVisible(presetNameLabel);
+
+    // ── Header: transport buttons ──
+    auto setupBtn = [this](juce::TextButton& b, const juce::String& text, bool toggle)
+    {
+        b.setButtonText(text);
+        b.setName(text);                 // LookAndFeel colour-codes REC/PANIC by name
+        b.setClickingTogglesState(toggle);
+        addAndMakeVisible(b);
+    };
+    setupBtn(btnMidi,  "MIDI",  true);
+    setupBtn(btnPoly,  "POLY",  true);
+    setupBtn(btnLeg,   "LEG",   true);
+    setupBtn(btnAB,    "A/B",   true);
+    setupBtn(btnRec,   "REC",   true);
+    setupBtn(btnPanic, "PANIC", false);
+
+    btnPoly.setToggleState(true, juce::dontSendNotification); // polyphonic by default
+
+    // Functional wiring (MIDI / A-B / REC are cosmetic toggles for now)
+    btnPoly.onClick  = [this] { processorRef.setMonoMode(! btnPoly.getToggleState()); };
+    btnLeg.onClick   = [this] { processorRef.setLegato(btnLeg.getToggleState()); };
+    btnPanic.onClick = [this] { processorRef.panicAllNotes(); };
+
+    updatePresetLabel();
+    startTimerHz(6);
+}
+
+void OrientalInstrumentEditor::timerCallback()
+{
+    updatePresetLabel();
+}
+
+void OrientalInstrumentEditor::updatePresetLabel()
+{
+    const auto& p = processorRef.getPresetManager().getCurrentPreset();
+    juce::String txt = p.name + "  \xC2\xB7  " + juce::String(instrumentName(p.instrument));
+    if (p.key.isNotEmpty())
+        txt += " \xC2\xB7 " + p.key;
+    if (presetNameLabel.getText() != txt)
+        presetNameLabel.setText(txt, juce::dontSendNotification);
 }
 
 OrientalInstrumentEditor::~OrientalInstrumentEditor()
 {
+    stopTimer();
     setLookAndFeel(nullptr);
 }
 
@@ -71,8 +119,21 @@ void OrientalInstrumentEditor::resized()
 
     background.setBounds(bounds);
 
-    // Header area (top 50px) — painted in paint(), no child component
-    bounds.removeFromTop(HEADER_HEIGHT);
+    // Header area (top 50px) — chrome painted by BackgroundComponent; lay out
+    // the interactive children (preset name + transport buttons) on top.
+    auto headerArea = bounds.removeFromTop(HEADER_HEIGHT);
+    {
+        const int h = 18, y = headerArea.getCentreY() - h / 2, gap = 4;
+        const int totalBtnW = 34 + 34 + 28 + 30 + 30 + 42 + 5 * gap;
+        int x = headerArea.getRight() - 10 - totalBtnW;
+        auto place = [&](juce::TextButton& b, int w) { b.setBounds(x, y, w, h); x += w + gap; };
+        place(btnMidi, 34); place(btnPoly, 34); place(btnLeg, 28);
+        place(btnAB, 30);   place(btnRec, 30);  place(btnPanic, 42);
+
+        const int labelW = 150;
+        presetNameLabel.setBounds(headerArea.getRight() - 10 - totalBtnW - 10 - labelW,
+                                  y - 2, labelW, h + 4);
+    }
 
     // Piano area (bottom 148px) with wheels on left/right
     auto pianoArea = bounds.removeFromBottom(PIANO_HEIGHT);

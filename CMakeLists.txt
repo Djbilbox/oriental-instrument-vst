@@ -58,6 +58,15 @@ target_sources(OrientalInstrument
 # Required with the CMake API — the Projucer-style JuceLibraryCode/ is not wired in.
 juce_generate_juce_header(OrientalInstrument)
 
+# Embed the UI fonts (Cinzel / Inter, OFL) → BinaryData::CinzelBold_ttf, etc.
+juce_add_binary_data(OrientalBinaryData
+    SOURCES
+        Resources/Fonts/CinzelBold.ttf
+        Resources/Fonts/CinzelRegular.ttf
+        Resources/Fonts/InterBold.ttf
+        Resources/Fonts/InterRegular.ttf
+)
+
 target_include_directories(OrientalInstrument
     PRIVATE
         Source
@@ -87,6 +96,7 @@ target_link_libraries(OrientalInstrument
         juce::juce_graphics
         juce::juce_gui_basics
         juce::juce_gui_extra
+        OrientalBinaryData
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags

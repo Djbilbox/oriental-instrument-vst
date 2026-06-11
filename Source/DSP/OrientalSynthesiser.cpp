@@ -1,12 +1,15 @@
 #include "OrientalSynthesiser.h"
 #include "OrientalSound.h"
+#include <algorithm>
 
 OrientalSynthesiser::OrientalSynthesiser()
 {
     for (int i = 0; i < OrientalConstants::MAX_VOICES; ++i)
         synth.addVoice(new OrientalVoice());
 
-    synth.addSound(new OrientalSound());
+    auto* s = new OrientalSound();
+    soundPtr = s;
+    synth.addSound(s);
 }
 
 void OrientalSynthesiser::prepare(double sampleRate, int samplesPerBlock)
@@ -20,6 +23,9 @@ void OrientalSynthesiser::prepare(double sampleRate, int samplesPerBlock)
             voice->prepareToPlay(sampleRate, samplesPerBlock);
     }
 
+    monoVoice = dynamic_cast<OrientalVoice*>(synth.getVoice(0));
+    monoStack.clear();
+
     updateVoices();
 }
 
@@ -27,7 +33,107 @@ void OrientalSynthesiser::renderNextBlock(juce::AudioBuffer<float>& buffer,
                                            juce::MidiBuffer& midiMessages,
                                            int startSample, int numSamples)
 {
-    synth.renderNextBlock(buffer, midiMessages, startSample, numSamples);
+    if (monoMode && monoVoice != nullptr)
+        renderMono(buffer, midiMessages, startSample, numSamples);
+    else
+        synth.renderNextBlock(buffer, midiMessages, startSample, numSamples);
+}
+
+void OrientalSynthesiser::setMonoMode(bool shouldBeMono)
+{
+    if (monoMode == shouldBeMono)
+        return;
+    monoMode = shouldBeMono;
+    // Clear any sounding notes when switching engines to avoid stuck voices.
+    monoStack.clear();
+    synth.allNotesOff(0, false);
+    if (monoVoice != nullptr)
+        monoVoice->stopNote(0.0f, false);
+}
+
+void OrientalSynthesiser::setLegato(bool shouldBeLegato)
+{
+    legatoMode = shouldBeLegato;
+}
+
+void OrientalSynthesiser::handleMonoMessage(const juce::MidiMessage& m)
+{
+    auto removeNote = [this](int n)
+    {
+        monoStack.erase(std::remove_if(monoStack.begin(), monoStack.end(),
+                                       [n](const HeldNote& h) { return h.note == n; }),
+                        monoStack.end());
+    };
+
+    if (m.isNoteOn())
+    {
+        const int note = m.getNoteNumber();
+        const float vel = m.getFloatVelocity();
+        const bool wasPlaying = ! monoStack.empty();
+        removeNote(note);
+        monoStack.push_back({ note, vel });
+
+        if (wasPlaying && legatoMode)
+            monoVoice->changeNoteLegato(note);
+        else
+            monoVoice->startNote(note, vel, soundPtr, monoPitchWheel);
+    }
+    else if (m.isNoteOff())
+    {
+        const int note = m.getNoteNumber();
+        const bool wasTop = (! monoStack.empty() && monoStack.back().note == note);
+        removeNote(note);
+
+        if (monoStack.empty())
+        {
+            monoVoice->stopNote(0.0f, true);
+        }
+        else if (wasTop)
+        {
+            const auto top = monoStack.back();
+            if (legatoMode)
+                monoVoice->changeNoteLegato(top.note);
+            else
+                monoVoice->startNote(top.note, top.vel, soundPtr, monoPitchWheel);
+        }
+    }
+    else if (m.isPitchWheel())
+    {
+        monoPitchWheel = m.getPitchWheelValue();
+        monoVoice->pitchWheelMoved(monoPitchWheel);
+    }
+    else if (m.isController() && m.getControllerNumber() == 1)
+    {
+        monoVoice->controllerMoved(1, m.getControllerValue());
+    }
+    else if (m.isAllNotesOff() || m.isAllSoundOff())
+    {
+        monoStack.clear();
+        monoVoice->stopNote(0.0f, true);
+    }
+}
+
+void OrientalSynthesiser::renderMono(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi,
+                                      int startSample, int numSamples)
+{
+    int pos = startSample;
+    const int end = startSample + numSamples;
+
+    for (const auto metadata : midi)
+    {
+        const int t = juce::jlimit(startSample, end, metadata.samplePosition);
+        const int gap = t - pos;
+        if (gap > 0)
+        {
+            monoVoice->renderNextBlock(buffer, pos, gap);
+            pos = t;
+        }
+        handleMonoMessage(metadata.getMessage());
+    }
+
+    const int remaining = end - pos;
+    if (remaining > 0)
+        monoVoice->renderNextBlock(buffer, pos, remaining);
 }
 
 void OrientalSynthesiser::setInstrument(OrientalConstants::Instrument instrument)

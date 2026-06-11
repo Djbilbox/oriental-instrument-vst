@@ -10,7 +10,8 @@
 #include "GUI/WheelComponent.h"
 #include "GUI/BackgroundComponent.h"
 
-class OrientalInstrumentEditor : public juce::AudioProcessorEditor
+class OrientalInstrumentEditor : public juce::AudioProcessorEditor,
+                                 private juce::Timer
 {
 public:
     explicit OrientalInstrumentEditor(OrientalInstrumentProcessor&);
@@ -20,8 +21,15 @@ public:
     void resized() override;
 
 private:
+    void timerCallback() override;
+    void updatePresetLabel();
+
     OrientalInstrumentProcessor& processorRef;
     OrientalLookAndFeel orientalLnf;
+
+    // Header: live preset name + transport buttons
+    juce::Label presetNameLabel;
+    juce::TextButton btnMidi, btnPoly, btnLeg, btnAB, btnRec, btnPanic;
 
     BackgroundComponent background;
     PresetBrowser presetBrowser;

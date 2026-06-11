@@ -150,19 +150,25 @@ void OrientalLookAndFeel::drawButtonBackground(juce::Graphics& g, juce::Button& 
     auto bounds = button.getLocalBounds().toFloat().reduced(0.5f);
     bool isOn = button.getToggleState();
 
-    // Tab style: glassmorphism with gold border when active
+    // Per-button accent (header transport chips colour-code by name)
+    auto name = button.getName();
+    juce::Colour accent = juce::Colour(Colors::TAB_ON_BORDER); // gold default
+    if (name == "REC")        accent = juce::Colour(Colors::RED);
+    else if (name == "PANIC") accent = juce::Colour(0xFFFF6644);
+
+    // Tab style: glassmorphism with accent border when active/pressed
     if (isOn || shouldDrawButtonAsDown)
     {
-        g.setColour(juce::Colour(Colors::TAB_ON_BG));
+        g.setColour(accent.withAlpha(0.15f));
         g.fillRoundedRectangle(bounds, Design::BORDER_RADIUS_LG);
-        g.setColour(juce::Colour(Colors::TAB_ON_BORDER));
+        g.setColour(accent);
         g.drawRoundedRectangle(bounds, Design::BORDER_RADIUS_LG, 1.0f);
     }
     else
     {
         g.setColour(juce::Colour(Colors::TAB_BG));
         g.fillRoundedRectangle(bounds, Design::BORDER_RADIUS_LG);
-        g.setColour(shouldDrawButtonAsHighlighted ? juce::Colour(Colors::GOLD_DIM) : juce::Colour(Colors::TAB_BORDER));
+        g.setColour(shouldDrawButtonAsHighlighted ? accent.withAlpha(0.6f) : juce::Colour(Colors::TAB_BORDER));
         g.drawRoundedRectangle(bounds, Design::BORDER_RADIUS_LG, 1.0f);
     }
 }
@@ -171,7 +177,12 @@ void OrientalLookAndFeel::drawButtonText(juce::Graphics& g, juce::TextButton& bu
                                           bool, bool)
 {
     bool isOn = button.getToggleState();
-    g.setColour(isOn ? juce::Colour(Colors::TAB_NAME_ON) : juce::Colour(Colors::TAB_NAME_OFF));
+    auto name = button.getName();
+    juce::Colour onCol = juce::Colour(Colors::TAB_NAME_ON); // gold
+    if (name == "REC")        onCol = juce::Colour(Colors::RED);
+    else if (name == "PANIC") onCol = juce::Colour(0xFFFF6644);
+
+    g.setColour((isOn || name == "PANIC") ? onCol : juce::Colour(Colors::TAB_NAME_OFF));
     g.setFont(Typography::tab());
     g.drawFittedText(button.getButtonText(), button.getLocalBounds().reduced(2),
                      juce::Justification::centred, 1);
