@@ -243,8 +243,8 @@ void BackgroundComponent::drawMonument(juce::Graphics& g, float sx, float sy)
     const float baseY = 366.0f;  // foot on the horizon
     const float apexY = 226.0f;  // fronds meet here
 
-    const juce::Colour body(0xFF140A05);                       // dark backlit silhouette
-    const juce::Colour rim(juce::Colour(Colors::GOLD_LIGHT));  // sun rim-light
+    const juce::Colour body(0xFF140A05u);          // dark backlit silhouette
+    const juce::Colour rim(Colors::GOLD_LIGHT);    // sun rim-light
 
     // Base platform
     g.setColour(body);
