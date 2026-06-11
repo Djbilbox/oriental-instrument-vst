@@ -91,7 +91,7 @@ processor OrientalInstrument
 
     // ── Noise one-pole + xorshift RNG ──
     float noiseLP = 0.0f;
-    int64 rngState = 0x2545F4914F6CDD1D;
+    int64 rngState = 0x2545F4914F6CDD1Di64;
 
     // ── TPT SVF state ──
     float svfIc1 = 0.0f, svfIc2 = 0.0f;
