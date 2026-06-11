@@ -12,11 +12,12 @@
           -> 2 parallel formant bandpass (Oud body resonance)
           -> ADSR amp + final tanh
 
+    NOTE: Amorph wraps this code in its own `processor { ... }`. So this file
+    is the processor BODY only — no `processor {` wrapper, no outer braces.
+
     Press COMPILE in Amorph; report errors to iterate.
 */
 
-processor OrientalInstrument
-{
     input event std::midi::Message midiIn;
     output stream float out;
 
@@ -267,4 +268,3 @@ processor OrientalInstrument
             advance();
         }
     }
-}
