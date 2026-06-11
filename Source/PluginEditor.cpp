@@ -93,9 +93,11 @@ void OrientalInstrumentEditor::timerCallback()
 void OrientalInstrumentEditor::updatePresetLabel()
 {
     const auto& p = processorRef.getPresetManager().getCurrentPreset();
-    juce::String txt = p.name + "  \xC2\xB7  " + juce::String(instrumentName(p.instrument));
+    // CharPointer_UTF8: plain juce::String(const char*) decodes · (U+00B7) as Latin-1 → "Â·".
+    const juce::String dot (juce::CharPointer_UTF8("  \xC2\xB7  "));
+    juce::String txt = p.name + dot + juce::String(instrumentName(p.instrument));
     if (p.key.isNotEmpty())
-        txt += " \xC2\xB7 " + p.key;
+        txt += dot + p.key;
     if (presetNameLabel.getText() != txt)
         presetNameLabel.setText(txt, juce::dontSendNotification);
 }

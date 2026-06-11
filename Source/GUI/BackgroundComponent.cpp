@@ -170,7 +170,7 @@ void BackgroundComponent::drawChrome(juce::Graphics& g)
     auto titleZone = header.withTrimmedLeft(170.0f).withTrimmedRight(270.0f);
     g.setColour(juce::Colour(Colors::GOLD_LIGHT));
     g.setFont(Typography::headerTitle());
-    g.drawText("ORIENTAL INSTRUMENT \xE2\x80\x94 MAQAM EDITION",
+    g.drawText(juce::String(juce::CharPointer_UTF8("ORIENTAL INSTRUMENT \xE2\x80\x94 MAQAM EDITION")),
                titleZone.withTrimmedTop(6.0f), juce::Justification::centredTop);
     g.setColour(juce::Colour(Colors::GOLD_DIM));
     g.setFont(Typography::body(8.0f, false));

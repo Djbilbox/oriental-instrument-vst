@@ -16,7 +16,9 @@ PresetBrowser::PresetBrowser(PresetManager& pm, juce::AudioProcessorValueTreeSta
     searchBox.onTextChange = [this]() { searchFilter = searchBox.getText(); updateFilteredList(); };
     addAndMakeVisible(searchBox);
 
-    const char* tabNames[] = { "\xf0\x9f\x8e\xbb VLN", "\xf0\x9f\x8e\xb8 OUD", "\xf0\x9f\x8c\xac NEY", "\xf0\x9f\x8e\xb5 QAN", "\xf0\x9f\xa5\x81 DARB", "\xf0\x9f\xaa\x95 RAB", "\xf0\x9f\x8e\xba MIZ" };
+    // Plain-text labels: the embedded Cinzel/Inter fonts carry no emoji glyphs,
+    // so emoji rendered as tofu boxes. Letters only → renders everywhere.
+    const char* tabNames[] = { "VLN", "OUD", "NEY", "QAN", "DARB", "RAB", "MIZ" };
     for (int i = 0; i < 7; ++i)
     {
         instrumentTabs[static_cast<size_t>(i)].setButtonText(tabNames[i]);
@@ -103,11 +105,14 @@ void PresetBrowser::paintListBoxItem(int rowNumber, juce::Graphics& g, int width
                juce::Justification::bottomLeft);
 
     // ── Ligne 2 : City  •  Key  •  Maqam (petit, discret) ─────────────────
+    // CharPointer_UTF8: juce::String(const char*) decodes as Latin-1, which
+    // turned the • (U+2022) UTF-8 bytes into mojibake. UTF-8 decode → real bullet.
+    const juce::String bullet (juce::CharPointer_UTF8 ("  \xe2\x80\xa2  "));
     juce::String subLine = preset.city;
     if (preset.key.isNotEmpty() && preset.key != "-")
-        subLine += "  \xe2\x80\xa2  " + preset.key;
+        subLine += bullet + preset.key;
     if (preset.maqam.isNotEmpty() && preset.maqam != "-")
-        subLine += "  \xe2\x80\xa2  " + preset.maqam;
+        subLine += bullet + preset.maqam;
 
     g.setColour(juce::Colour(rowIsSelected ? OrientalConstants::Colors::GOLD_DIM
                                            : 0xFF888888u));
