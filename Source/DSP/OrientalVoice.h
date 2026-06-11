@@ -83,9 +83,17 @@ private:
     float noteDrive = 1.0f;
     float noteAsym = 0.12f;
 
+    // Antiderivative-antialiasing (ADAA) state for the waveshaper — one previous
+    // input + previous antiderivative per channel. Kills harmonic foldback from
+    // the drive stage without oversampling. Reset on each note-on.
+    float adaaX1L = 0.0f, adaaX1R = 0.0f;
+    float adaaF1L = 0.0f, adaaF1R = 0.0f;
+
     double sampleRate = 44100.0;
 
-    float shape(float x) const;    // asymmetric waveshaper (the "grain")
+    float shape(float x) const;       // asymmetric waveshaper (the "grain")
+    float shapeAntideriv(float x) const; // F(x) = integral of shape, for ADAA
+    float adaaShape(float x, float& x1, float& f1) const; // antialiased shape
     void updateFilterCoefficients(float cutoffHz);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OrientalVoice)

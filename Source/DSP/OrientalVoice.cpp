@@ -50,6 +50,8 @@ void OrientalVoice::startNote(int midiNoteNumber, float vel,
         osc.reset();
     subOsc.reset();
     noiseLP = 0.0f;
+    adaaX1L = adaaX1R = 0.0f;
+    adaaF1L = adaaF1R = 0.0f;
     svfL.reset(); svfR.reset();
     formant1L.reset(); formant1R.reset();
     formant2L.reset(); formant2R.reset();
@@ -158,6 +160,31 @@ float OrientalVoice::shape(float x) const
     return std::tanh(x + noteAsym) - std::tanh(noteAsym);
 }
 
+float OrientalVoice::shapeAntideriv(float x) const
+{
+    // Antiderivative of shape(): ∫ tanh(x+a) dx = ln(cosh(x+a)).
+    // The −tanh(a)·x term carries the DC-removal offset through the integral.
+    return std::log(std::cosh(x + noteAsym)) - std::tanh(noteAsym) * x;
+}
+
+float OrientalVoice::adaaShape(float x, float& x1, float& f1) const
+{
+    // First-order antiderivative anti-aliasing (Parker/Esqueda/Bilbao 2016).
+    // y = (F(x) − F(x₋₁)) / (x − x₋₁) suppresses the foldback the raw waveshaper
+    // would generate. Falls back to the direct shape at the midpoint when the
+    // input barely moves (avoids 0/0).
+    const float f = shapeAntideriv(x);
+    const float dx = x - x1;
+    float y;
+    if (std::abs(dx) > 1.0e-4f)
+        y = (f - f1) / dx;
+    else
+        y = shape(0.5f * (x + x1));
+    x1 = x;
+    f1 = f;
+    return y;
+}
+
 void OrientalVoice::updateFilterCoefficients(float cutoffHz)
 {
     float safe = juce::jlimit(20.0f, static_cast<float>(sampleRate * 0.45), cutoffHz);
@@ -249,9 +276,9 @@ void OrientalVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer,
         float left  = center + sideL;
         float right = center + sideR;
 
-        // ── Drive / waveshaper (the grain) ──
-        left  = shape(left  * driveAmt);
-        right = shape(right * driveAmt);
+        // ── Drive / waveshaper (the grain), antialiased via ADAA ──
+        left  = adaaShape(left  * driveAmt, adaaX1L, adaaF1L);
+        right = adaaShape(right * driveAmt, adaaX1R, adaaF1R);
 
         // ── Resonant filter with envelope + key-track + velocity ──
         float fenv = filterEnv.getNextSample();
@@ -260,16 +287,19 @@ void OrientalVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer,
         left  = svfL.processSample(0, left);
         right = svfR.processSample(0, right);
 
-        // ── Body resonance (parallel formants) ──
+        // ── Body resonance (truly parallel formants) ──
+        // Both formants read the same dry post-filter signal, then sum back in.
+        // (Previously formant2 fed on the signal already coloured by formant1.)
+        const float dryL = left, dryR = right;
         if (hasFormant1)
         {
-            left  += formant1L.processSample(left)  * prof.formant1.gain;
-            right += formant1R.processSample(right) * prof.formant1.gain;
+            left  += formant1L.processSample(dryL) * prof.formant1.gain;
+            right += formant1R.processSample(dryR) * prof.formant1.gain;
         }
         if (hasFormant2)
         {
-            left  += formant2L.processSample(left)  * prof.formant2.gain;
-            right += formant2R.processSample(right) * prof.formant2.gain;
+            left  += formant2L.processSample(dryL) * prof.formant2.gain;
+            right += formant2R.processSample(dryR) * prof.formant2.gain;
         }
 
         // ── Amp + final cohesion clip ──
