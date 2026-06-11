@@ -331,6 +331,7 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     fxChain.getChorus()->setAmount(chorusAmtParam->load() / 100.0f);
     fxChain.getDistortion()->setAmount(distAmtParam->load() / 100.0f);
     fxChain.getCompressor()->setAmount(compAmtParam->load() / 100.0f);
+    fxChain.getEQ()->setAmount(eqAmtParam->load() / 100.0f);
     fxChain.getPhaser()->setAmount(phaserAmtParam->load() / 100.0f);
     fxChain.getBitcrusher()->setAmount(bitcrushAmtParam->load() / 100.0f);
 
