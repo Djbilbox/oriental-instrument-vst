@@ -139,6 +139,7 @@ void OrientalInstrumentProcessor::parameterChanged(const juce::String& parameter
         {
             lastInstrument = instIdx;
             synthesiser.setInstrument(static_cast<OrientalConstants::Instrument>(instIdx));
+            sampleEngine.setInstrument(static_cast<OrientalConstants::Instrument>(instIdx));
         }
     }
     else if (parameterID == "preset")
@@ -215,6 +216,7 @@ void OrientalInstrumentProcessor::applyPresetToParameters(const PresetData& pres
 
     // Switch instrument and maqam
     synthesiser.setInstrument(preset.instrument);
+    sampleEngine.setInstrument(preset.instrument);
     synthesiser.setMaqam(MaqamTuning::maqamFromString(preset.maqam));
 }
 
@@ -249,6 +251,9 @@ void OrientalInstrumentProcessor::changeProgramName(int, const juce::String&) {}
 void OrientalInstrumentProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     synthesiser.prepare(sampleRate, samplesPerBlock);
+    sampleEngine.prepare(sampleRate, samplesPerBlock);
+    sampleEngine.setInstrument(static_cast<OrientalConstants::Instrument>(
+        static_cast<int>(instrumentParam->load())));
     fxChain.prepare(sampleRate, samplesPerBlock);
     masterLimiter.prepare(sampleRate, samplesPerBlock);
 }
@@ -335,8 +340,12 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     fxChain.getPhaser()->setAmount(phaserAmtParam->load() / 100.0f);
     fxChain.getBitcrusher()->setAmount(bitcrushAmtParam->load() / 100.0f);
 
-    // Render synth into buffer
-    synthesiser.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    // Render the instrument: real multisamples when the user has dropped wavs in
+    // the instrument's Samples folder, otherwise the synthesis engine.
+    if (sampleEngine.hasSamples())
+        sampleEngine.render(buffer, midiMessages, 0, buffer.getNumSamples());
+    else
+        synthesiser.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 
     // Process FX chain
     fxChain.process(buffer);
@@ -361,6 +370,7 @@ void OrientalInstrumentProcessor::setModWheel(float normalizedValue)
 void OrientalInstrumentProcessor::panicAllNotes()
 {
     synthesiser.allNotesOff();
+    sampleEngine.allNotesOff();
 }
 
 void OrientalInstrumentProcessor::setMonoMode(bool mono)

@@ -30,6 +30,7 @@ target_sources(OrientalInstrument
         Source/PluginEditor.cpp
         Source/DSP/OrientalSynthesiser.cpp
         Source/DSP/OrientalVoice.cpp
+        Source/DSP/SampleEngine.cpp
         Source/DSP/WavetableOscillator.cpp
         Source/DSP/ADSREnvelope.cpp
         Source/DSP/MaqamTuning.cpp

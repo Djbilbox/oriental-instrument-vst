@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "DSP/OrientalSynthesiser.h"
+#include "DSP/SampleEngine.h"
 #include "DSP/FXChain/FXChain.h"
 #include "DSP/MasterLimiter.h"
 #include "Data/PresetManager.h"
@@ -56,6 +57,7 @@ public:
 
 private:
     OrientalSynthesiser synthesiser;
+    SampleEngine sampleEngine;     // disk multisample player (falls back to synth when empty)
     FXChain fxChain;
     MasterLimiter masterLimiter;   // final output protection (soft limiter + hard ceiling)
     PresetManager presetManager;
