@@ -318,8 +318,8 @@ void BackgroundComponent::drawMonument(juce::Graphics& g, float sx, float sy)
     const float baseY = 366.0f;  // foot on the horizon
     const float apexY = 226.0f;  // fronds meet here
 
-    const juce::Colour body(0xFF140A05u);          // dark backlit silhouette
-    const juce::Colour rim(Colors::GOLD_LIGHT);    // sun rim-light
+    const juce::Colour body(0xFF3A2820u);          // lighter silhouette for visibility
+    const juce::Colour rim(Colors::GOLD);          // brighter gold rim
 
     // Base platform
     g.setColour(body);
@@ -340,16 +340,19 @@ void BackgroundComponent::drawMonument(juce::Graphics& g, float sx, float sy)
 
         g.setColour(body);
         g.fillPath(fr);
-        g.setColour(rim.withAlpha(0.45f));
-        g.strokePath(fr, juce::PathStrokeType(1.2f));
+        g.setColour(rim.withAlpha(0.75f));
+        g.strokePath(fr, juce::PathStrokeType(1.5f));
     }
 
     // Eternal flame at the apex
     auto flame = P(cx, apexY - 6.0f);
-    juce::ColourGradient fg(rim.withAlpha(0.9f), flame.x, flame.y,
-                            rim.withAlpha(0.0f), flame.x, flame.y - 14.0f * sy, false);
+    juce::ColourGradient fg(rim.withAlpha(1.0f), flame.x, flame.y,
+                            rim.withAlpha(0.3f), flame.x, flame.y - 14.0f * sy, false);
     g.setGradientFill(fg);
-    g.fillEllipse(flame.x - 4.0f * sx, flame.y - 12.0f * sy, 8.0f * sx, 16.0f * sy);
+    g.fillEllipse(flame.x - 5.0f * sx, flame.y - 14.0f * sy, 10.0f * sx, 20.0f * sy);
+    // Glow around flame
+    g.setColour(rim.withAlpha(0.25f));
+    g.fillEllipse(flame.x - 8.0f * sx, flame.y - 18.0f * sy, 16.0f * sx, 26.0f * sy);
 }
 
 // ── Algerian flag on a pole, planted on the dune (green/white split, red
@@ -361,11 +364,11 @@ void BackgroundComponent::drawAlgerianFlag(juce::Graphics& g, float sx, float sy
     const float px = 656.0f;     // pole x
     const float topY = 300.0f;   // flag top
     const float baseY = 372.0f;  // pole foot on the dune
-    const float fw = 50.0f, fh = 32.0f;
+    const float fw = 65.0f, fh = 42.0f;
 
-    // Pole
-    g.setColour(juce::Colour(0xFF2A2018));
-    g.fillRect(P(px, topY - 6.0f).x, P(px, topY - 6.0f).y, 2.0f * sx, (baseY - topY + 6.0f) * sy);
+    // Pole (thicker for visibility)
+    g.setColour(juce::Colour(0xFF4A3A2A));
+    g.fillRect(P(px, topY - 6.0f).x, P(px, topY - 6.0f).y, 3.0f * sx, (baseY - topY + 6.0f) * sy);
 
     auto fl = juce::Rectangle<float>(P(px + 2.0f, topY).x, P(px + 2.0f, topY).y, fw * sx, fh * sy);
 
