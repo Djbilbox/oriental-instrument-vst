@@ -107,13 +107,13 @@ void FXPanel::FXSlot::paint(juce::Graphics& g)
 
     // FX name (bigger, readable)
     g.setColour(on ? juce::Colour(0xFFE8E8E8) : juce::Colour(0xFF999999));
-    g.setFont(juce::Font(22.0f, juce::Font::bold));
+    g.setFont(juce::Font(18.0f, juce::Font::bold));
     g.drawText(fxName, 22, 0, getWidth() - 96, getHeight() - 3, juce::Justification::centredLeft);
 
     // Amount value (between − and +)
     g.setColour(on ? juce::Colour(OrientalConstants::Colors::GOLD_LIGHT)
                    : juce::Colour(OrientalConstants::Colors::GOLD_DIM));
-    g.setFont(juce::Font(18.0f, juce::Font::bold));
+    g.setFont(juce::Font(14.0f, juce::Font::bold));
     g.drawText(juce::String(static_cast<int>(amt)) + "%",
                getWidth() - 22 - 34, 0, 34, getHeight() - 3, juce::Justification::centred);
 }
