@@ -37,7 +37,7 @@ void PianoComponent::paint(juce::Graphics& g)
     auto strip = getLocalBounds().removeFromTop(24);
     g.setColour(juce::Colour(OrientalConstants::Colors::GOLD_DIM));
     g.setFont(Typography::display(8.5f, true));
-    g.drawText(Typography::tracked(juce::String(juce::CharPointer_UTF8("D\xC3\xA9""dicace \xC3\xA0 Mourad Attalah"))),
+    g.drawText(Typography::tracked(juce::String(juce::CharPointer_UTF8("D\xC3\xA9""dicace \xC3\xA0 Mourad Attalah & Yamina Chikhr"))),
                strip, juce::Justification::centred);
 }
 
