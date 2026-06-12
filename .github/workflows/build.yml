@@ -146,3 +146,16 @@ jobs:
           path: ${{ steps.find_demo.outputs.demo_path }}
           if-no-files-found: error
           retention-days: 90
+
+      - name: Build styled DMG (full)
+        run: |
+          chmod +x packaging/build_dmg.sh
+          packaging/build_dmg.sh "${{ steps.find_vst3.outputs.vst3_path }}" "Oriental-Instrument-VST3-macOS.dmg"
+
+      - name: Upload DMG installer (macOS)
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrientalInstrument-Installer-DMG-macOS
+          path: Oriental-Instrument-VST3-macOS.dmg
+          if-no-files-found: error
+          retention-days: 90
