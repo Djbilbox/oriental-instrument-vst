@@ -37,26 +37,50 @@ jobs:
         # from VS2022 to VS2025). -A x64 stays valid for any VS generator.
         run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build VST3
+      - name: Build VST3 (full)
         run: cmake --build build --config Release --target OrientalInstrument_VST3
 
-      - name: Locate VST3 artifact
+      - name: Build VST3 (DEMO)
+        run: cmake --build build --config Release --target OrientalInstrumentDemo_VST3
+
+      - name: Locate full VST3 artifact
         id: find_vst3
         shell: bash
         run: |
-          VST3_PATH=$(find build -name "*.vst3" -type d | head -1)
+          VST3_PATH=$(find build -name "Oriental Instrument.vst3" -type d | head -1)
           if [ -z "$VST3_PATH" ]; then
-            echo "ERROR: No .vst3 bundle found!"
-            find build -type f -name "*.dll" -o -name "*.vst3"
+            echo "ERROR: No full .vst3 bundle found!"
+            find build -type d -name "*.vst3"
             exit 1
           fi
           echo "vst3_path=$VST3_PATH" >> $GITHUB_OUTPUT
-          echo "Found VST3 at: $VST3_PATH"
+          echo "Found full VST3 at: $VST3_PATH"
 
-      - name: Upload VST3 artifact
+      - name: Locate DEMO VST3 artifact
+        id: find_demo
+        shell: bash
+        run: |
+          DEMO_PATH=$(find build -name "Oriental Instrument DEMO.vst3" -type d | head -1)
+          if [ -z "$DEMO_PATH" ]; then
+            echo "ERROR: No DEMO .vst3 bundle found!"
+            find build -type d -name "*.vst3"
+            exit 1
+          fi
+          echo "demo_path=$DEMO_PATH" >> $GITHUB_OUTPUT
+          echo "Found DEMO VST3 at: $DEMO_PATH"
+
+      - name: Upload full VST3 artifact
         uses: actions/upload-artifact@v4
         with:
           name: OrientalInstrument-VST3-Win64
           path: ${{ steps.find_vst3.outputs.vst3_path }}
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload DEMO VST3 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrientalInstrument-DEMO-VST3-Win64
+          path: ${{ steps.find_demo.outputs.demo_path }}
           if-no-files-found: error
           retention-days: 90

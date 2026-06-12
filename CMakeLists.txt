@@ -6,60 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(JUCE)
 
-juce_add_plugin(OrientalInstrument
-    COMPANY_NAME "DJBILBOX BEATS"
-    PLUGIN_MANUFACTURER_CODE DJBX
-    PLUGIN_CODE OrIn
-    FORMATS VST3
-    PRODUCT_NAME "Oriental Instrument"
-    PLUGIN_NAME "Oriental Instrument"
-    PLUGIN_DESC "Oriental Virtual Instrument - Maqam Edition"
-    IS_SYNTH TRUE
-    NEEDS_MIDI_INPUT TRUE
-    NEEDS_MIDI_OUTPUT FALSE
-    IS_MIDI_EFFECT FALSE
-    EDITOR_WANTS_KEYBOARD_FOCUS TRUE
-    VST3_CATEGORIES Instrument Synth
-    BUNDLE_ID com.djbilbox.orientalinstrument
-    COPY_PLUGIN_AFTER_BUILD FALSE
-)
-
-target_sources(OrientalInstrument
-    PRIVATE
-        Source/PluginProcessor.cpp
-        Source/PluginEditor.cpp
-        Source/DSP/OrientalSynthesiser.cpp
-        Source/DSP/OrientalVoice.cpp
-        Source/DSP/SampleEngine.cpp
-        Source/DSP/WavetableOscillator.cpp
-        Source/DSP/ADSREnvelope.cpp
-        Source/DSP/MaqamTuning.cpp
-        Source/DSP/FXChain/FXChain.cpp
-        Source/DSP/FXChain/ReverbFX.cpp
-        Source/DSP/FXChain/DelayFX.cpp
-        Source/DSP/FXChain/ChorusFX.cpp
-        Source/DSP/FXChain/DistortionFX.cpp
-        Source/DSP/FXChain/CompressorFX.cpp
-        Source/DSP/FXChain/EQ3BandFX.cpp
-        Source/DSP/FXChain/PhaserFX.cpp
-        Source/DSP/FXChain/BitcrusherFX.cpp
-        Source/Data/InstrumentProfiles.cpp
-        Source/Data/PresetManager.cpp
-        Source/GUI/OrientalLookAndFeel.cpp
-        Source/GUI/KnobComponent.cpp
-        Source/GUI/PresetBrowser.cpp
-        Source/GUI/PianoComponent.cpp
-        Source/GUI/FXPanel.cpp
-        Source/GUI/WaveformDisplay.cpp
-        Source/GUI/WheelComponent.cpp
-        Source/GUI/BackgroundComponent.cpp
-)
-
-# Generate JuceHeader.h (every source uses #include <JuceHeader.h>).
-# Required with the CMake API — the Projucer-style JuceLibraryCode/ is not wired in.
-juce_generate_juce_header(OrientalInstrument)
-
-# Embed the UI fonts (Cinzel / Inter, OFL) → BinaryData::CinzelBold_ttf, etc.
+# Embed the UI fonts (Cinzel / Inter, OFL) + background photo → BinaryData::*.
+# Shared by both the full and DEMO plugin targets.
 juce_add_binary_data(OrientalBinaryData
     SOURCES
         Resources/Fonts/CinzelBold.ttf
@@ -70,38 +18,95 @@ juce_add_binary_data(OrientalBinaryData
         Resources/Images/bg_algerie.png
 )
 
-target_include_directories(OrientalInstrument
-    PRIVATE
-        Source
+set(ORIENTAL_SOURCES
+    Source/PluginProcessor.cpp
+    Source/PluginEditor.cpp
+    Source/DSP/OrientalSynthesiser.cpp
+    Source/DSP/OrientalVoice.cpp
+    Source/DSP/SampleEngine.cpp
+    Source/DSP/WavetableOscillator.cpp
+    Source/DSP/ADSREnvelope.cpp
+    Source/DSP/MaqamTuning.cpp
+    Source/DSP/FXChain/FXChain.cpp
+    Source/DSP/FXChain/ReverbFX.cpp
+    Source/DSP/FXChain/DelayFX.cpp
+    Source/DSP/FXChain/ChorusFX.cpp
+    Source/DSP/FXChain/DistortionFX.cpp
+    Source/DSP/FXChain/CompressorFX.cpp
+    Source/DSP/FXChain/EQ3BandFX.cpp
+    Source/DSP/FXChain/PhaserFX.cpp
+    Source/DSP/FXChain/BitcrusherFX.cpp
+    Source/Data/InstrumentProfiles.cpp
+    Source/Data/PresetManager.cpp
+    Source/GUI/OrientalLookAndFeel.cpp
+    Source/GUI/KnobComponent.cpp
+    Source/GUI/PresetBrowser.cpp
+    Source/GUI/PianoComponent.cpp
+    Source/GUI/FXPanel.cpp
+    Source/GUI/WaveformDisplay.cpp
+    Source/GUI/WheelComponent.cpp
+    Source/GUI/BackgroundComponent.cpp
 )
 
-target_compile_definitions(OrientalInstrument
-    PUBLIC
-        JUCE_VST3_CAN_REPLACE_VST2=0
-        JUCE_STRICT_REFCOUNTEDPOINTER=1
-        JUCE_WEB_BROWSER=0
-        JUCE_USE_CURL=0
-        JUCE_DISPLAY_SPLASH_SCREEN=0
-)
+# Build one plugin target (full or DEMO). DEMO defines ORIENTAL_DEMO=1 which
+# limits PresetManager to 5 presets per instrument.
+function(add_oriental_target tgt product code is_demo)
+    juce_add_plugin(${tgt}
+        COMPANY_NAME "DJBILBOX BEATS"
+        PLUGIN_MANUFACTURER_CODE DJBX
+        PLUGIN_CODE ${code}
+        FORMATS VST3
+        PRODUCT_NAME ${product}
+        PLUGIN_NAME ${product}
+        PLUGIN_DESC "Oriental Virtual Instrument - Maqam Edition"
+        IS_SYNTH TRUE
+        NEEDS_MIDI_INPUT TRUE
+        NEEDS_MIDI_OUTPUT FALSE
+        IS_MIDI_EFFECT FALSE
+        EDITOR_WANTS_KEYBOARD_FOCUS TRUE
+        VST3_CATEGORIES Instrument Synth
+        BUNDLE_ID com.djbilbox.${tgt}
+        COPY_PLUGIN_AFTER_BUILD FALSE
+    )
 
-target_link_libraries(OrientalInstrument
-    PRIVATE
-        juce::juce_audio_basics
-        juce::juce_audio_devices
-        juce::juce_audio_formats
-        juce::juce_audio_plugin_client
-        juce::juce_audio_processors
-        juce::juce_audio_utils
-        juce::juce_core
-        juce::juce_data_structures
-        juce::juce_dsp
-        juce::juce_events
-        juce::juce_graphics
-        juce::juce_gui_basics
-        juce::juce_gui_extra
-        OrientalBinaryData
-    PUBLIC
-        juce::juce_recommended_config_flags
-        juce::juce_recommended_lto_flags
-        juce::juce_recommended_warning_flags
-)
+    target_sources(${tgt} PRIVATE ${ORIENTAL_SOURCES})
+    juce_generate_juce_header(${tgt})
+    target_include_directories(${tgt} PRIVATE Source)
+
+    target_compile_definitions(${tgt}
+        PUBLIC
+            JUCE_VST3_CAN_REPLACE_VST2=0
+            JUCE_STRICT_REFCOUNTEDPOINTER=1
+            JUCE_WEB_BROWSER=0
+            JUCE_USE_CURL=0
+            JUCE_DISPLAY_SPLASH_SCREEN=0
+    )
+    if(is_demo)
+        target_compile_definitions(${tgt} PUBLIC ORIENTAL_DEMO=1)
+    endif()
+
+    target_link_libraries(${tgt}
+        PRIVATE
+            juce::juce_audio_basics
+            juce::juce_audio_devices
+            juce::juce_audio_formats
+            juce::juce_audio_plugin_client
+            juce::juce_audio_processors
+            juce::juce_audio_utils
+            juce::juce_core
+            juce::juce_data_structures
+            juce::juce_dsp
+            juce::juce_events
+            juce::juce_graphics
+            juce::juce_gui_basics
+            juce::juce_gui_extra
+            OrientalBinaryData
+        PUBLIC
+            juce::juce_recommended_config_flags
+            juce::juce_recommended_lto_flags
+            juce::juce_recommended_warning_flags
+    )
+endfunction()
+
+add_oriental_target(OrientalInstrument     "Oriental Instrument"      OrIn FALSE)
+add_oriental_target(OrientalInstrumentDemo "Oriental Instrument DEMO" OrDm TRUE)

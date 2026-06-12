@@ -6,6 +6,24 @@ PresetManager::PresetManager()
 {
     loadFactoryPresets();
     loadExtendedPresets();
+
+#ifdef ORIENTAL_DEMO
+    // DEMO build: keep only the first 5 presets of each instrument (lighter demo).
+    {
+        std::vector<PresetData> demo;
+        for (int inst = 0; inst < 7; ++inst)
+        {
+            int kept = 0;
+            for (const auto& p : factoryPresets)
+            {
+                if (static_cast<int>(p.instrument) != inst) continue;
+                if (kept++ >= 5) break;
+                demo.push_back(p);
+            }
+        }
+        factoryPresets.swap(demo);
+    }
+#endif
 }
 
 // Derive a DISTINCT ADSR per preset from its own macro personality, anchored on
