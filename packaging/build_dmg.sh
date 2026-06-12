@@ -64,7 +64,7 @@ EOF
 # Build compressed DMG directly (no Finder/osascript styling — unreliable on
 # headless CI runners). Background + icon files travel inside the image.
 TMP_DMG="$(mktemp -d)/plain.dmg"
-hdiutil create -srcfolder "$STAGE" -volname "$VOLNAME" -fs HFS+ \
+hdiutil create -srcfolder "$STAGE" -volname "$VOLNAME" \
   -format UDZO -imagekey zlib-level=9 -ov "$TMP_DMG"
 
 rm -f "$OUT_DMG"

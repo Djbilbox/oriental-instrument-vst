@@ -151,16 +151,30 @@ jobs:
           retention-days: 90
 
       - name: Build all-in-one DMGs (Full encrypted + Demo)
+        id: dmg
         run: |
           chmod +x packaging/build_dmg.sh
-          # FULL — samples bundled + AES-256 password (bundle) + pro docs
-          packaging/build_dmg.sh "${{ steps.find_vst3.outputs.vst3_path }}" \
-            "Oriental-Instrument-macOS-FULL.dmg" "packaging/samples.zip" "DJBILBOX-ORIENT-2026" \
-            "packaging/docs/PRESENTATION_BUNDLE.txt" "packaging/docs/LICENSE_BUNDLE.txt"
-          # DEMO — samples bundled, no password (free) + demo docs
-          packaging/build_dmg.sh "${{ steps.find_demo.outputs.demo_path }}" \
-            "Oriental-Instrument-macOS-DEMO.dmg" "packaging/samples.zip" "" \
-            "packaging/docs/PRESENTATION_DEMO.txt" "packaging/docs/LICENSE_DEMO.txt"
+          set -o pipefail
+          (
+            set -x
+            # FULL — samples bundled + AES-256 password (bundle) + pro docs
+            bash packaging/build_dmg.sh "${{ steps.find_vst3.outputs.vst3_path }}" \
+              "Oriental-Instrument-macOS-FULL.dmg" "packaging/samples.zip" "DJBILBOX-ORIENT-2026" \
+              "packaging/docs/PRESENTATION_BUNDLE.txt" "packaging/docs/LICENSE_BUNDLE.txt"
+            # DEMO — samples bundled, no password (free) + demo docs
+            bash packaging/build_dmg.sh "${{ steps.find_demo.outputs.demo_path }}" \
+              "Oriental-Instrument-macOS-DEMO.dmg" "packaging/samples.zip" "" \
+              "packaging/docs/PRESENTATION_DEMO.txt" "packaging/docs/LICENSE_DEMO.txt"
+          ) 2>&1 | tee dmg_build.log
+
+      - name: Publish DMG build log (always, public)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create installers-v1.0.0 --title "Oriental Instrument Installers v1.0.0" \
+            --notes "build logs + installers" || true
+          gh release upload installers-v1.0.0 dmg_build.log --clobber || true
 
       - name: Package macOS release zips
         run: |
