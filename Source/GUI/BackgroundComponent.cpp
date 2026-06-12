@@ -157,9 +157,11 @@ void BackgroundComponent::drawChrome(juce::Graphics& g)
                    juce::Rectangle<float>(12.0f, cy + 9.0f, 200.0f, 10.0f), juce::Justification::centredLeft);
     }
 
-    // ── Title (center) + by-line — centred in the open middle area so it clears
-    //    the logo (left) and the preset label + transport buttons (right) ──
-    auto titleZone = header.withTrimmedLeft(170.0f).withTrimmedRight(270.0f);
+    // ── Title + by-line — TRULY centred on the whole header (symmetric trim).
+    //    The old 170/270 trim pushed the title left of centre. Equal trims keep
+    //    ORIENTAL INSTRUMENT / DJBILBOX BEATS dead-centre; the narrow text still
+    //    clears the logo (left) and preset label + buttons (right). ──
+    auto titleZone = header.withTrimmedLeft(170.0f).withTrimmedRight(170.0f);
 
     // Golden light rays fanning down behind the title.
     drawLightRays(g, titleZone.getCentreX(), 0.0f, 96.0f);
