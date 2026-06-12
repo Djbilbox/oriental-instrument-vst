@@ -29,6 +29,9 @@ private:
     float haloPhase = 0.0f;
 
     // Scene painters (into the cache). sx/sy map SVG 980x640 coords to bounds.
+    void drawArabesqueBackdrop(juce::Graphics& g, juce::Rectangle<float> bounds);
+    void drawMandala(juce::Graphics& g, float cx, float cy, float R, int petals, float alpha);
+    void drawLightRays(juce::Graphics& g, float cx, float topY, float len);
     void drawDesertGradient(juce::Graphics& g, juce::Rectangle<float> bounds);
     void drawStars(juce::Graphics& g, juce::Rectangle<float> bounds);
     void drawSun(juce::Graphics& g, float cx, float cy, float intensity);

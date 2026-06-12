@@ -50,21 +50,10 @@ void BackgroundComponent::rebuildCaches()
     {
         juce::Graphics g(cachedDesert);
         auto bounds = b.toFloat();
-        // Z-order matches the HTML SVG, back → front
-        drawDesertGradient(g, bounds);
-        drawStars(g, bounds);
-        drawSun(g, b.getWidth() * 0.51f, b.getHeight() * 0.56f, 1.0f);
-        drawPyramids(g, bounds);
+        // Premium dark arabesque backdrop, Algiers monument + flag kept.
+        drawArabesqueBackdrop(g, bounds);
         drawMonument(g, sx, sy);     // Maqam Echahid (Monument des Martyrs, Alger)
-        drawSphinx(g, sx, sy);
-        drawDunes(g, bounds);
-        drawAlgerianFlag(g, sx, sy); // planted on the dune, foreground
-
-        drawMusicians(g, sx, sy);
-        drawCamel(g, sx, sy);
-        drawEagles(g, sx, sy);
-        drawPalms(g, sx, sy);
-        drawHeatHaze(g, sx, sy);
+        drawAlgerianFlag(g, sx, sy);
         drawVignette(g, bounds);
     }
 
@@ -79,8 +68,8 @@ void BackgroundComponent::paint(juce::Graphics& g)
     g.drawImageAt(cachedDesert, 0, 0);
 
     // Subtle breathing halo on top for life
-    float pulse = 0.06f + 0.06f * std::sin(haloPhase);
-    drawHalo(g, getWidth() * 0.51f, getHeight() * 0.56f, pulse);
+    float pulse = 0.05f + 0.05f * std::sin(haloPhase);
+    drawHalo(g, getWidth() * 0.5f, getHeight() * 0.02f, pulse);
 
     drawGlassPanels(g);
     drawChrome(g);
@@ -171,6 +160,10 @@ void BackgroundComponent::drawChrome(juce::Graphics& g)
     // ── Title (center) + by-line — centred in the open middle area so it clears
     //    the logo (left) and the preset label + transport buttons (right) ──
     auto titleZone = header.withTrimmedLeft(170.0f).withTrimmedRight(270.0f);
+
+    // Golden light rays fanning down behind the title.
+    drawLightRays(g, titleZone.getCentreX(), 0.0f, 96.0f);
+
     g.setColour(juce::Colour(Colors::GOLD_LIGHT));
     g.setFont(Typography::headerTitle());
     g.drawText("ORIENTAL INSTRUMENT",
@@ -230,6 +223,88 @@ void BackgroundComponent::drawDesertGradient(juce::Graphics& g, juce::Rectangle<
 
     g.setColour(juce::Colour(0xB32A1406));
     g.fillRect(0.0f, bounds.getHeight() * 0.556f, bounds.getWidth(), bounds.getHeight() * 0.45f);
+}
+
+// ── Premium dark backdrop: deep gradient, warm top-centre light, faint gold
+//    arabesque mandalas. Replaces the desert scene. ──
+void BackgroundComponent::drawArabesqueBackdrop(juce::Graphics& g, juce::Rectangle<float> b)
+{
+    const float w = b.getWidth(), h = b.getHeight();
+
+    // Base vertical gradient — near-black, a touch warmer toward the top centre.
+    juce::ColourGradient base(juce::Colour(0xFF14100B), 0, 0,
+                              juce::Colour(0xFF050403), 0, h, false);
+    base.addColour(0.45, juce::Colour(0xFF0C0A07));
+    g.setGradientFill(base);
+    g.fillRect(b);
+
+    // Warm light source at top centre (origin of the title rays).
+    juce::ColourGradient glow(juce::Colour(Colors::GOLD).withAlpha(0.16f), w * 0.5f, h * 0.02f,
+                              juce::Colours::transparentBlack, w * 0.5f, h * 0.42f, true);
+    g.setGradientFill(glow);
+    g.fillRect(b);
+
+    // Faint gold arabesque mandalas.
+    drawMandala(g, w * 0.50f, h * 0.46f, juce::jmin(w, h) * 0.40f, 16, 0.06f);
+    drawMandala(g, w * 0.50f, h * 0.46f, juce::jmin(w, h) * 0.26f, 12, 0.05f);
+    drawMandala(g, w * 0.12f, h * 0.80f, juce::jmin(w, h) * 0.20f, 12, 0.04f);
+    drawMandala(g, w * 0.88f, h * 0.80f, juce::jmin(w, h) * 0.20f, 12, 0.04f);
+    drawMandala(g, w * 0.12f, h * 0.16f, juce::jmin(w, h) * 0.16f, 10, 0.035f);
+    drawMandala(g, w * 0.88f, h * 0.16f, juce::jmin(w, h) * 0.16f, 10, 0.035f);
+}
+
+// One arabesque mandala: concentric rings, radial spokes, node circles, petals.
+void BackgroundComponent::drawMandala(juce::Graphics& g, float cx, float cy, float R,
+                                      int petals, float alpha)
+{
+    const juce::Colour gold = juce::Colour(Colors::GOLD).withAlpha(alpha);
+    g.setColour(gold);
+
+    g.drawEllipse(cx - R, cy - R, R * 2.0f, R * 2.0f, 1.0f);
+    g.drawEllipse(cx - R * 0.62f, cy - R * 0.62f, R * 1.24f, R * 1.24f, 1.0f);
+    g.drawEllipse(cx - R * 0.30f, cy - R * 0.30f, R * 0.60f, R * 0.60f, 1.0f);
+
+    for (int k = 0; k < petals; ++k)
+    {
+        const float a = juce::MathConstants<float>::twoPi * (static_cast<float>(k) / petals);
+        const float ca = std::cos(a), sa = std::sin(a);
+
+        // spoke
+        g.drawLine(cx + ca * R * 0.30f, cy + sa * R * 0.30f,
+                   cx + ca * R, cy + sa * R, 0.8f);
+
+        // node circle on the mid ring
+        const float nx = cx + ca * R * 0.62f, ny = cy + sa * R * 0.62f;
+        g.drawEllipse(nx - R * 0.05f, ny - R * 0.05f, R * 0.10f, R * 0.10f, 0.8f);
+
+        // pointed petal between the mid ring and the rim
+        const float a2 = a + juce::MathConstants<float>::twoPi / (petals * 2.0f);
+        juce::Path petal;
+        petal.startNewSubPath(cx + ca * R * 0.62f, cy + sa * R * 0.62f);
+        petal.quadraticTo(cx + std::cos(a2) * R * 0.92f, cy + std::sin(a2) * R * 0.92f,
+                          cx + std::cos(a + juce::MathConstants<float>::twoPi / petals) * R * 0.62f,
+                          cy + std::sin(a + juce::MathConstants<float>::twoPi / petals) * R * 0.62f);
+        g.strokePath(petal, juce::PathStrokeType(0.8f));
+    }
+}
+
+// Volumetric light rays fanning down from a point (drawn sharp behind the title).
+void BackgroundComponent::drawLightRays(juce::Graphics& g, float cx, float topY, float len)
+{
+    juce::Graphics::ScopedSaveState save(g);
+    static const float spread[] = { -0.42f, -0.26f, -0.12f, 0.04f, 0.18f, 0.34f, 0.50f };
+    for (float s : spread)
+    {
+        juce::Path ray;
+        ray.startNewSubPath(cx, topY);
+        ray.lineTo(cx + s * len - 10.0f, topY + len);
+        ray.lineTo(cx + s * len + 10.0f, topY + len);
+        ray.closeSubPath();
+        juce::ColourGradient rg(juce::Colour(Colors::GOLD_LIGHT).withAlpha(0.10f), cx, topY,
+                                juce::Colours::transparentBlack, cx, topY + len, false);
+        g.setGradientFill(rg);
+        g.fillPath(ray);
+    }
 }
 
 // ── Maqam Echahid (Monument des Martyrs, Alger) — three concrete palm fronds

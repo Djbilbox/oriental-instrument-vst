@@ -65,20 +65,35 @@ void FXPanel::FXSlot::paint(juce::Graphics& g)
     const bool on = toggleBtn.getToggleState();
     const float amt = state.getRawParameterValue(amtParamId)->load();
 
-    g.setColour(on ? juce::Colour(0x10DC1E1E) : juce::Colour(0x4D000000));
-    g.fillRoundedRectangle(getLocalBounds().toFloat(), 4.0f);
+    // Brushed-metal row with a subtle top sheen.
+    auto rb = getLocalBounds().toFloat();
+    juce::ColourGradient rowg(juce::Colour(on ? 0xFF241A18u : 0xFF15110Eu), rb.getX(), rb.getY(),
+                              juce::Colour(0xFF080605), rb.getX(), rb.getBottom(), false);
+    g.setGradientFill(rowg);
+    g.fillRoundedRectangle(rb, 4.0f);
+    g.setColour(juce::Colours::white.withAlpha(0.05f));
+    g.fillRoundedRectangle(rb.reduced(1.0f).withHeight(rb.getHeight() * 0.45f), 3.0f);
+    g.setColour(on ? juce::Colour(0x66DC1E1E) : juce::Colour(0xFF26211B));
+    g.drawRoundedRectangle(rb.reduced(0.5f), 4.0f, 1.0f);
 
-    g.setColour(on ? juce::Colour(0x4DDC1E1E) : juce::Colour(0xFF222222));
-    g.drawRoundedRectangle(getLocalBounds().toFloat().reduced(0.5f), 4.0f, 1.0f);
-
-    // Amount fill bar along the bottom edge (visual level meter).
-    auto bar = getLocalBounds().toFloat().reduced(3.0f);
-    bar = bar.removeFromBottom(3.0f);
-    g.setColour(juce::Colour(0xFF1A1A1A));
-    g.fillRoundedRectangle(bar, 1.5f);
-    g.setColour(on ? juce::Colour(OrientalConstants::Colors::GOLD)
-                   : juce::Colour(OrientalConstants::Colors::GOLD_DIM));
-    g.fillRoundedRectangle(bar.withWidth(bar.getWidth() * juce::jlimit(0.0f, 1.0f, amt / 100.0f)), 1.5f);
+    // Segmented VU-style amount meter along the bottom edge.
+    {
+        auto bar = getLocalBounds().toFloat().reduced(4.0f, 2.0f).removeFromBottom(4.0f);
+        const int segs = 14;
+        const float lit = juce::jlimit(0.0f, 1.0f, amt / 100.0f) * segs;
+        const float sw = bar.getWidth() / segs;
+        for (int i = 0; i < segs; ++i)
+        {
+            auto seg = juce::Rectangle<float>(bar.getX() + i * sw, bar.getY(), sw - 1.0f, bar.getHeight());
+            const float t = static_cast<float>(i) / (segs - 1);
+            juce::Colour c = t < 0.6f ? juce::Colour(OrientalConstants::Colors::GOLD)
+                           : t < 0.85f ? juce::Colour(0xFFE08A2A)
+                                       : juce::Colour(OrientalConstants::Colors::RED);
+            const bool litSeg = on && (static_cast<float>(i) < lit);
+            g.setColour(litSeg ? c : juce::Colour(0xFF1C1814));
+            g.fillRect(seg);
+        }
+    }
 
     // LED indicator
     auto ledBounds = juce::Rectangle<float>(7.0f, (getHeight() - 9.0f) / 2.0f - 2.0f, 9.0f, 9.0f);
