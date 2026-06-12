@@ -1,0 +1,367 @@
+﻿2026-06-11T16:23:46.7060265Z Current runner version: '2.335.1'
+2026-06-11T16:23:46.7086477Z ##[group]Runner Image Provisioner
+2026-06-11T16:23:46.7087345Z Hosted Compute Agent
+2026-06-11T16:23:46.7087847Z Version: 20260527.539
+2026-06-11T16:23:46.7088470Z Commit: a891dd388383b896fa6ac04a82c0b75cec981078
+2026-06-11T16:23:46.7089125Z Build Date: 2026-05-27T21:39:57Z
+2026-06-11T16:23:46.7089732Z Worker ID: {5d2a7b46-8dd6-4446-b775-fab97174f4a4}
+2026-06-11T16:23:46.7090393Z Azure Region: southcentralus
+2026-06-11T16:23:46.7091068Z ##[endgroup]
+2026-06-11T16:23:46.7092471Z ##[group]Operating System
+2026-06-11T16:23:46.7093235Z Microsoft Windows Server 2025
+2026-06-11T16:23:46.7093900Z 10.0.26100
+2026-06-11T16:23:46.7094474Z Datacenter
+2026-06-11T16:23:46.7094956Z ##[endgroup]
+2026-06-11T16:23:46.7095429Z ##[group]Runner Image
+2026-06-11T16:23:46.7095998Z Image: windows-2025-vs2026
+2026-06-11T16:23:46.7096518Z Version: 20260608.135.2
+2026-06-11T16:23:46.7098427Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20260608.135/images/windows/Windows2025-VS2026-Readme.md
+2026-06-11T16:23:46.7101667Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20260608.135
+2026-06-11T16:23:46.7103074Z ##[endgroup]
+2026-06-11T16:23:46.7104697Z ##[group]GITHUB_TOKEN Permissions
+2026-06-11T16:23:46.7107530Z Contents: read
+2026-06-11T16:23:46.7108063Z Metadata: read
+2026-06-11T16:23:46.7108559Z Packages: read
+2026-06-11T16:23:46.7109044Z ##[endgroup]
+2026-06-11T16:23:46.7111136Z Secret source: Actions
+2026-06-11T16:23:46.7111861Z Prepare workflow directory
+2026-06-11T16:23:46.8625073Z Prepare all required actions
+2026-06-11T16:23:46.8682706Z Getting action download info
+2026-06-11T16:23:47.4000615Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-06-11T16:23:47.5095025Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-06-11T16:23:47.8616989Z Complete job name: build-windows
+2026-06-11T16:23:48.1301198Z ##[group]Run actions/checkout@v4
+2026-06-11T16:23:48.1302453Z with:
+2026-06-11T16:23:48.1302933Z   fetch-depth: 1
+2026-06-11T16:23:48.1303450Z   repository: Djbilbox/oriental-instrument-vst
+2026-06-11T16:23:48.1308945Z   token: ***
+2026-06-11T16:23:48.1309386Z   ssh-strict: true
+2026-06-11T16:23:48.1310001Z   ssh-user: git
+2026-06-11T16:23:48.1310524Z   persist-credentials: true
+2026-06-11T16:23:48.1311041Z   clean: true
+2026-06-11T16:23:48.1311491Z   sparse-checkout-cone-mode: true
+2026-06-11T16:23:48.1312033Z   fetch-tags: false
+2026-06-11T16:23:48.1312484Z   show-progress: true
+2026-06-11T16:23:48.1312950Z   lfs: false
+2026-06-11T16:23:48.1313373Z   submodules: false
+2026-06-11T16:23:48.1313827Z   set-safe-directory: true
+2026-06-11T16:23:48.1314683Z ##[endgroup]
+2026-06-11T16:23:48.2986384Z Syncing repository: Djbilbox/oriental-instrument-vst
+2026-06-11T16:23:48.2989483Z ##[group]Getting Git version info
+2026-06-11T16:23:48.2991208Z Working directory is 'D:\a\oriental-instrument-vst\oriental-instrument-vst'
+2026-06-11T16:23:48.3685339Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-06-11T16:23:48.5449350Z git version 2.54.0.windows.1
+2026-06-11T16:23:48.5509944Z ##[endgroup]
+2026-06-11T16:23:48.5534356Z Temporarily overriding HOME='D:\a\_temp\482fc0c7-7c08-4c5c-b70e-4d472ace28d1' before making global git config changes
+2026-06-11T16:23:48.5536832Z Adding repository directory to the temporary git global config as a safe directory
+2026-06-11T16:23:48.5548478Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\oriental-instrument-vst\oriental-instrument-vst
+2026-06-11T16:23:48.5860520Z Deleting the contents of 'D:\a\oriental-instrument-vst\oriental-instrument-vst'
+2026-06-11T16:23:48.5866816Z ##[group]Initializing the repository
+2026-06-11T16:23:48.5877507Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\oriental-instrument-vst\oriental-instrument-vst
+2026-06-11T16:23:48.6324983Z Initialized empty Git repository in D:/a/oriental-instrument-vst/oriental-instrument-vst/.git/
+2026-06-11T16:23:48.6373642Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/Djbilbox/oriental-instrument-vst
+2026-06-11T16:23:48.6698675Z ##[endgroup]
+2026-06-11T16:23:48.6700173Z ##[group]Disabling automatic garbage collection
+2026-06-11T16:23:48.6711524Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-06-11T16:23:48.7002511Z ##[endgroup]
+2026-06-11T16:23:48.7003206Z ##[group]Setting up auth
+2026-06-11T16:23:48.7022430Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-06-11T16:23:48.7328642Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-06-11T16:23:49.6357369Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-06-11T16:23:49.6655404Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-06-11T16:23:50.2375289Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-06-11T16:23:50.2688106Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-06-11T16:23:50.7975381Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-06-11T16:23:50.8281925Z ##[endgroup]
+2026-06-11T16:23:50.8282435Z ##[group]Fetching the repository
+2026-06-11T16:23:50.8297169Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6e6285e9fdbe929d53e0edae90a5ffcf132530b8:refs/remotes/origin/feature/refonte-dsp-ui
+2026-06-11T16:23:51.6787633Z From https://github.com/Djbilbox/oriental-instrument-vst
+2026-06-11T16:23:51.6788553Z  * [new ref]         6e6285e9fdbe929d53e0edae90a5ffcf132530b8 -> origin/feature/refonte-dsp-ui
+2026-06-11T16:23:51.6984420Z ##[endgroup]
+2026-06-11T16:23:51.6985052Z ##[group]Determining the checkout info
+2026-06-11T16:23:51.6987296Z ##[endgroup]
+2026-06-11T16:23:51.6998509Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-06-11T16:23:51.7326563Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-06-11T16:23:51.7624369Z ##[group]Checking out the ref
+2026-06-11T16:23:51.7636266Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B feature/refonte-dsp-ui refs/remotes/origin/feature/refonte-dsp-ui
+2026-06-11T16:23:51.8428819Z Switched to a new branch 'feature/refonte-dsp-ui'
+2026-06-11T16:23:51.8442932Z branch 'feature/refonte-dsp-ui' set up to track 'origin/feature/refonte-dsp-ui'.
+2026-06-11T16:23:51.8503044Z ##[endgroup]
+2026-06-11T16:23:51.8820724Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-06-11T16:23:51.9081825Z 6e6285e9fdbe929d53e0edae90a5ffcf132530b8
+2026-06-11T16:23:51.9835819Z ##[group]Run git clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git JUCE
+2026-06-11T16:23:51.9836704Z [36;1mgit clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git JUCE[0m
+2026-06-11T16:23:51.9960126Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-06-11T16:23:51.9960525Z ##[endgroup]
+2026-06-11T16:23:57.0137124Z Cloning into 'JUCE'...
+2026-06-11T16:24:00.1510572Z Note: switching to '51d11a2be6d5c97ccf12b4e5e827006e19f0555a'.
+2026-06-11T16:24:00.1512798Z 
+2026-06-11T16:24:00.1513503Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-06-11T16:24:00.1514281Z changes and commit them, and you can discard any commits you make in this
+2026-06-11T16:24:00.1517080Z state without impacting any branches by switching back to a branch.
+2026-06-11T16:24:00.1517533Z 
+2026-06-11T16:24:00.1517812Z If you want to create a new branch to retain commits you create, you may
+2026-06-11T16:24:00.1518621Z do so (now or later) by using -c with the switch command. Example:
+2026-06-11T16:24:00.1519062Z 
+2026-06-11T16:24:00.1519223Z   git switch -c <new-branch-name>
+2026-06-11T16:24:00.1519523Z 
+2026-06-11T16:24:00.1519698Z Or undo this operation with:
+2026-06-11T16:24:00.1519956Z 
+2026-06-11T16:24:00.1520082Z   git switch -
+2026-06-11T16:24:00.1520279Z 
+2026-06-11T16:24:00.1520648Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-06-11T16:24:00.1521210Z 
+2026-06-11T16:24:01.1782531Z Updating files:  86% (3633/4217)
+2026-06-11T16:24:01.1872148Z Updating files:  87% (3669/4217)
+2026-06-11T16:24:01.1963010Z Updating files:  88% (3711/4217)
+2026-06-11T16:24:01.2074544Z Updating files:  89% (3754/4217)
+2026-06-11T16:24:01.2172742Z Updating files:  90% (3796/4217)
+2026-06-11T16:24:01.2283944Z Updating files:  91% (3838/4217)
+2026-06-11T16:24:01.2399479Z Updating files:  92% (3880/4217)
+2026-06-11T16:24:01.2507043Z Updating files:  93% (3922/4217)
+2026-06-11T16:24:01.2597204Z Updating files:  94% (3964/4217)
+2026-06-11T16:24:01.2698739Z Updating files:  95% (4007/4217)
+2026-06-11T16:24:01.2964237Z Updating files:  96% (4049/4217)
+2026-06-11T16:24:01.3061836Z Updating files:  97% (4091/4217)
+2026-06-11T16:24:01.5346424Z Updating files:  98% (4133/4217)
+2026-06-11T16:24:01.5469533Z Updating files:  99% (4175/4217)
+2026-06-11T16:24:01.5470285Z Updating files: 100% (4217/4217)
+2026-06-11T16:24:01.5470525Z Updating files: 100% (4217/4217), done.
+2026-06-11T16:24:01.9198988Z ##[group]Run echo "=== Root files ==="
+2026-06-11T16:24:01.9199374Z [36;1mecho "=== Root files ==="[0m
+2026-06-11T16:24:01.9199622Z [36;1mls -la[0m
+2026-06-11T16:24:01.9199857Z [36;1mecho "=== JUCE present? ==="[0m
+2026-06-11T16:24:01.9200157Z [36;1mls JUCE/CMakeLists.txt && echo "OK: JUCE found"[0m
+2026-06-11T16:24:01.9200463Z [36;1mecho "=== Source dir ==="[0m
+2026-06-11T16:24:01.9200695Z [36;1mls Source/[0m
+2026-06-11T16:24:01.9213709Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-06-11T16:24:01.9214084Z ##[endgroup]
+2026-06-11T16:24:01.9560241Z === Root files ===
+2026-06-11T16:24:01.9773076Z total 145
+2026-06-11T16:24:01.9773451Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 .
+2026-06-11T16:24:01.9773796Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 ..
+2026-06-11T16:24:01.9774120Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 .git
+2026-06-11T16:24:01.9774535Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 .github
+2026-06-11T16:24:01.9775064Z -rw-r--r-- 1 runneradmin 197121   383 Jun 11 16:23 .gitignore
+2026-06-11T16:24:01.9775527Z -rw-r--r-- 1 runneradmin 197121  8698 Jun 11 16:23 ARCHITECTURE.md
+2026-06-11T16:24:01.9775992Z -rw-r--r-- 1 runneradmin 197121  3357 Jun 11 16:23 CMakeLists.txt
+2026-06-11T16:24:01.9776711Z -rw-r--r-- 1 runneradmin 197121  1676 Jun 11 16:23 Fiche Projet  Oriental VST.txt
+2026-06-11T16:24:01.9777472Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:24 JUCE
+2026-06-11T16:24:01.9778059Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 JuceLibraryCode
+2026-06-11T16:24:01.9778705Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 Oriental Instrument
+2026-06-11T16:24:01.9779157Z -rw-r--r-- 1 runneradmin 197121 12641 Jun 11 16:23 OrientalInstrument.jucer
+2026-06-11T16:24:01.9779965Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 Resources
+2026-06-11T16:24:01.9780548Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 Source
+2026-06-11T16:24:01.9781157Z -rw-r--r-- 1 runneradmin 197121 73292 Jun 11 16:23 ma_musique.html
+2026-06-11T16:24:01.9781845Z -rw-r--r-- 1 runneradmin 197121  2386 Jun 11 16:23 oriental-vst-document.md
+2026-06-11T16:24:01.9782291Z === JUCE present? ===
+2026-06-11T16:24:01.9946056Z JUCE/CMakeLists.txt
+2026-06-11T16:24:01.9952315Z OK: JUCE found
+2026-06-11T16:24:01.9952674Z === Source dir ===
+2026-06-11T16:24:02.0119497Z Cmajor
+2026-06-11T16:24:02.0119859Z DSP
+2026-06-11T16:24:02.0120288Z Data
+2026-06-11T16:24:02.0120892Z GUI
+2026-06-11T16:24:02.0121210Z PluginEditor.cpp
+2026-06-11T16:24:02.0121873Z PluginEditor.h
+2026-06-11T16:24:02.0122733Z PluginProcessor.cpp
+2026-06-11T16:24:02.0123477Z PluginProcessor.h
+2026-06-11T16:24:02.0123739Z Utils
+2026-06-11T16:24:02.0350099Z ##[group]Run cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
+2026-06-11T16:24:02.0350586Z [36;1mcmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release[0m
+2026-06-11T16:24:02.0413451Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-06-11T16:24:02.0413791Z ##[endgroup]
+2026-06-11T16:24:09.4196894Z -- Building for: Visual Studio 18 2026
+2026-06-11T16:24:09.4197534Z -- The CXX compiler identification is MSVC 19.51.36246.0
+2026-06-11T16:24:09.5064062Z -- Detecting CXX compiler ABI info
+2026-06-11T16:24:10.4649105Z -- Detecting CXX compiler ABI info - done
+2026-06-11T16:24:10.4993393Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+2026-06-11T16:24:10.5008613Z -- Detecting CXX compile features
+2026-06-11T16:24:10.5024933Z -- Detecting CXX compile features - done
+2026-06-11T16:24:11.4384775Z -- The C compiler identification is MSVC 19.51.36246.0
+2026-06-11T16:24:11.4552250Z -- Detecting C compiler ABI info
+2026-06-11T16:24:12.1095037Z -- Detecting C compiler ABI info - done
+2026-06-11T16:24:12.1272061Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+2026-06-11T16:24:12.1275972Z -- Detecting C compile features
+2026-06-11T16:24:12.1282661Z -- Detecting C compile features - done
+2026-06-11T16:24:13.3247860Z -- Configuring juceaide
+2026-06-11T16:24:17.0944502Z -- Building juceaide
+2026-06-11T16:24:45.4229867Z -- Exporting juceaide
+2026-06-11T16:24:45.4238453Z -- Testing juceaide
+2026-06-11T16:24:45.4670018Z -- Finished setting up juceaide
+2026-06-11T16:24:45.5069657Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+2026-06-11T16:24:45.9844375Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+2026-06-11T16:24:45.9845643Z -- Looking for pthread_create in pthreads
+2026-06-11T16:24:46.5482209Z -- Looking for pthread_create in pthreads - not found
+2026-06-11T16:24:46.5482746Z -- Looking for pthread_create in pthread
+2026-06-11T16:24:47.0990954Z -- Looking for pthread_create in pthread - not found
+2026-06-11T16:24:47.1083611Z -- Found Threads: TRUE
+2026-06-11T16:24:47.1108900Z -- Configuring done (44.1s)
+2026-06-11T16:24:47.2198829Z CMake Warning:
+2026-06-11T16:24:47.2199200Z   Manually-specified variables were not used by the project:
+2026-06-11T16:24:47.2199682Z 
+2026-06-11T16:24:47.2199786Z     CMAKE_BUILD_TYPE
+2026-06-11T16:24:47.2199919Z 
+2026-06-11T16:24:47.2199961Z 
+2026-06-11T16:24:47.2200076Z -- Generating done (0.1s)
+2026-06-11T16:24:47.2207694Z -- Build files have been written to: D:/a/oriental-instrument-vst/oriental-instrument-vst/build
+2026-06-11T16:24:47.3387918Z ##[group]Run cmake --build build --config Release --target OrientalInstrument_VST3
+2026-06-11T16:24:47.3388733Z [36;1mcmake --build build --config Release --target OrientalInstrument_VST3[0m
+2026-06-11T16:24:47.3445302Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-06-11T16:24:47.3445654Z ##[endgroup]
+2026-06-11T16:24:47.6794967Z MSBuild version 18.6.3+84d3e95b4 for .NET Framework
+2026-06-11T16:24:47.7117915Z 
+2026-06-11T16:24:47.8900945Z   Checking File Globs
+2026-06-11T16:24:48.0558756Z   1>Checking Build System
+2026-06-11T16:24:48.1805546Z   Generating OrientalInstrument_artefacts/JuceLibraryCode/OrientalInstrument_resources.rc
+2026-06-11T16:24:48.2076589Z   Building Custom Rule D:/a/oriental-instrument-vst/oriental-instrument-vst/CMakeLists.txt
+2026-06-11T16:24:48.4502130Z   OrientalInstrument_rc_lib.vcxproj -> D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument_rc_lib.dir\Release\OrientalInstrument_rc_lib.lib
+2026-06-11T16:24:48.5178478Z   Generating juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData1.cpp, juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData2.cpp, juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData3.cpp, juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData4.cpp, juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData5.cpp, juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData.h
+2026-06-11T16:24:48.5643197Z   Building Custom Rule D:/a/oriental-instrument-vst/oriental-instrument-vst/CMakeLists.txt
+2026-06-11T16:24:48.6714474Z   BinaryData1.cpp
+2026-06-11T16:24:48.7176863Z   BinaryData2.cpp
+2026-06-11T16:24:48.7601189Z   BinaryData3.cpp
+2026-06-11T16:24:48.8264339Z   BinaryData4.cpp
+2026-06-11T16:24:48.8925573Z   BinaryData5.cpp
+2026-06-11T16:24:48.9427334Z   Generating Code...
+2026-06-11T16:24:49.0892176Z   OrientalBinaryData.vcxproj -> D:\a\oriental-instrument-vst\oriental-instrument-vst\build\Release\OrientalBinaryData.lib
+2026-06-11T16:24:49.1537017Z   Generating OrientalInstrument_artefacts/JuceLibraryCode/JuceHeader.h
+2026-06-11T16:24:49.1824445Z   Building Custom Rule D:/a/oriental-instrument-vst/oriental-instrument-vst/CMakeLists.txt
+2026-06-11T16:24:49.2991460Z   PluginProcessor.cpp
+2026-06-11T16:24:49.2997949Z   PluginEditor.cpp
+2026-06-11T16:24:49.3029903Z   OrientalSynthesiser.cpp
+2026-06-11T16:24:49.3030668Z   OrientalVoice.cpp
+2026-06-11T16:24:52.9257648Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(44,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:24:52.9269484Z   (compiling source file '../Source/PluginEditor.cpp')
+2026-06-11T16:24:52.9391114Z   
+2026-06-11T16:24:52.9490685Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(50,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:24:52.9588739Z   (compiling source file '../Source/PluginEditor.cpp')
+2026-06-11T16:24:52.9593113Z   
+2026-06-11T16:24:52.9729246Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(56,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:24:52.9829207Z   (compiling source file '../Source/PluginEditor.cpp')
+2026-06-11T16:24:52.9910234Z   
+2026-06-11T16:24:54.6610645Z   WavetableOscillator.cpp
+2026-06-11T16:24:54.6660140Z   ADSREnvelope.cpp
+2026-06-11T16:24:54.7125175Z   MaqamTuning.cpp
+2026-06-11T16:24:54.8318081Z   FXChain.cpp
+2026-06-11T16:24:59.9076938Z   ReverbFX.cpp
+2026-06-11T16:24:59.9629657Z   DelayFX.cpp
+2026-06-11T16:24:59.9880429Z   ChorusFX.cpp
+2026-06-11T16:25:00.3684232Z   DistortionFX.cpp
+2026-06-11T16:25:05.2190335Z   CompressorFX.cpp
+2026-06-11T16:25:05.4210340Z   EQ3BandFX.cpp
+2026-06-11T16:25:05.4531018Z   PhaserFX.cpp
+2026-06-11T16:25:05.6382365Z   BitcrusherFX.cpp
+2026-06-11T16:25:10.4897249Z   InstrumentProfiles.cpp
+2026-06-11T16:25:10.6839413Z   PresetManager.cpp
+2026-06-11T16:25:10.7067476Z   OrientalLookAndFeel.cpp
+2026-06-11T16:25:10.8718049Z   KnobComponent.cpp
+2026-06-11T16:25:14.2087016Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(44,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.2089082Z   (compiling source file '../Source/GUI/OrientalLookAndFeel.cpp')
+2026-06-11T16:25:14.2144785Z   
+2026-06-11T16:25:14.2407158Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(50,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.2412498Z   (compiling source file '../Source/GUI/OrientalLookAndFeel.cpp')
+2026-06-11T16:25:14.2480808Z   
+2026-06-11T16:25:14.2728721Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(56,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.2740169Z   (compiling source file '../Source/GUI/OrientalLookAndFeel.cpp')
+2026-06-11T16:25:14.2744697Z   
+2026-06-11T16:25:14.3716705Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(44,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.3718746Z   (compiling source file '../Source/GUI/KnobComponent.cpp')
+2026-06-11T16:25:14.3733056Z   
+2026-06-11T16:25:14.3802161Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(50,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.4045924Z   (compiling source file '../Source/GUI/KnobComponent.cpp')
+2026-06-11T16:25:14.4069038Z   
+2026-06-11T16:25:14.4149005Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(56,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.4365712Z   (compiling source file '../Source/GUI/KnobComponent.cpp')
+2026-06-11T16:25:14.4385546Z   
+2026-06-11T16:25:15.8046185Z   PresetBrowser.cpp
+2026-06-11T16:25:15.9415018Z   PianoComponent.cpp
+2026-06-11T16:25:15.9609265Z   FXPanel.cpp
+2026-06-11T16:25:16.1690489Z   WaveformDisplay.cpp
+2026-06-11T16:25:19.3298151Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\PresetBrowser.cpp(97,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.3404845Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\PresetBrowser.cpp(103,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.3407903Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\PresetBrowser.cpp(119,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.4285775Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(44,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.4297326Z   (compiling source file '../Source/GUI/PianoComponent.cpp')
+2026-06-11T16:25:19.4363149Z   
+2026-06-11T16:25:19.4397304Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(50,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.4608104Z   (compiling source file '../Source/GUI/PianoComponent.cpp')
+2026-06-11T16:25:19.4632052Z   
+2026-06-11T16:25:19.4699021Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(56,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.4730823Z   (compiling source file '../Source/GUI/PianoComponent.cpp')
+2026-06-11T16:25:19.4940430Z   
+2026-06-11T16:25:19.4972966Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\FXPanel.cpp(95,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.5033708Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\FXPanel.cpp(101,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.5066472Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\FXPanel.cpp(147,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:21.1342226Z   WheelComponent.cpp
+2026-06-11T16:25:21.2238674Z   BackgroundComponent.cpp
+2026-06-11T16:25:21.3220555Z   juce_audio_processors.cpp
+2026-06-11T16:25:21.4967610Z   juce_audio_processors_ara.cpp
+2026-06-11T16:25:21.5295606Z   juce_audio_processors_lv2_libs.cpp
+2026-06-11T16:25:21.5620610Z   juce_gui_extra.cpp
+2026-06-11T16:25:24.6456644Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\WheelComponent.cpp(24,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.6636693Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\WheelComponent.cpp(123,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7283336Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(44,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7299277Z   (compiling source file '../Source/GUI/BackgroundComponent.cpp')
+2026-06-11T16:25:24.7329753Z   
+2026-06-11T16:25:24.7331632Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(50,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7333784Z   (compiling source file '../Source/GUI/BackgroundComponent.cpp')
+2026-06-11T16:25:24.7334521Z   
+2026-06-11T16:25:24.7336319Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(56,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7338814Z   (compiling source file '../Source/GUI/BackgroundComponent.cpp')
+2026-06-11T16:25:24.7339599Z   
+2026-06-11T16:25:24.7341724Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(190,45): warning C4996: 'juce::Font::getStringWidthFloat': Use GlyphArrangement or TextLayout to compute text layouts [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7452735Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(247,49): error C2751: 'OrientalConstants::Colors::GOLD_LIGHT': the name of a function parameter cannot be qualified [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7684692Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(274,28): error C2665: 'juce::ColourGradient::ColourGradient': no overloaded function could convert all the argument types [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7992447Z       D:\a\oriental-instrument-vst\oriental-instrument-vst\JUCE\modules\juce_graphics\colour\juce_ColourGradient.h(100,5):
+2026-06-11T16:25:24.7994016Z       could be 'juce::ColourGradient::ColourGradient(juce::Colour,juce::Point<float>,juce::Colour,juce::Point<float>,bool)'
+2026-06-11T16:25:24.8008977Z           D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(274,28):
+2026-06-11T16:25:24.8331086Z           'juce::ColourGradient::ColourGradient(juce::Colour,juce::Point<float>,juce::Colour,juce::Point<float>,bool)': cannot convert argument 1 from 'ValueType' to 'juce::Colour'
+2026-06-11T16:25:24.8334583Z           with
+2026-06-11T16:25:24.8608281Z           [
+2026-06-11T16:25:24.8667204Z               ValueType=float
+2026-06-11T16:25:24.8668682Z           ]
+2026-06-11T16:25:24.8730932Z               D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(274,55):
+2026-06-11T16:25:24.8927256Z               Constructor for class 'juce::Colour' is declared 'explicit'
+2026-06-11T16:25:24.8987920Z       D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(274,28):
+2026-06-11T16:25:24.9009170Z       while trying to match the argument list '(ValueType, ValueType, ValueType, ValueType, bool)'
+2026-06-11T16:25:24.9064282Z           with
+2026-06-11T16:25:24.9263390Z           [
+2026-06-11T16:25:24.9291635Z               ValueType=float
+2026-06-11T16:25:24.9293325Z           ]
+2026-06-11T16:25:24.9294137Z   
+2026-06-11T16:25:24.9302248Z   juce_gui_basics.cpp
+2026-06-11T16:25:26.4292796Z   juce_graphics.cpp
+2026-06-11T16:25:27.2713812Z   juce_graphics_Harfbuzz.cpp
+2026-06-11T16:25:28.1597635Z D:\a\oriental-instrument-vst\oriental-instrument-vst\JUCE\modules\juce_gui_basics\juce_gui_basics.cpp(61): warning : This version of JUCE does not use the splash screen, the flag JUCE_DISPLAY_SPLASH_SCREEN is ignored [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:29.4696236Z   juce_events.cpp
+2026-06-11T16:25:32.7976425Z   juce_core.cpp
+2026-06-11T16:25:36.3303450Z   juce_core_CompilationTime.cpp
+2026-06-11T16:25:36.3625491Z   juce_data_structures.cpp
+2026-06-11T16:25:37.4145908Z   juce_audio_basics.cpp
+2026-06-11T16:25:38.1546171Z   juce_audio_devices.cpp
+2026-06-11T16:25:38.7536773Z   juce_audio_formats.cpp
+2026-06-11T16:25:39.7142836Z   juce_audio_utils.cpp
+2026-06-11T16:25:41.2095278Z   juce_dsp.cpp
+2026-06-11T16:25:45.8863160Z   Building Custom Rule D:/a/oriental-instrument-vst/oriental-instrument-vst/CMakeLists.txt
+2026-06-11T16:25:45.9577228Z   juce_VST3ManifestHelper.cpp
+2026-06-11T16:25:51.2315193Z   juce_vst3_helper.vcxproj -> D:\a\oriental-instrument-vst\oriental-instrument-vst\build\Release\juce_vst3_helper.exe
+2026-06-11T16:25:51.3594101Z ##[error]Process completed with exit code 1.
+2026-06-11T16:25:51.4329088Z Post job cleanup.
+2026-06-11T16:25:51.6389945Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-06-11T16:25:51.6653233Z git version 2.54.0.windows.1
+2026-06-11T16:25:51.6724624Z Temporarily overriding HOME='D:\a\_temp\05d42162-4bdc-4afc-9763-3187ca66382f' before making global git config changes
+2026-06-11T16:25:51.6725455Z Adding repository directory to the temporary git global config as a safe directory
+2026-06-11T16:25:51.6736401Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\oriental-instrument-vst\oriental-instrument-vst
+2026-06-11T16:25:51.7038694Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-06-11T16:25:51.7338445Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-06-11T16:25:52.2721411Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-06-11T16:25:52.2976566Z http.https://github.com/.extraheader
+2026-06-11T16:25:52.3024254Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-06-11T16:25:52.3324264Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-06-11T16:25:52.8543759Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-06-11T16:25:52.8836917Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-06-11T16:25:53.4161709Z Cleaning up orphan processes
+2026-06-11T16:25:53.4328525Z Terminate orphan process: pid (7928) (vctip)
+2026-06-11T16:25:53.4447723Z Terminate orphan process: pid (4828) (mspdbsrv)
+2026-06-11T16:25:53.4460352Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4. Actions will be forced to run with Node.js 24 by default starting June 16th, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

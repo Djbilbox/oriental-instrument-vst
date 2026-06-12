@@ -1,0 +1,142 @@
+﻿2026-06-11T16:24:47.3387892Z ##[group]Run cmake --build build --config Release --target OrientalInstrument_VST3
+2026-06-11T16:24:47.3388728Z [36;1mcmake --build build --config Release --target OrientalInstrument_VST3[0m
+2026-06-11T16:24:47.3445289Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-06-11T16:24:47.3445651Z ##[endgroup]
+2026-06-11T16:24:47.6794922Z MSBuild version 18.6.3+84d3e95b4 for .NET Framework
+2026-06-11T16:24:47.7117870Z 
+2026-06-11T16:24:47.8900908Z   Checking File Globs
+2026-06-11T16:24:48.0558717Z   1>Checking Build System
+2026-06-11T16:24:48.1805506Z   Generating OrientalInstrument_artefacts/JuceLibraryCode/OrientalInstrument_resources.rc
+2026-06-11T16:24:48.2076534Z   Building Custom Rule D:/a/oriental-instrument-vst/oriental-instrument-vst/CMakeLists.txt
+2026-06-11T16:24:48.4502073Z   OrientalInstrument_rc_lib.vcxproj -> D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument_rc_lib.dir\Release\OrientalInstrument_rc_lib.lib
+2026-06-11T16:24:48.5178343Z   Generating juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData1.cpp, juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData2.cpp, juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData3.cpp, juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData4.cpp, juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData5.cpp, juce_binarydata_OrientalBinaryData/JuceLibraryCode/BinaryData.h
+2026-06-11T16:24:48.5643156Z   Building Custom Rule D:/a/oriental-instrument-vst/oriental-instrument-vst/CMakeLists.txt
+2026-06-11T16:24:48.6714437Z   BinaryData1.cpp
+2026-06-11T16:24:48.7176830Z   BinaryData2.cpp
+2026-06-11T16:24:48.7601139Z   BinaryData3.cpp
+2026-06-11T16:24:48.8264294Z   BinaryData4.cpp
+2026-06-11T16:24:48.8925536Z   BinaryData5.cpp
+2026-06-11T16:24:48.9427285Z   Generating Code...
+2026-06-11T16:24:49.0892141Z   OrientalBinaryData.vcxproj -> D:\a\oriental-instrument-vst\oriental-instrument-vst\build\Release\OrientalBinaryData.lib
+2026-06-11T16:24:49.1536956Z   Generating OrientalInstrument_artefacts/JuceLibraryCode/JuceHeader.h
+2026-06-11T16:24:49.1824404Z   Building Custom Rule D:/a/oriental-instrument-vst/oriental-instrument-vst/CMakeLists.txt
+2026-06-11T16:24:49.2991412Z   PluginProcessor.cpp
+2026-06-11T16:24:49.2997921Z   PluginEditor.cpp
+2026-06-11T16:24:49.3029479Z   OrientalSynthesiser.cpp
+2026-06-11T16:24:49.3030657Z   OrientalVoice.cpp
+2026-06-11T16:24:52.9257574Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(44,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:24:52.9269456Z   (compiling source file '../Source/PluginEditor.cpp')
+2026-06-11T16:24:52.9391066Z   
+2026-06-11T16:24:52.9490598Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(50,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:24:52.9588664Z   (compiling source file '../Source/PluginEditor.cpp')
+2026-06-11T16:24:52.9593081Z   
+2026-06-11T16:24:52.9729187Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(56,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:24:52.9829159Z   (compiling source file '../Source/PluginEditor.cpp')
+2026-06-11T16:24:52.9910167Z   
+2026-06-11T16:24:54.6610578Z   WavetableOscillator.cpp
+2026-06-11T16:24:54.6660100Z   ADSREnvelope.cpp
+2026-06-11T16:24:54.7125118Z   MaqamTuning.cpp
+2026-06-11T16:24:54.8318022Z   FXChain.cpp
+2026-06-11T16:24:59.9076882Z   ReverbFX.cpp
+2026-06-11T16:24:59.9629612Z   DelayFX.cpp
+2026-06-11T16:24:59.9880383Z   ChorusFX.cpp
+2026-06-11T16:25:00.3684180Z   DistortionFX.cpp
+2026-06-11T16:25:05.2187660Z   CompressorFX.cpp
+2026-06-11T16:25:05.4210299Z   EQ3BandFX.cpp
+2026-06-11T16:25:05.4530965Z   PhaserFX.cpp
+2026-06-11T16:25:05.6382319Z   BitcrusherFX.cpp
+2026-06-11T16:25:10.4897203Z   InstrumentProfiles.cpp
+2026-06-11T16:25:10.6839347Z   PresetManager.cpp
+2026-06-11T16:25:10.7067436Z   OrientalLookAndFeel.cpp
+2026-06-11T16:25:10.8718000Z   KnobComponent.cpp
+2026-06-11T16:25:14.2086965Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(44,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.2089072Z   (compiling source file '../Source/GUI/OrientalLookAndFeel.cpp')
+2026-06-11T16:25:14.2144741Z   
+2026-06-11T16:25:14.2407075Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(50,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.2412464Z   (compiling source file '../Source/GUI/OrientalLookAndFeel.cpp')
+2026-06-11T16:25:14.2480755Z   
+2026-06-11T16:25:14.2728671Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(56,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.2740139Z   (compiling source file '../Source/GUI/OrientalLookAndFeel.cpp')
+2026-06-11T16:25:14.2744677Z   
+2026-06-11T16:25:14.3716651Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(44,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.3718729Z   (compiling source file '../Source/GUI/KnobComponent.cpp')
+2026-06-11T16:25:14.3733004Z   
+2026-06-11T16:25:14.3802121Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(50,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.4045879Z   (compiling source file '../Source/GUI/KnobComponent.cpp')
+2026-06-11T16:25:14.4069001Z   
+2026-06-11T16:25:14.4148952Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(56,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:14.4365660Z   (compiling source file '../Source/GUI/KnobComponent.cpp')
+2026-06-11T16:25:14.4385510Z   
+2026-06-11T16:25:15.8046129Z   PresetBrowser.cpp
+2026-06-11T16:25:15.9414969Z   PianoComponent.cpp
+2026-06-11T16:25:15.9609209Z   FXPanel.cpp
+2026-06-11T16:25:16.1690408Z   WaveformDisplay.cpp
+2026-06-11T16:25:19.3298091Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\PresetBrowser.cpp(97,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.3404799Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\PresetBrowser.cpp(103,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.3407890Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\PresetBrowser.cpp(119,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.4284408Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(44,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.4297295Z   (compiling source file '../Source/GUI/PianoComponent.cpp')
+2026-06-11T16:25:19.4363102Z   
+2026-06-11T16:25:19.4397255Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(50,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.4608051Z   (compiling source file '../Source/GUI/PianoComponent.cpp')
+2026-06-11T16:25:19.4632012Z   
+2026-06-11T16:25:19.4698977Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(56,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.4730750Z   (compiling source file '../Source/GUI/PianoComponent.cpp')
+2026-06-11T16:25:19.4940374Z   
+2026-06-11T16:25:19.4972917Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\FXPanel.cpp(95,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.5033645Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\FXPanel.cpp(101,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:19.5066439Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\FXPanel.cpp(147,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:21.1342147Z   WheelComponent.cpp
+2026-06-11T16:25:21.2238629Z   BackgroundComponent.cpp
+2026-06-11T16:25:21.3220510Z   juce_audio_processors.cpp
+2026-06-11T16:25:21.4967555Z   juce_audio_processors_ara.cpp
+2026-06-11T16:25:21.5295552Z   juce_audio_processors_lv2_libs.cpp
+2026-06-11T16:25:21.5620549Z   juce_gui_extra.cpp
+2026-06-11T16:25:24.6456584Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\WheelComponent.cpp(24,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.6636639Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\WheelComponent.cpp(123,25): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7283248Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(44,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7299244Z   (compiling source file '../Source/GUI/BackgroundComponent.cpp')
+2026-06-11T16:25:24.7329728Z   
+2026-06-11T16:25:24.7331620Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(50,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7333777Z   (compiling source file '../Source/GUI/BackgroundComponent.cpp')
+2026-06-11T16:25:24.7334516Z   
+2026-06-11T16:25:24.7336309Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\Typography.h(56,21): warning C4996: 'juce::Font::Font': Use the constructor that takes a FontOptions argument [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7338421Z   (compiling source file '../Source/GUI/BackgroundComponent.cpp')
+2026-06-11T16:25:24.7339593Z   
+2026-06-11T16:25:24.7341715Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(190,45): warning C4996: 'juce::Font::getStringWidthFloat': Use GlyphArrangement or TextLayout to compute text layouts [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7452684Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(247,49): error C2751: 'OrientalConstants::Colors::GOLD_LIGHT': the name of a function parameter cannot be qualified [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7684556Z D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(274,28): error C2665: 'juce::ColourGradient::ColourGradient': no overloaded function could convert all the argument types [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:24.7992396Z       D:\a\oriental-instrument-vst\oriental-instrument-vst\JUCE\modules\juce_graphics\colour\juce_ColourGradient.h(100,5):
+2026-06-11T16:25:24.7994008Z       could be 'juce::ColourGradient::ColourGradient(juce::Colour,juce::Point<float>,juce::Colour,juce::Point<float>,bool)'
+2026-06-11T16:25:24.8008951Z           D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(274,28):
+2026-06-11T16:25:24.8331034Z           'juce::ColourGradient::ColourGradient(juce::Colour,juce::Point<float>,juce::Colour,juce::Point<float>,bool)': cannot convert argument 1 from 'ValueType' to 'juce::Colour'
+2026-06-11T16:25:24.8334561Z           with
+2026-06-11T16:25:24.8608235Z           [
+2026-06-11T16:25:24.8667170Z               ValueType=float
+2026-06-11T16:25:24.8668653Z           ]
+2026-06-11T16:25:24.8730870Z               D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(274,55):
+2026-06-11T16:25:24.8927218Z               Constructor for class 'juce::Colour' is declared 'explicit'
+2026-06-11T16:25:24.8987880Z       D:\a\oriental-instrument-vst\oriental-instrument-vst\Source\GUI\BackgroundComponent.cpp(274,28):
+2026-06-11T16:25:24.9009143Z       while trying to match the argument list '(ValueType, ValueType, ValueType, ValueType, bool)'
+2026-06-11T16:25:24.9064259Z           with
+2026-06-11T16:25:24.9263352Z           [
+2026-06-11T16:25:24.9291607Z               ValueType=float
+2026-06-11T16:25:24.9293313Z           ]
+2026-06-11T16:25:24.9294127Z   
+2026-06-11T16:25:24.9302235Z   juce_gui_basics.cpp
+2026-06-11T16:25:26.4292740Z   juce_graphics.cpp
+2026-06-11T16:25:27.2713754Z   juce_graphics_Harfbuzz.cpp
+2026-06-11T16:25:28.1597554Z D:\a\oriental-instrument-vst\oriental-instrument-vst\JUCE\modules\juce_gui_basics\juce_gui_basics.cpp(61): warning : This version of JUCE does not use the splash screen, the flag JUCE_DISPLAY_SPLASH_SCREEN is ignored [D:\a\oriental-instrument-vst\oriental-instrument-vst\build\OrientalInstrument.vcxproj]
+2026-06-11T16:25:29.4696180Z   juce_events.cpp
+2026-06-11T16:25:32.7976384Z   juce_core.cpp
+2026-06-11T16:25:36.3303403Z   juce_core_CompilationTime.cpp
+2026-06-11T16:25:36.3625446Z   juce_data_structures.cpp
+2026-06-11T16:25:37.4145857Z   juce_audio_basics.cpp
+2026-06-11T16:25:38.1546109Z   juce_audio_devices.cpp
+2026-06-11T16:25:38.7536723Z   juce_audio_formats.cpp
+2026-06-11T16:25:39.7142788Z   juce_audio_utils.cpp
+2026-06-11T16:25:41.2095227Z   juce_dsp.cpp
+2026-06-11T16:25:45.8863116Z   Building Custom Rule D:/a/oriental-instrument-vst/oriental-instrument-vst/CMakeLists.txt
+2026-06-11T16:25:45.9577175Z   juce_VST3ManifestHelper.cpp
+2026-06-11T16:25:51.2315155Z   juce_vst3_helper.vcxproj -> D:\a\oriental-instrument-vst\oriental-instrument-vst\build\Release\juce_vst3_helper.exe
+2026-06-11T16:25:51.3594068Z ##[error]Process completed with exit code 1.

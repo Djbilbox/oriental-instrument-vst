@@ -1,0 +1,59 @@
+﻿2026-06-11T16:23:48.1301127Z ##[group]Run actions/checkout@v4
+2026-06-11T16:23:48.1302440Z with:
+2026-06-11T16:23:48.1302928Z   fetch-depth: 1
+2026-06-11T16:23:48.1303446Z   repository: Djbilbox/oriental-instrument-vst
+2026-06-11T16:23:48.1308936Z   token: ***
+2026-06-11T16:23:48.1309382Z   ssh-strict: true
+2026-06-11T16:23:48.1309993Z   ssh-user: git
+2026-06-11T16:23:48.1310519Z   persist-credentials: true
+2026-06-11T16:23:48.1311037Z   clean: true
+2026-06-11T16:23:48.1311487Z   sparse-checkout-cone-mode: true
+2026-06-11T16:23:48.1312029Z   fetch-tags: false
+2026-06-11T16:23:48.1312475Z   show-progress: true
+2026-06-11T16:23:48.1312947Z   lfs: false
+2026-06-11T16:23:48.1313370Z   submodules: false
+2026-06-11T16:23:48.1313823Z   set-safe-directory: true
+2026-06-11T16:23:48.1314676Z ##[endgroup]
+2026-06-11T16:23:48.2986311Z Syncing repository: Djbilbox/oriental-instrument-vst
+2026-06-11T16:23:48.2989450Z ##[group]Getting Git version info
+2026-06-11T16:23:48.2991104Z Working directory is 'D:\a\oriental-instrument-vst\oriental-instrument-vst'
+2026-06-11T16:23:48.3685270Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-06-11T16:23:48.5449245Z git version 2.54.0.windows.1
+2026-06-11T16:23:48.5509884Z ##[endgroup]
+2026-06-11T16:23:48.5534303Z Temporarily overriding HOME='D:\a\_temp\482fc0c7-7c08-4c5c-b70e-4d472ace28d1' before making global git config changes
+2026-06-11T16:23:48.5536819Z Adding repository directory to the temporary git global config as a safe directory
+2026-06-11T16:23:48.5548439Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\oriental-instrument-vst\oriental-instrument-vst
+2026-06-11T16:23:48.5860457Z Deleting the contents of 'D:\a\oriental-instrument-vst\oriental-instrument-vst'
+2026-06-11T16:23:48.5866799Z ##[group]Initializing the repository
+2026-06-11T16:23:48.5877469Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\oriental-instrument-vst\oriental-instrument-vst
+2026-06-11T16:23:48.6324782Z Initialized empty Git repository in D:/a/oriental-instrument-vst/oriental-instrument-vst/.git/
+2026-06-11T16:23:48.6373590Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/Djbilbox/oriental-instrument-vst
+2026-06-11T16:23:48.6698627Z ##[endgroup]
+2026-06-11T16:23:48.6700161Z ##[group]Disabling automatic garbage collection
+2026-06-11T16:23:48.6711484Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-06-11T16:23:48.7002465Z ##[endgroup]
+2026-06-11T16:23:48.7003201Z ##[group]Setting up auth
+2026-06-11T16:23:48.7022381Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-06-11T16:23:48.7328563Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-06-11T16:23:49.6357187Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-06-11T16:23:49.6655326Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-06-11T16:23:50.2375145Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-06-11T16:23:50.2688026Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-06-11T16:23:50.7975317Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-06-11T16:23:50.8281872Z ##[endgroup]
+2026-06-11T16:23:50.8282430Z ##[group]Fetching the repository
+2026-06-11T16:23:50.8294940Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6e6285e9fdbe929d53e0edae90a5ffcf132530b8:refs/remotes/origin/feature/refonte-dsp-ui
+2026-06-11T16:23:51.6787560Z From https://github.com/Djbilbox/oriental-instrument-vst
+2026-06-11T16:23:51.6788545Z  * [new ref]         6e6285e9fdbe929d53e0edae90a5ffcf132530b8 -> origin/feature/refonte-dsp-ui
+2026-06-11T16:23:51.6984326Z ##[endgroup]
+2026-06-11T16:23:51.6985039Z ##[group]Determining the checkout info
+2026-06-11T16:23:51.6987271Z ##[endgroup]
+2026-06-11T16:23:51.6998466Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-06-11T16:23:51.7326501Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-06-11T16:23:51.7624303Z ##[group]Checking out the ref
+2026-06-11T16:23:51.7636207Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B feature/refonte-dsp-ui refs/remotes/origin/feature/refonte-dsp-ui
+2026-06-11T16:23:51.8428764Z Switched to a new branch 'feature/refonte-dsp-ui'
+2026-06-11T16:23:51.8442581Z branch 'feature/refonte-dsp-ui' set up to track 'origin/feature/refonte-dsp-ui'.
+2026-06-11T16:23:51.8503017Z ##[endgroup]
+2026-06-11T16:23:51.8820682Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-06-11T16:23:51.9081778Z 6e6285e9fdbe929d53e0edae90a5ffcf132530b8

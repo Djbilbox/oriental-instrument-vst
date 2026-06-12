@@ -1,0 +1,40 @@
+﻿2026-06-11T16:24:01.9198964Z ##[group]Run echo "=== Root files ==="
+2026-06-11T16:24:01.9199371Z [36;1mecho "=== Root files ==="[0m
+2026-06-11T16:24:01.9199618Z [36;1mls -la[0m
+2026-06-11T16:24:01.9199855Z [36;1mecho "=== JUCE present? ==="[0m
+2026-06-11T16:24:01.9200154Z [36;1mls JUCE/CMakeLists.txt && echo "OK: JUCE found"[0m
+2026-06-11T16:24:01.9200461Z [36;1mecho "=== Source dir ==="[0m
+2026-06-11T16:24:01.9200692Z [36;1mls Source/[0m
+2026-06-11T16:24:01.9213691Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-06-11T16:24:01.9214081Z ##[endgroup]
+2026-06-11T16:24:01.9560193Z === Root files ===
+2026-06-11T16:24:01.9773035Z total 145
+2026-06-11T16:24:01.9773447Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 .
+2026-06-11T16:24:01.9773792Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 ..
+2026-06-11T16:24:01.9774118Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 .git
+2026-06-11T16:24:01.9774447Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 .github
+2026-06-11T16:24:01.9775059Z -rw-r--r-- 1 runneradmin 197121   383 Jun 11 16:23 .gitignore
+2026-06-11T16:24:01.9775525Z -rw-r--r-- 1 runneradmin 197121  8698 Jun 11 16:23 ARCHITECTURE.md
+2026-06-11T16:24:01.9775988Z -rw-r--r-- 1 runneradmin 197121  3357 Jun 11 16:23 CMakeLists.txt
+2026-06-11T16:24:01.9776706Z -rw-r--r-- 1 runneradmin 197121  1676 Jun 11 16:23 Fiche Projet  Oriental VST.txt
+2026-06-11T16:24:01.9777468Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:24 JUCE
+2026-06-11T16:24:01.9778054Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 JuceLibraryCode
+2026-06-11T16:24:01.9778699Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 Oriental Instrument
+2026-06-11T16:24:01.9779154Z -rw-r--r-- 1 runneradmin 197121 12641 Jun 11 16:23 OrientalInstrument.jucer
+2026-06-11T16:24:01.9779960Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 Resources
+2026-06-11T16:24:01.9780543Z drwxr-xr-x 1 runneradmin 197121     0 Jun 11 16:23 Source
+2026-06-11T16:24:01.9781140Z -rw-r--r-- 1 runneradmin 197121 73292 Jun 11 16:23 ma_musique.html
+2026-06-11T16:24:01.9781841Z -rw-r--r-- 1 runneradmin 197121  2386 Jun 11 16:23 oriental-vst-document.md
+2026-06-11T16:24:01.9782288Z === JUCE present? ===
+2026-06-11T16:24:01.9946019Z JUCE/CMakeLists.txt
+2026-06-11T16:24:01.9952287Z OK: JUCE found
+2026-06-11T16:24:01.9952669Z === Source dir ===
+2026-06-11T16:24:02.0119452Z Cmajor
+2026-06-11T16:24:02.0119854Z DSP
+2026-06-11T16:24:02.0120284Z Data
+2026-06-11T16:24:02.0120879Z GUI
+2026-06-11T16:24:02.0121206Z PluginEditor.cpp
+2026-06-11T16:24:02.0121862Z PluginEditor.h
+2026-06-11T16:24:02.0122719Z PluginProcessor.cpp
+2026-06-11T16:24:02.0123469Z PluginProcessor.h
+2026-06-11T16:24:02.0123735Z Utils

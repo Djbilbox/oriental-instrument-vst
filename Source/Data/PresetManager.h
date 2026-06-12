@@ -23,6 +23,7 @@ public:
 
 private:
     void loadFactoryPresets();
+    void loadExtendedPresets();
 
     std::vector<PresetData> factoryPresets;
     int currentPresetIndex = 0;

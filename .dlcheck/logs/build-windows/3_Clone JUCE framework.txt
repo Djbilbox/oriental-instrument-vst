@@ -1,0 +1,38 @@
+﻿2026-06-11T16:23:51.9835786Z ##[group]Run git clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git JUCE
+2026-06-11T16:23:51.9836698Z [36;1mgit clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git JUCE[0m
+2026-06-11T16:23:51.9960104Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-06-11T16:23:51.9960521Z ##[endgroup]
+2026-06-11T16:23:57.0137076Z Cloning into 'JUCE'...
+2026-06-11T16:24:00.1510531Z Note: switching to '51d11a2be6d5c97ccf12b4e5e827006e19f0555a'.
+2026-06-11T16:24:00.1512768Z 
+2026-06-11T16:24:00.1513485Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-06-11T16:24:00.1514277Z changes and commit them, and you can discard any commits you make in this
+2026-06-11T16:24:00.1517061Z state without impacting any branches by switching back to a branch.
+2026-06-11T16:24:00.1517529Z 
+2026-06-11T16:24:00.1517807Z If you want to create a new branch to retain commits you create, you may
+2026-06-11T16:24:00.1518541Z do so (now or later) by using -c with the switch command. Example:
+2026-06-11T16:24:00.1519057Z 
+2026-06-11T16:24:00.1519217Z   git switch -c <new-branch-name>
+2026-06-11T16:24:00.1519519Z 
+2026-06-11T16:24:00.1519694Z Or undo this operation with:
+2026-06-11T16:24:00.1519953Z 
+2026-06-11T16:24:00.1520078Z   git switch -
+2026-06-11T16:24:00.1520274Z 
+2026-06-11T16:24:00.1520642Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-06-11T16:24:00.1521206Z 
+2026-06-11T16:24:01.1782490Z Updating files:  86% (3633/4217)
+2026-06-11T16:24:01.1872105Z Updating files:  87% (3669/4217)
+2026-06-11T16:24:01.1962978Z Updating files:  88% (3711/4217)
+2026-06-11T16:24:01.2074531Z Updating files:  89% (3754/4217)
+2026-06-11T16:24:01.2172727Z Updating files:  90% (3796/4217)
+2026-06-11T16:24:01.2283932Z Updating files:  91% (3838/4217)
+2026-06-11T16:24:01.2399439Z Updating files:  92% (3880/4217)
+2026-06-11T16:24:01.2507021Z Updating files:  93% (3922/4217)
+2026-06-11T16:24:01.2597165Z Updating files:  94% (3964/4217)
+2026-06-11T16:24:01.2698730Z Updating files:  95% (4007/4217)
+2026-06-11T16:24:01.2964203Z Updating files:  96% (4049/4217)
+2026-06-11T16:24:01.3061817Z Updating files:  97% (4091/4217)
+2026-06-11T16:24:01.5346385Z Updating files:  98% (4133/4217)
+2026-06-11T16:24:01.5469504Z Updating files:  99% (4175/4217)
+2026-06-11T16:24:01.5470269Z Updating files: 100% (4217/4217)
+2026-06-11T16:24:01.5470522Z Updating files: 100% (4217/4217), done.

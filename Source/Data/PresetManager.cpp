@@ -4,6 +4,7 @@
 PresetManager::PresetManager()
 {
     loadFactoryPresets();
+    loadExtendedPresets();
 }
 
 // Derive a DISTINCT ADSR per preset from its own macro personality, anchored on
@@ -279,6 +280,17 @@ void PresetManager::loadFactoryPresets()
     // [65] Khartoum Sufi — zikr, sustain profond
     factoryPresets[65].attack = 0.08f; factoryPresets[65].sustain = 0.85f; factoryPresets[65].release = 0.80f;
     // ────────────────────────────────────────────────────────────────────────
+}
+
+void PresetManager::loadExtendedPresets()
+{
+    #include "PresetData_Extended.h"
+    auto extended = PresetDataExtended::loadAll();
+    for (auto& p : extended)
+    {
+        deriveADSR(p);
+        factoryPresets.push_back(p);
+    }
 }
 
 int PresetManager::getNumPresets() const

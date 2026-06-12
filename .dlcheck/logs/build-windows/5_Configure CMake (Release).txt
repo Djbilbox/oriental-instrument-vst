@@ -1,0 +1,38 @@
+﻿2026-06-11T16:24:02.0350073Z ##[group]Run cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
+2026-06-11T16:24:02.0350583Z [36;1mcmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release[0m
+2026-06-11T16:24:02.0413436Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-06-11T16:24:02.0413788Z ##[endgroup]
+2026-06-11T16:24:09.4196827Z -- Building for: Visual Studio 18 2026
+2026-06-11T16:24:09.4197529Z -- The CXX compiler identification is MSVC 19.51.36246.0
+2026-06-11T16:24:09.5064032Z -- Detecting CXX compiler ABI info
+2026-06-11T16:24:10.4649060Z -- Detecting CXX compiler ABI info - done
+2026-06-11T16:24:10.4993356Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+2026-06-11T16:24:10.5008585Z -- Detecting CXX compile features
+2026-06-11T16:24:10.5024923Z -- Detecting CXX compile features - done
+2026-06-11T16:24:11.4384737Z -- The C compiler identification is MSVC 19.51.36246.0
+2026-06-11T16:24:11.4552012Z -- Detecting C compiler ABI info
+2026-06-11T16:24:12.1095001Z -- Detecting C compiler ABI info - done
+2026-06-11T16:24:12.1272021Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+2026-06-11T16:24:12.1275960Z -- Detecting C compile features
+2026-06-11T16:24:12.1282654Z -- Detecting C compile features - done
+2026-06-11T16:24:13.3247820Z -- Configuring juceaide
+2026-06-11T16:24:17.0944455Z -- Building juceaide
+2026-06-11T16:24:45.4229816Z -- Exporting juceaide
+2026-06-11T16:24:45.4238431Z -- Testing juceaide
+2026-06-11T16:24:45.4669979Z -- Finished setting up juceaide
+2026-06-11T16:24:45.5069617Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+2026-06-11T16:24:45.9844339Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+2026-06-11T16:24:45.9845637Z -- Looking for pthread_create in pthreads
+2026-06-11T16:24:46.5482168Z -- Looking for pthread_create in pthreads - not found
+2026-06-11T16:24:46.5482671Z -- Looking for pthread_create in pthread
+2026-06-11T16:24:47.0990921Z -- Looking for pthread_create in pthread - not found
+2026-06-11T16:24:47.1083570Z -- Found Threads: TRUE
+2026-06-11T16:24:47.1108894Z -- Configuring done (44.1s)
+2026-06-11T16:24:47.2198798Z CMake Warning:
+2026-06-11T16:24:47.2199196Z   Manually-specified variables were not used by the project:
+2026-06-11T16:24:47.2199677Z 
+2026-06-11T16:24:47.2199783Z     CMAKE_BUILD_TYPE
+2026-06-11T16:24:47.2199917Z 
+2026-06-11T16:24:47.2199958Z 
+2026-06-11T16:24:47.2200073Z -- Generating done (0.1s)
+2026-06-11T16:24:47.2207682Z -- Build files have been written to: D:/a/oriental-instrument-vst/oriental-instrument-vst/build
