@@ -1,6 +1,7 @@
 #include "BackgroundComponent.h"
 #include "BlurUtils.h"
 #include "Typography.h"
+#include "BinaryData.h"
 #include "../Utils/Constants.h"
 #include <initializer_list>
 #include <cmath>
@@ -50,10 +51,37 @@ void BackgroundComponent::rebuildCaches()
     {
         juce::Graphics g(cachedDesert);
         auto bounds = b.toFloat();
-        // Premium dark arabesque backdrop, Algiers monument + flag kept.
-        drawArabesqueBackdrop(g, bounds);
-        drawMonument(g, sx, sy);     // Maqam Echahid (Monument des Martyrs, Alger)
-        drawAlgerianFlag(g, sx, sy);
+
+        if (bgPhoto.isNull())
+            bgPhoto = juce::ImageFileFormat::loadFrom(BinaryData::bg_algerie_png,
+                                                      (size_t) BinaryData::bg_algerie_pngSize);
+
+        if (bgPhoto.isValid())
+        {
+            // Real Maqam Echahid photo (monument + flag + camels), cover-fit.
+            const float iw = (float) bgPhoto.getWidth(), ih = (float) bgPhoto.getHeight();
+            const float scale = juce::jmax(b.getWidth() / iw, b.getHeight() / ih);
+            const float dw = iw * scale, dh = ih * scale;
+            g.drawImageTransformed(bgPhoto,
+                juce::AffineTransform::scale(scale)
+                    .translated((b.getWidth() - dw) * 0.5f, (b.getHeight() - dh) * 0.5f));
+
+            // Overall darken so gold UI + glass panels stay legible over the photo.
+            g.setColour(juce::Colour(0x59000000)); // ~35%
+            g.fillRect(bounds);
+            // Extra dark band under the header (title legibility).
+            juce::ColourGradient top{juce::Colour(0xB0000000), 0, 0,
+                                     juce::Colours::transparentBlack, 0, bounds.getHeight() * 0.16f, false};
+            g.setGradientFill(top);
+            g.fillRect(0.0f, 0.0f, bounds.getWidth(), bounds.getHeight() * 0.16f);
+        }
+        else
+        {
+            // Fallback: drawn arabesque backdrop + monument + flag.
+            drawArabesqueBackdrop(g, bounds);
+            drawMonument(g, sx, sy);
+            drawAlgerianFlag(g, sx, sy);
+        }
         drawVignette(g, bounds);
     }
 

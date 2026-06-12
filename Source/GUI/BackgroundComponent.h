@@ -23,6 +23,7 @@ private:
     void rebuildCaches();
     juce::Image cachedDesert;   // full sharp scene
     juce::Image cachedFrosted;  // blurred scene for glass panels
+    juce::Image bgPhoto;        // user-provided Maqam Echahid photo backdrop
     juce::Rectangle<int> cachedSize;
 
     // Animation

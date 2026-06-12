@@ -67,6 +67,7 @@ juce_add_binary_data(OrientalBinaryData
         Resources/Fonts/InterBold.ttf
         Resources/Fonts/InterRegular.ttf
         Resources/Fonts/UnifrakturCookBold.ttf
+        Resources/Images/bg_algerie.png
 )
 
 target_include_directories(OrientalInstrument
