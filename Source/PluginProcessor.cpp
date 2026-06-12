@@ -400,7 +400,7 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         const float driveTarget = 1.0f + (depth / 100.0f) * 2.2f;
         const float tremDepth   = mod * 0.5f;                         // 0..0.5
         const float tremInc     = juce::MathConstants<float>::twoPi * 5.5f
-                                  / static_cast<float>(juce::jmax(1.0, sampleRate));
+                                  / static_cast<float>(juce::jmax(1.0, getSampleRate()));
         const int   numCh = buffer.getNumChannels();
         const int   numSm = buffer.getNumSamples();
         for (int n = 0; n < numSm; ++n)
