@@ -15,13 +15,13 @@ namespace OrientalConstants
     constexpr int WAVETABLE_SIZE = 2048;
     constexpr float DEFAULT_TUNING = 440.0f;
 
-    // GUI dimensions (matches HTML prototype: 980x640)
-    constexpr int WINDOW_WIDTH = 980;
-    constexpr int WINDOW_HEIGHT = 640;
-    constexpr int HEADER_HEIGHT = 64;
-    constexpr int PIANO_HEIGHT = 148;
-    constexpr int LEFT_COL_WIDTH = 170;
-    constexpr int RIGHT_COL_WIDTH = 162;
+    // GUI dimensions — compact (smaller, BUJAA-style footprint).
+    constexpr int WINDOW_WIDTH = 860;
+    constexpr int WINDOW_HEIGHT = 540;
+    constexpr int HEADER_HEIGHT = 60;
+    constexpr int PIANO_HEIGHT = 120;
+    constexpr int LEFT_COL_WIDTH = 150;
+    constexpr int RIGHT_COL_WIDTH = 150;
 
     // ══ COLORS — exact from ma_musique.html CSS vars ══
     namespace Colors

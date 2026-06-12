@@ -380,7 +380,10 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         // Shape the raw sample with the preset's macros so presets sound DISTINCT.
         // SamplerVoice ignores filter/reso/orient/depth, so without this every
         // preset of an instrument is the same tone.
-        sampleFilter.setCutoffFrequency(juce::jlimit(120.0f, 18000.0f, cutoffHz));
+        // MOD WHEEL opens the filter (brighter) so the wheel is audible on samples.
+        const float mod = modWheelValue.load();
+        const float modCutoff = cutoffHz * (1.0f + mod * 3.0f);
+        sampleFilter.setCutoffFrequency(juce::jlimit(120.0f, 18000.0f, modCutoff));
         sampleFilter.setResonance(juce::jlimit(0.10f, 1.6f, 0.30f + (reso / 100.0f) * 1.30f));
         // ORIENT opens a presence/high-pass: low values = warm/round, high = airy/nasal.
         sampleHighpass.setCutoffFrequency(juce::jlimit(20.0f, 1200.0f, 20.0f + (orient / 100.0f) * 1180.0f));
@@ -393,15 +396,26 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             sampleHighpass.process(ctx);
 
         // DEPTH → soft harmonic drive (body/warmth) with make-up compensation.
+        // MOD WHEEL → tremolo (~5.5 Hz amplitude LFO), depth scales with the wheel.
         const float driveTarget = 1.0f + (depth / 100.0f) * 2.2f;
-        for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
+        const float tremDepth   = mod * 0.5f;                         // 0..0.5
+        const float tremInc     = juce::MathConstants<float>::twoPi * 5.5f
+                                  / static_cast<float>(juce::jmax(1.0, sampleRate));
+        const int   numCh = buffer.getNumChannels();
+        const int   numSm = buffer.getNumSamples();
+        for (int n = 0; n < numSm; ++n)
         {
-            float* d = buffer.getWritePointer(ch);
-            for (int n = 0; n < buffer.getNumSamples(); ++n)
+            sampleDriveSmoothed += (driveTarget - sampleDriveSmoothed) * 0.001f;
+            const float trem = 1.0f - tremDepth + tremDepth * 0.5f * (1.0f + std::sin(tremoloPhase));
+            tremoloPhase += tremInc;
+            if (tremoloPhase > juce::MathConstants<float>::twoPi)
+                tremoloPhase -= juce::MathConstants<float>::twoPi;
+
+            const float makeup = 1.0f / std::tanh(sampleDriveSmoothed + 0.0001f);
+            for (int ch = 0; ch < numCh; ++ch)
             {
-                sampleDriveSmoothed += (driveTarget - sampleDriveSmoothed) * 0.001f;
-                const float x = d[n] * sampleDriveSmoothed;
-                d[n] = std::tanh(x) * (1.0f / std::tanh(sampleDriveSmoothed + 0.0001f));
+                float* d = buffer.getWritePointer(ch);
+                d[n] = std::tanh(d[n] * sampleDriveSmoothed) * makeup * trem;
             }
         }
     }
@@ -419,6 +433,7 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
 void OrientalInstrumentProcessor::setPitchBend(float normalizedValue)
 {
+    pitchBendValue.store(normalizedValue);
     // Convert -1..+1 to MIDI pitch wheel 0..16383
     int pitchWheelValue = static_cast<int>((normalizedValue + 1.0f) * 0.5f * 16383.0f);
     synthesiser.setPitchWheel(pitchWheelValue);
@@ -426,7 +441,8 @@ void OrientalInstrumentProcessor::setPitchBend(float normalizedValue)
 
 void OrientalInstrumentProcessor::setModWheel(float normalizedValue)
 {
-    // Send CC#1 to all voices
+    modWheelValue.store(normalizedValue);
+    // Send CC#1 to all voices (synth path)
     synthesiser.setModWheel(normalizedValue);
 }
 

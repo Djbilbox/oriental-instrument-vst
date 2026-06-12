@@ -105,15 +105,15 @@ void FXPanel::FXSlot::paint(juce::Graphics& g)
         g.fillEllipse(ledBounds.expanded(2.0f));
     }
 
-    // FX name (bigger, readable)
+    // FX name (compact, full word — no truncation)
     g.setColour(on ? juce::Colour(0xFFE8E8E8) : juce::Colour(0xFF999999));
-    g.setFont(juce::Font(18.0f, juce::Font::bold));
-    g.drawText(fxName, 22, 0, getWidth() - 96, getHeight() - 3, juce::Justification::centredLeft);
+    g.setFont(juce::Font(13.0f, juce::Font::bold));
+    g.drawText(fxName, 20, 0, getWidth() - 86, getHeight() - 3, juce::Justification::centredLeft);
 
     // Amount value (between − and +)
     g.setColour(on ? juce::Colour(OrientalConstants::Colors::GOLD_LIGHT)
                    : juce::Colour(OrientalConstants::Colors::GOLD_DIM));
-    g.setFont(juce::Font(14.0f, juce::Font::bold));
+    g.setFont(juce::Font(11.0f, juce::Font::bold));
     g.drawText(juce::String(static_cast<int>(amt)) + "%",
                getWidth() - 22 - 34, 0, 34, getHeight() - 3, juce::Justification::centred);
 }
@@ -139,7 +139,7 @@ FXPanel::FXPanel(FXChain& chain, juce::AudioProcessorValueTreeState& state)
         { "Chorus",    "chorusOn",   "chorusAmt" },
         { "Distort",   "distOn",     "distAmt" },
         { "Comprs",    "compOn",     "compAmt" },
-        { "3-Band EQ", "eqOn",       "eqAmt" },
+        { "EQ",        "eqOn",       "eqAmt" },
         { "Phaser",    "phaserOn",   "phaserAmt" },
         { "Bitcrsh",   "bitcrushOn", "bitcrushAmt" },
     };

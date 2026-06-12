@@ -44,7 +44,7 @@ PresetBrowser::PresetBrowser(PresetManager& pm, juce::AudioProcessorValueTreeSta
 
 void PresetBrowser::paint(juce::Graphics& g)
 {
-    g.setColour(juce::Colour(0xAA0A0805)); // ~67%: monument/dunes glow through as a watermark
+    g.setColour(juce::Colour(0x8E0A0805)); // ~56%: monument/dunes clearly visible behind list
     g.fillRoundedRectangle(getLocalBounds().toFloat(), 2.0f);
     g.setColour(juce::Colour(OrientalConstants::Colors::GLASS_BORDER));
     g.drawRoundedRectangle(getLocalBounds().toFloat(), 2.0f, 1.0f);

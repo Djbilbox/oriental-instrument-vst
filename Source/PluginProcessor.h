@@ -66,6 +66,13 @@ private:
     juce::dsp::StateVariableTPTFilter<float> sampleHighpass; // orient → presence
     float sampleDriveSmoothed = 1.0f;
 
+    // Live performance modulation. SamplerVoice ignores pitch/mod, so the wheels
+    // did nothing on sampled presets. Mod wheel here drives a tremolo + filter
+    // sweep on the sample path; pitch bend still goes to the synth voices.
+    std::atomic<float> modWheelValue  { 0.0f };
+    std::atomic<float> pitchBendValue { 0.0f };
+    float tremoloPhase = 0.0f;
+
     FXChain fxChain;
     MasterLimiter masterLimiter;   // final output protection (soft limiter + hard ceiling)
     PresetManager presetManager;

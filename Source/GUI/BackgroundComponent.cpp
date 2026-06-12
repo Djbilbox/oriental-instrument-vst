@@ -89,7 +89,7 @@ void BackgroundComponent::drawGlassPanel(juce::Graphics& g, juce::Rectangle<int>
             g.drawImageAt(cachedFrosted, 0, 0);
     }
 
-    g.setColour(juce::Colour(0x8C0C0906)); // ~55% warm-dark tint (scene shows through)
+    g.setColour(juce::Colour(0x780C0906)); // ~47% warm-dark tint (scene shows through clearly)
     g.fillRect(rf);
 
     juce::ColourGradient sheen{juce::Colours::white.withAlpha(0.07f), rf.getX(), rf.getY(),
@@ -262,10 +262,11 @@ void BackgroundComponent::drawArabesqueBackdrop(juce::Graphics& g, juce::Rectang
     const float horizon = h * 0.555f;
 
     // Warm sky band just above the horizon (sunset wash).
-    juce::ColourGradient sky{juce::Colour(0xFF4A2410).withAlpha(0.55f), 0, horizon - h * 0.18f,
-                             juce::Colours::transparentBlack, 0, horizon - h * 0.42f, false};
+    juce::ColourGradient sky{juce::Colour(0xFF8A4418).withAlpha(0.75f), 0, horizon - h * 0.16f,
+                             juce::Colours::transparentBlack, 0, horizon - h * 0.46f, false};
+    sky.addColour(0.5, juce::Colour(0xFFB85A1E).withAlpha(0.42f));
     g.setGradientFill(sky);
-    g.fillRect(0.0f, horizon - h * 0.42f, w, h * 0.24f);
+    g.fillRect(0.0f, horizon - h * 0.46f, w, h * 0.30f);
 
     // Three dune layers, far (pale) → near (dark), each a smooth ridge.
     struct Dune { float y; juce::uint32 col; float amp; };
