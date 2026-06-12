@@ -1,4 +1,5 @@
 #include "SampleEngine.h"
+#include "BendableSampler.h"
 #include <regex>
 #include <vector>
 #include <algorithm>
@@ -14,7 +15,7 @@ SampleEngine::SampleEngine()
 {
     formatManager.registerBasicFormats(); // wav, aiff (+ flac/ogg if enabled)
     for (int i = 0; i < kSamplerVoices; ++i)
-        synth.addVoice(new juce::SamplerVoice());
+        synth.addVoice(new BendableVoice()); // responds to pitch + mod wheel
 }
 
 void SampleEngine::prepare(double sr, int samplesPerBlock)
@@ -135,11 +136,11 @@ void SampleEngine::loadFolder(const juce::File& dir)
         if (reader == nullptr)
             continue;
 
-        synth.addSound(new juce::SamplerSound(entries[i].file.getFileName(), *reader,
-                                              keys, root,
-                                              0.002,   // attack (s)
-                                              0.15,    // release (s)
-                                              kMaxSampleSeconds));
+        synth.addSound(new BendableSound(entries[i].file.getFileName(), *reader,
+                                         keys, root,
+                                         0.002,   // attack (s)
+                                         0.15,    // release (s)
+                                         kMaxSampleSeconds));
     }
 
     currentHasSamples = synth.getNumSounds() > 0;

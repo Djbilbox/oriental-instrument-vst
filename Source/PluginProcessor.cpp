@@ -375,6 +375,15 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     // the instrument's Samples folder, otherwise the synthesis engine.
     if (sampleEngine.hasSamples())
     {
+        // Feed the wheels to the sample voices as MIDI so pitch bend + mod-vibrato
+        // actually work (BendableVoice handles pitchWheelMoved/controllerMoved).
+        const int pw  = juce::jlimit(0, 16383,
+                            static_cast<int>((pitchBendValue.load() + 1.0f) * 0.5f * 16383.0f));
+        const int cc1 = juce::jlimit(0, 127,
+                            static_cast<int>(modWheelValue.load() * 127.0f));
+        midiMessages.addEvent(juce::MidiMessage::pitchWheel(1, pw), 0);
+        midiMessages.addEvent(juce::MidiMessage::controllerEvent(1, 1, cc1), 0);
+
         sampleEngine.render(buffer, midiMessages, 0, buffer.getNumSamples());
 
         // Shape the raw sample with the preset's macros so presets sound DISTINCT.
