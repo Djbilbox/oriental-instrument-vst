@@ -88,6 +88,8 @@ jobs:
   build-macos:
     runs-on: macos-14
     timeout-minutes: 40
+    permissions:
+      contents: write   # publish Release so installer zips are publicly downloadable
 
     steps:
       - name: Checkout repository
@@ -194,3 +196,14 @@ jobs:
           path: OrientalInstrument-macOS-DEMO.zip
           if-no-files-found: error
           retention-days: 90
+
+      - name: Publish Release (public download, no auth needed)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="installers-v1.0.0"
+          NOTES="Oriental Instrument VST3 — all-in-one installers by DJBILBOX BEATS. macOS Full DMG is AES-256 encrypted (password in PASSWORD.txt)."
+          gh release create "$TAG" --title "Oriental Instrument Installers v1.0.0" --notes "$NOTES" \
+            OrientalInstrument-macOS-FULL.zip OrientalInstrument-macOS-DEMO.zip \
+          || gh release upload "$TAG" \
+            OrientalInstrument-macOS-FULL.zip OrientalInstrument-macOS-DEMO.zip --clobber
