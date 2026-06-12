@@ -28,8 +28,7 @@ void SampleEngine::prepare(double sr, int samplesPerBlock)
 juce::File SampleEngine::samplesRoot()
 {
     auto dir = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
-                   .getChildFile("Oriental Instrument")
-                   .getChildFile("Samples");
+                   .getChildFile("SAMPLE ORIENTAL INSTRUMENT VST3");
     if (! dir.exists())
         dir.createDirectory();
     return dir;
