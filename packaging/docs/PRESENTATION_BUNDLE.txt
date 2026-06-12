@@ -1,0 +1,50 @@
+===============================================================
+   ORIENTAL INSTRUMENT — BUNDLE (PRO / COMPLET)
+   by DJBILBOX BEATS
+===============================================================
+
+L'instrument oriental ultime. Maqam authentique, son de studio.
+
+Synthé multisample hybride taillé pour la musique orientale, arabe,
+maghrébine et cinématique. 280 presets sur 7 instruments réels, avec
+moteur d'accordage maqam, pitch-bend et vibrato live, et une chaîne
+d'effets complète. VST3 Windows & macOS — FL Studio, Logic, Ableton,
+Cubase, Studio One.
+
+---------------------------------------------------------------
+INCLUS DANS LE BUNDLE
+---------------------------------------------------------------
+  +  280 presets multisample pro (Oud, Qanun, Ney, Violin,
+     Darbuka, Rababah, Mizmar)
+  +  895 samples — vrais instruments orientaux
+  +  Chaîne FX 8 effets : Reverb, Echo, Chorus, Distort,
+     Compressor, EQ, Phaser, Bitcrush
+  +  Molettes PITCH + MOD (pitch-bend + vibrato expressifs)
+  +  Polyphonie 32 voix
+  +  Clavier piano pleine largeur
+  +  Interface arabesque dorée + monument Maqam Echahid (Alger)
+  +  Export audio illimité
+  +  Licence commerciale (beats & productions autorisés)
+
+---------------------------------------------------------------
+POURQUOI LE PRO
+---------------------------------------------------------------
+  -  Son authentique, prêt pour le mix
+  -  Accordage maqam micro-tonal réaliste
+  -  Workflow rapide : recherche, catégories, tags
+  -  Conçu par un beatmaker pro (DJBILBOX BEATS, Toulouse)
+
+---------------------------------------------------------------
+INSTALLATION
+---------------------------------------------------------------
+  Windows : lance le .exe, entre le mot de passe (PASSWORD.txt),
+            tout s'installe (plugin + samples).
+  macOS   : ouvre le .dmg (chiffré, mot de passe dans PASSWORD.txt),
+            glisse le plugin + le dossier samples, suis INSTALLATION.txt.
+
+Licence d'utilisation : voir LICENSE_BUNDLE.txt
+
+===============================================================
+  www.djbilboxbeats.com
+  Dédié à Mourad Attalah & Yamina Chikhr
+===============================================================

@@ -9,6 +9,8 @@ VST3_SRC="${1:?need path to .vst3 bundle}"
 OUT_DMG="${2:-Oriental-Instrument-VST3-macOS.dmg}"
 SAMPLES_ZIP="${3:-}"
 PASSWORD="${4:-}"
+DOC_PRESENT="${5:-}"
+DOC_LICENSE="${6:-}"
 PKG_DIR="$(cd "$(dirname "$0")" && pwd)"
 VOLNAME="Oriental Instrument"
 
@@ -52,6 +54,10 @@ ORIENTAL INSTRUMENT VST3 — macOS
 
 www.djbilboxbeats.com — Dedicated to Mourad Attalah & Yamina Chikhr
 EOF
+
+# Presentation + license docs (per variant)
+[ -n "$DOC_PRESENT" ] && [ -f "$DOC_PRESENT" ] && cp "$DOC_PRESENT" "$STAGE/$(basename "$DOC_PRESENT")"
+[ -n "$DOC_LICENSE" ] && [ -f "$DOC_LICENSE" ] && cp "$DOC_LICENSE" "$STAGE/$(basename "$DOC_LICENSE")"
 
 # Writable DMG + Finder layout
 RW_DMG="$(mktemp -d)/rw.dmg"

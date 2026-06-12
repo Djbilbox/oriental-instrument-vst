@@ -153,12 +153,14 @@ jobs:
       - name: Build all-in-one DMGs (Full encrypted + Demo)
         run: |
           chmod +x packaging/build_dmg.sh
-          # FULL — samples bundled + AES-256 password (bundle)
+          # FULL — samples bundled + AES-256 password (bundle) + pro docs
           packaging/build_dmg.sh "${{ steps.find_vst3.outputs.vst3_path }}" \
-            "Oriental-Instrument-macOS-FULL.dmg" "packaging/samples.zip" "DJBILBOX-ORIENT-2026"
-          # DEMO — samples bundled, no password (free)
+            "Oriental-Instrument-macOS-FULL.dmg" "packaging/samples.zip" "DJBILBOX-ORIENT-2026" \
+            "packaging/docs/PRESENTATION_BUNDLE.txt" "packaging/docs/LICENSE_BUNDLE.txt"
+          # DEMO — samples bundled, no password (free) + demo docs
           packaging/build_dmg.sh "${{ steps.find_demo.outputs.demo_path }}" \
-            "Oriental-Instrument-macOS-DEMO.dmg" "packaging/samples.zip"
+            "Oriental-Instrument-macOS-DEMO.dmg" "packaging/samples.zip" "" \
+            "packaging/docs/PRESENTATION_DEMO.txt" "packaging/docs/LICENSE_DEMO.txt"
 
       - name: Package macOS release zips
         run: |
@@ -177,9 +179,15 @@ jobs:
           ===========================================
           EOF
           mkdir -p release_mac
-          cp "Oriental-Instrument-macOS-FULL.dmg" PASSWORD.txt release_mac/
-          (cd release_mac && zip -9 ../OrientalInstrument-macOS-FULL.zip "Oriental-Instrument-macOS-FULL.dmg" PASSWORD.txt)
-          zip -9 OrientalInstrument-macOS-DEMO.zip "Oriental-Instrument-macOS-DEMO.dmg"
+          cp "Oriental-Instrument-macOS-FULL.dmg" PASSWORD.txt \
+             packaging/docs/PRESENTATION_BUNDLE.txt packaging/docs/LICENSE_BUNDLE.txt release_mac/
+          (cd release_mac && zip -9 ../OrientalInstrument-macOS-FULL.zip \
+             "Oriental-Instrument-macOS-FULL.dmg" PASSWORD.txt PRESENTATION_BUNDLE.txt LICENSE_BUNDLE.txt)
+          mkdir -p release_demo
+          cp "Oriental-Instrument-macOS-DEMO.dmg" \
+             packaging/docs/PRESENTATION_DEMO.txt packaging/docs/LICENSE_DEMO.txt release_demo/
+          (cd release_demo && zip -9 ../OrientalInstrument-macOS-DEMO.zip \
+             "Oriental-Instrument-macOS-DEMO.dmg" PRESENTATION_DEMO.txt LICENSE_DEMO.txt)
 
       - name: Upload macOS FULL installer zip
         uses: actions/upload-artifact@v4

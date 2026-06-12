@@ -1,0 +1,68 @@
+ORIENTAL INSTRUMENT — BUNDLE (PRO)
+END USER LICENSE AGREEMENT (EULA) / CONTRAT DE LICENCE
+DJBILBOX BEATS — Version 1.0.0
+
+-----------------------------------------------------------------
+FR — Français
+-----------------------------------------------------------------
+En installant ou en utilisant la version BUNDLE d'Oriental Instrument
+(le « Logiciel »), vous acceptez le présent contrat.
+
+1. CONCESSION DE LICENCE
+   DJBILBOX BEATS vous accorde une licence commerciale, mono-
+   utilisateur, non exclusive et non transférable. Un (1) achat
+   couvre un (1) utilisateur sur ses postes personnels.
+
+2. USAGE AUTORISÉ
+   - Produire de la musique, des beats et des œuvres audio,
+     commerciales ou non.
+   - Diffuser, vendre, monétiser et synchroniser vos productions
+     contenant les sons rendus par le Logiciel (libre de redevance).
+   - Aucune attribution requise (mais appréciée).
+
+3. RESTRICTIONS
+   Il est interdit de :
+   - revendre, louer, prêter, partager, sous-licencier ou
+     redistribuer le Logiciel ou son installateur ;
+   - extraire, exporter, ré-empaqueter ou revendre les samples bruts
+     en tant que librairie, kit, sample pack ou preset pack ;
+   - distribuer les sons de façon isolée (non intégrés à une œuvre
+     musicale finie) ;
+   - décompiler, désassembler ou modifier le Logiciel ;
+   - partager le mot de passe d'installation.
+
+4. PROPRIÉTÉ
+   Le Logiciel et tous les samples restent la propriété exclusive de
+   DJBILBOX BEATS. La licence ne transfère aucun droit de propriété,
+   seulement un droit d'utilisation selon les présentes.
+
+5. TRANSFERT
+   La licence est personnelle et ne peut être revendue ni transférée
+   sans l'accord écrit de DJBILBOX BEATS.
+
+6. ABSENCE DE GARANTIE / RESPONSABILITÉ
+   Le Logiciel est fourni « EN L'ÉTAT », sans garantie. DJBILBOX BEATS
+   ne saurait être tenu responsable de tout dommage direct ou indirect
+   résultant de son utilisation.
+
+7. RÉSILIATION
+   Toute violation des présentes met fin automatiquement à la licence
+   et oblige à désinstaller et supprimer le Logiciel et ses samples.
+
+-----------------------------------------------------------------
+EN — English (summary)
+-----------------------------------------------------------------
+This is the PRO BUNDLE of Oriental Instrument. License is COMMERCIAL,
+single-user, non-transferable. One purchase = one user. You MAY use the
+rendered sounds in your own music, beats and audio works — commercial or
+not — and release, sell, monetize and sync those productions royalty-free,
+no attribution required. You may NOT resell, share, sublicense or
+redistribute the software or its installer, NOR extract, repackage or
+resell the raw samples as a sound library / sample pack / preset pack,
+NOR share the install password. Software and samples remain the property
+of DJBILBOX BEATS, provided "AS IS" without warranty. Any breach
+terminates the license.
+
+-----------------------------------------------------------------
+(c) DJBILBOX BEATS — Toulouse, France. All rights reserved.
+Dedicated to Mourad Attalah & Yamina Chikhr.
