@@ -172,19 +172,24 @@ void BackgroundComponent::drawChrome(juce::Graphics& g)
     // ── By-line: sober, luxurious, legible — Cinzel tracked caps in gold,
     //    framed by two thin gold rules (engraved-plate look). ──
     {
-        auto blz = titleZone.withTrimmedTop(36.0f).withTrimmedBottom(2.0f);
-        g.setColour(juce::Colour(Colors::GOLD_DIM));
-        g.setFont(Typography::display(11.5f, true));
+        auto blz = titleZone.withTrimmedTop(34.0f).withTrimmedBottom(1.0f);
+        // Soft dark backing so the name reads on any stream/OBS capture.
         const juce::String byline = Typography::tracked("DJBILBOX BEATS");
+        g.setFont(Typography::display(17.0f, true));
+        const float tw = g.getCurrentFont().getStringWidthFloat(byline);
+        const float cx = blz.getCentreX();
+        g.setColour(juce::Colour(0x66000000));
+        g.fillRoundedRectangle(cx - tw * 0.5f - 10.0f, blz.getY() - 1.0f,
+                               tw + 20.0f, 22.0f, 4.0f);
+        // Bright gold name (bigger, brighter — visible on live).
+        g.setColour(juce::Colour(Colors::GOLD_LIGHT));
         g.drawText(byline, blz, juce::Justification::centredTop);
 
         // Thin gold rules flanking the name.
-        const float ty = blz.getY() + 6.0f;
-        const float tw = g.getCurrentFont().getStringWidthFloat(byline);
-        const float cx = blz.getCentreX();
-        g.setColour(juce::Colour(Colors::GOLD_DIM).withAlpha(0.55f));
-        g.fillRect(cx - tw * 0.5f - 22.0f, ty, 16.0f, 1.0f);
-        g.fillRect(cx + tw * 0.5f + 6.0f,  ty, 16.0f, 1.0f);
+        const float ty = blz.getY() + 9.0f;
+        g.setColour(juce::Colour(Colors::GOLD).withAlpha(0.75f));
+        g.fillRect(cx - tw * 0.5f - 26.0f, ty, 18.0f, 1.5f);
+        g.fillRect(cx + tw * 0.5f + 8.0f,  ty, 18.0f, 1.5f);
     }
 
     // (Transport buttons are real interactive components in the editor.)
