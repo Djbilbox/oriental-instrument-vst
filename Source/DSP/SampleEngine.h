@@ -29,6 +29,10 @@ public:
     // Load the wavs for an instrument (no-op if already loaded).
     void setInstrument(OrientalConstants::Instrument inst);
 
+    // Load wavs from an arbitrary folder under samplesRoot() (no-op if the same
+    // path is already loaded). Lets each preset pull its own source material.
+    void loadFromPath(const juce::String& relativePath);
+
     bool hasSamples() const { return currentHasSamples; }
 
     void render(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi,
@@ -50,6 +54,7 @@ private:
     int    blockSize  = 512;
     bool   currentHasSamples = false;
     int    loadedInstrument  = -1;
+    juce::String cachedFolderPath;   // LRU: last folder loaded via loadFromPath
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SampleEngine)
 };

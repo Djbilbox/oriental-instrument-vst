@@ -72,11 +72,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout OrientalInstrumentProcessor:
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID("fxmix", 1), "FX Mix", 0.0f, 100.0f, 50.0f));
 
-    // Instrument & preset selection
+    // Instrument & preset selection.
+    // Preset range must cover EVERY preset (factory + extended). presetManager is
+    // a member constructed before apvts, so its count is valid here. With a fixed
+    // 0..69 range, selecting any preset above 69 clamped to 69 — so all 200+
+    // extended presets collapsed onto preset #69 and sounded identical.
+    const int maxPreset = juce::jmax(1, presetManager.getNumPresets() - 1);
     params.push_back(std::make_unique<juce::AudioParameterInt>(
         juce::ParameterID("instrument", 1), "Instrument", 0, 6, 0));
     params.push_back(std::make_unique<juce::AudioParameterInt>(
-        juce::ParameterID("preset", 1), "Preset", 0, 69, 0));
+        juce::ParameterID("preset", 1), "Preset", 0, maxPreset, 0));
 
     // FX amounts (0-100)
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
@@ -214,9 +219,12 @@ void OrientalInstrumentProcessor::applyPresetToParameters(const PresetData& pres
     if (auto* p = apvts.getParameter("release"))
         p->setValueNotifyingHost(p->convertTo0to1(preset.release));
 
-    // Switch instrument and maqam
+    // Switch instrument, sample source and maqam.
     synthesiser.setInstrument(preset.instrument);
-    sampleEngine.setInstrument(preset.instrument);
+    if (preset.sampleFolder.isNotEmpty())
+        sampleEngine.loadFromPath(preset.sampleFolder); // preset's own source samples
+    else
+        sampleEngine.setInstrument(preset.instrument);  // instrument default folder
     synthesiser.setMaqam(MaqamTuning::maqamFromString(preset.maqam));
 }
 
@@ -230,7 +238,7 @@ bool OrientalInstrumentProcessor::producesMidi() const { return false; }
 bool OrientalInstrumentProcessor::isMidiEffect() const { return false; }
 double OrientalInstrumentProcessor::getTailLengthSeconds() const { return 2.0; }
 
-int OrientalInstrumentProcessor::getNumPrograms() { return OrientalConstants::TOTAL_PRESETS; }
+int OrientalInstrumentProcessor::getNumPrograms() { return juce::jmax(1, presetManager.getNumPresets()); }
 int OrientalInstrumentProcessor::getCurrentProgram() { return presetManager.getCurrentPresetIndex(); }
 
 void OrientalInstrumentProcessor::setCurrentProgram(int index)
@@ -252,8 +260,15 @@ void OrientalInstrumentProcessor::prepareToPlay(double sampleRate, int samplesPe
 {
     synthesiser.prepare(sampleRate, samplesPerBlock);
     sampleEngine.prepare(sampleRate, samplesPerBlock);
-    sampleEngine.setInstrument(static_cast<OrientalConstants::Instrument>(
-        static_cast<int>(instrumentParam->load())));
+    // Load the CURRENT preset's source (its own folder, else instrument default).
+    {
+        const auto& cur = presetManager.getCurrentPreset();
+        synthesiser.setInstrument(cur.instrument);
+        if (cur.sampleFolder.isNotEmpty())
+            sampleEngine.loadFromPath(cur.sampleFolder);
+        else
+            sampleEngine.setInstrument(cur.instrument);
+    }
 
     juce::dsp::ProcessSpec spec;
     spec.sampleRate       = sampleRate;
@@ -293,11 +308,11 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     float reso   = resoParam->load();
     float depth  = depthParam->load();
     float fxmix  = fxMixParam->load();
-    int   inst   = static_cast<int>(instrumentParam->load());
 
-    // === INSTRUMENT SELECTION ===
-    synthesiser.setInstrument(static_cast<OrientalConstants::Instrument>(inst));
-    sampleEngine.setInstrument(static_cast<OrientalConstants::Instrument>(inst));
+    // NOTE: instrument + sample-folder selection is handled on the message thread
+    // in parameterChanged()/applyPresetToParameters(), NOT here. Doing it per block
+    // re-ran disk I/O on the audio thread and overrode each preset's own sample
+    // folder back to the instrument default — making every preset sound the same.
 
     // === SYNTH PARAMETERS ===
 

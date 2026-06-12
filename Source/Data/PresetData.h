@@ -12,6 +12,13 @@ struct PresetData
     juce::String tags;
     OrientalConstants::Instrument instrument;
 
+    // Relative path under <Documents>/Oriental Instrument/Samples that supplies
+    // THIS preset's source samples. Empty = use the instrument's default folder.
+    // Lets two presets of the same instrument pull different source material
+    // (e.g. "Oud Sample Pack/Oud Sample Pack" vs top-level "Oud") so they have a
+    // genuinely distinct sonic identity, not just different knob values.
+    juce::String sampleFolder;
+
     // Synth parameters
     float glide   = 25.0f;
     float space   = 60.0f;

@@ -147,14 +147,28 @@ void SampleEngine::loadFolder(const juce::File& dir)
 
 void SampleEngine::setInstrument(OrientalConstants::Instrument inst)
 {
-    if (static_cast<int>(inst) == loadedInstrument)
+    if (static_cast<int>(inst) == loadedInstrument && cachedFolderPath.isEmpty())
         return;
     loadedInstrument = static_cast<int>(inst);
+    cachedFolderPath = {}; // a path load is now stale; instrument folder is active
 
     const juce::File dir = samplesRoot().getChildFile(OrientalConstants::instrumentName(inst));
     if (! dir.exists())
         dir.createDirectory(); // so the user sees where to drop files
     loadFolder(dir);
+}
+
+void SampleEngine::loadFromPath(const juce::String& relativePath)
+{
+    if (relativePath.isEmpty())
+        return;
+    if (relativePath == cachedFolderPath)
+        return; // already loaded — LRU no-op
+    cachedFolderPath = relativePath;
+    loadedInstrument = -1; // instrument cache is now stale
+
+    const juce::File dir = samplesRoot().getChildFile(relativePath);
+    loadFolder(dir); // sets currentHasSamples; if empty the processor uses synth
 }
 
 void SampleEngine::render(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi,
