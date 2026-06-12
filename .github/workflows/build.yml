@@ -84,3 +84,65 @@ jobs:
           path: ${{ steps.find_demo.outputs.demo_path }}
           if-no-files-found: error
           retention-days: 90
+
+  build-macos:
+    runs-on: macos-14
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Clone JUCE framework
+        run: git clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git JUCE
+
+      - name: Configure CMake (Release, universal)
+        run: cmake -B build -G Xcode -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13
+
+      - name: Build VST3 (full)
+        run: cmake --build build --config Release --target OrientalInstrument_VST3
+
+      - name: Build VST3 (DEMO)
+        run: cmake --build build --config Release --target OrientalInstrumentDemo_VST3
+
+      - name: Locate full VST3 artifact
+        id: find_vst3
+        run: |
+          VST3_PATH=$(find build -name "Oriental Instrument.vst3" -type d | head -1)
+          if [ -z "$VST3_PATH" ]; then
+            echo "ERROR: No full .vst3 bundle found!"
+            find build -type d -name "*.vst3"
+            exit 1
+          fi
+          echo "vst3_path=$VST3_PATH" >> $GITHUB_OUTPUT
+          echo "Found full VST3 at: $VST3_PATH"
+
+      - name: Locate DEMO VST3 artifact
+        id: find_demo
+        run: |
+          DEMO_PATH=$(find build -name "Oriental Instrument DEMO.vst3" -type d | head -1)
+          if [ -z "$DEMO_PATH" ]; then
+            echo "ERROR: No DEMO .vst3 bundle found!"
+            find build -type d -name "*.vst3"
+            exit 1
+          fi
+          echo "demo_path=$DEMO_PATH" >> $GITHUB_OUTPUT
+          echo "Found DEMO VST3 at: $DEMO_PATH"
+
+      - name: Upload full VST3 artifact (macOS)
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrientalInstrument-VST3-macOS
+          path: ${{ steps.find_vst3.outputs.vst3_path }}
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload DEMO VST3 artifact (macOS)
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrientalInstrument-DEMO-VST3-macOS
+          path: ${{ steps.find_demo.outputs.demo_path }}
+          if-no-files-found: error
+          retention-days: 90
