@@ -1,5 +1,6 @@
 #include "PresetManager.h"
 #include "InstrumentProfiles.h"
+#include "PresetData_Extended.h"
 
 PresetManager::PresetManager()
 {
@@ -284,7 +285,6 @@ void PresetManager::loadFactoryPresets()
 
 void PresetManager::loadExtendedPresets()
 {
-    #include "PresetData_Extended.h"
     auto extended = PresetDataExtended::loadAll();
     for (auto& p : extended)
     {
