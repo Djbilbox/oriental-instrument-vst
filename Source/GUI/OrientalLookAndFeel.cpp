@@ -184,6 +184,8 @@ void OrientalLookAndFeel::drawButtonText(juce::Graphics& g, juce::TextButton& bu
 
     g.setColour((isOn || name == "PANIC") ? onCol : juce::Colour(Colors::TAB_NAME_OFF));
     g.setFont(Typography::tab());
-    g.drawFittedText(button.getButtonText(), button.getLocalBounds().reduced(2),
+    // drawFittedText auto-shrinks to fit, so a bigger base font enlarges the wide
+    // instrument tabs (VLN/OUD/...) while narrow header buttons still fit.
+    g.drawFittedText(button.getButtonText(), button.getLocalBounds().reduced(1),
                      juce::Justification::centred, 1);
 }

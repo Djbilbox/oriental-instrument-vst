@@ -69,7 +69,7 @@ namespace Typography
     inline juce::Font sectionLabel() { return body(    9.0f, true); }
     inline juce::Font knobLabel()    { return body(   10.0f, true); }
     inline juce::Font value()        { return body(   12.0f, false); }
-    inline juce::Font tab()          { return display( 9.0f, true); }
+    inline juce::Font tab()          { return display(12.0f, true); }
 
     // Uppercase + tracked spacing helper (JUCE has no letter-spacing, so we
     // inject thin spaces between glyphs for the "tracked caps" look).

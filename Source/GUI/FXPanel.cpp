@@ -105,10 +105,10 @@ void FXPanel::FXSlot::paint(juce::Graphics& g)
         g.fillEllipse(ledBounds.expanded(2.0f));
     }
 
-    // FX name (compact, full word — no truncation)
+    // FX name (compact; width stops before the − button so nothing overlaps)
     g.setColour(on ? juce::Colour(0xFFE8E8E8) : juce::Colour(0xFF999999));
     g.setFont(juce::Font(13.0f, juce::Font::bold));
-    g.drawText(fxName, 20, 0, getWidth() - 86, getHeight() - 3, juce::Justification::centredLeft);
+    g.drawText(fxName, 20, 0, getWidth() - 100, getHeight() - 3, juce::Justification::centredLeft);
 
     // Amount value (between − and +)
     g.setColour(on ? juce::Colour(OrientalConstants::Colors::GOLD_LIGHT)
@@ -154,17 +154,12 @@ FXPanel::FXPanel(FXChain& chain, juce::AudioProcessorValueTreeState& state)
 
 void FXPanel::paint(juce::Graphics& g)
 {
-    // Titre rouge avec glow — design HTML de référence
-    auto titleArea = getLocalBounds().removeFromTop(20);
-    juce::Colour red(OrientalConstants::Colors::RED);
-    // Red glow (shadow layers)
-    g.setColour(red.withAlpha(0.25f));
-    g.setFont(juce::Font("Cinzel", 11.0f, juce::Font::bold));
-    for (int dx = -2; dx <= 2; ++dx)
-        for (int dy = -2; dy <= 2; ++dy)
-            if (dx != 0 || dy != 0)
-                g.drawText("FX CHAIN", titleArea.translated(dx, dy), juce::Justification::centred);
-    g.setColour(red);
+    // Title — gold, legible (the blurry red glow was unreadable on stream).
+    auto titleArea = getLocalBounds().removeFromTop(22);
+    g.setFont(juce::Font("Cinzel", 13.0f, juce::Font::bold));
+    g.setColour(juce::Colour(0xCC000000)); // crisp 1px drop shadow only
+    g.drawText("FX CHAIN", titleArea.translated(1, 1), juce::Justification::centred);
+    g.setColour(juce::Colour(OrientalConstants::Colors::GOLD_LIGHT));
     g.drawText("FX CHAIN", titleArea, juce::Justification::centred);
 }
 
