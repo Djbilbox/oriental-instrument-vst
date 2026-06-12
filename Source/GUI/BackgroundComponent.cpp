@@ -92,13 +92,13 @@ void BackgroundComponent::drawGlassPanel(juce::Graphics& g, juce::Rectangle<int>
     g.setColour(juce::Colour(0xA60C0906)); // ~65% warm-dark tint
     g.fillRect(rf);
 
-    juce::ColourGradient sheen(juce::Colours::white.withAlpha(0.07f), rf.getX(), rf.getY(),
-                               juce::Colours::transparentWhite, rf.getX(), rf.getY() + 70.0f, false);
+    juce::ColourGradient sheen{juce::Colours::white.withAlpha(0.07f), rf.getX(), rf.getY(),
+                               juce::Colours::transparentWhite, rf.getX(), rf.getY() + 70.0f, false};
     g.setGradientFill(sheen);
     g.fillRect(rf.withHeight(70.0f));
 
-    juce::ColourGradient border(juce::Colour(Colors::GOLD_LIGHT).withAlpha(0.45f), rf.getX(), rf.getY(),
-                                juce::Colour(Colors::GOLD_DIM).withAlpha(0.14f), rf.getX(), rf.getBottom(), false);
+    juce::ColourGradient border{juce::Colour(Colors::GOLD_LIGHT).withAlpha(0.45f), rf.getX(), rf.getY(),
+                                juce::Colour(Colors::GOLD_DIM).withAlpha(0.14f), rf.getX(), rf.getBottom(), false};
     g.setGradientFill(border);
     if (topEdge)  g.fillRect(rf.getX(), rf.getY(), rf.getWidth(), 1.0f);
     if (leftEdge) g.fillRect(rf.getX(), rf.getY(), 1.0f, rf.getHeight());
@@ -209,8 +209,8 @@ void BackgroundComponent::drawChrome(juce::Graphics& g)
 
 void BackgroundComponent::drawDesertGradient(juce::Graphics& g, juce::Rectangle<float> bounds)
 {
-    juce::ColourGradient sky(juce::Colour(0xFF030008), 0, 0,
-                             juce::Colour(0xFFC86010), 0, bounds.getHeight(), false);
+    juce::ColourGradient sky{juce::Colour(0xFF030008), 0, 0,
+                             juce::Colour(0xFFC86010), 0, bounds.getHeight(), false};
     sky.addColour(0.08, juce::Colour(0xFF0A0115));
     sky.addColour(0.22, juce::Colour(0xFF1E0418));
     sky.addColour(0.36, juce::Colour(0xFF380610));
@@ -232,15 +232,15 @@ void BackgroundComponent::drawArabesqueBackdrop(juce::Graphics& g, juce::Rectang
     const float w = b.getWidth(), h = b.getHeight();
 
     // Base vertical gradient — near-black, a touch warmer toward the top centre.
-    juce::ColourGradient base(juce::Colour(0xFF14100B), 0, 0,
-                              juce::Colour(0xFF050403), 0, h, false);
+    juce::ColourGradient base{juce::Colour(0xFF14100B), 0, 0,
+                              juce::Colour(0xFF050403), 0, h, false};
     base.addColour(0.45, juce::Colour(0xFF0C0A07));
     g.setGradientFill(base);
     g.fillRect(b);
 
     // Warm light source at top centre (origin of the title rays).
-    juce::ColourGradient glow(juce::Colour(Colors::GOLD).withAlpha(0.16f), w * 0.5f, h * 0.02f,
-                              juce::Colours::transparentBlack, w * 0.5f, h * 0.42f, true);
+    juce::ColourGradient glow{juce::Colour(Colors::GOLD).withAlpha(0.16f), w * 0.5f, h * 0.02f,
+                              juce::Colours::transparentBlack, w * 0.5f, h * 0.42f, true};
     g.setGradientFill(glow);
     g.fillRect(b);
 
