@@ -282,6 +282,11 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     float reso   = resoParam->load();
     float depth  = depthParam->load();
     float fxmix  = fxMixParam->load();
+    int   inst   = static_cast<int>(instrumentParam->load());
+
+    // === INSTRUMENT SELECTION ===
+    synthesiser.setInstrument(static_cast<OrientalConstants::Instrument>(inst));
+    sampleEngine.setInstrument(static_cast<OrientalConstants::Instrument>(inst));
 
     // === SYNTH PARAMETERS ===
 

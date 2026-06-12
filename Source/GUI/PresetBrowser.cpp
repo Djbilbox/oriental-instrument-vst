@@ -6,7 +6,7 @@ PresetBrowser::PresetBrowser(PresetManager& pm, juce::AudioProcessorValueTreeSta
 {
     listBox.setModel(this);
     listBox.setColour(juce::ListBox::backgroundColourId, juce::Colours::transparentBlack);
-    listBox.setRowHeight(46);
+    listBox.setRowHeight(40);
     addAndMakeVisible(listBox);
 
     searchBox.setTextToShowWhenEmpty("Search preset, city, key...", juce::Colour(0xFF555555));
@@ -94,13 +94,13 @@ void PresetBrowser::paintListBoxItem(int rowNumber, juce::Graphics& g, int width
 
     // Numéro (centré verticalement)
     g.setColour(juce::Colour(0xFF777777));
-    g.setFont(juce::Font(14.0f, juce::Font::bold));
+    g.setFont(juce::Font(17.0f, juce::Font::bold));
     g.drawText(juce::String(rowNumber + 1), 0, 0, numW, height, juce::Justification::centred);
 
     // ── Ligne 1 : Nom du preset (grand, Cinzel-like) ───────────────────────
     g.setColour(rowIsSelected ? juce::Colour(OrientalConstants::Colors::GOLD_LIGHT)
                               : juce::Colour(0xFFF0EADE));
-    g.setFont(juce::Font("Cinzel", 18.0f, juce::Font::bold));
+    g.setFont(juce::Font("Cinzel", 24.0f, juce::Font::bold));
     g.drawText(preset.name, numW + pad, line1Y, width - numW - pad * 2, line1H,
                juce::Justification::bottomLeft);
 
@@ -116,7 +116,7 @@ void PresetBrowser::paintListBoxItem(int rowNumber, juce::Graphics& g, int width
 
     g.setColour(juce::Colour(rowIsSelected ? OrientalConstants::Colors::GOLD
                                            : 0xFFA09078u));
-    g.setFont(juce::Font(14.5f));
+    g.setFont(juce::Font(16.5f));
     g.drawText(subLine, numW + pad, line2Y, width - numW - pad * 2, line2H,
                juce::Justification::topLeft);
 }
