@@ -53,11 +53,8 @@ OrientalInstrumentEditor::OrientalInstrumentEditor(OrientalInstrumentProcessor& 
     depthAttach  = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "depth", knobDepth.getSlider());
     fxMixAttach  = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "fxmix", knobFxMix.getSlider());
 
-    // ── Header: live preset name ──
-    presetNameLabel.setJustificationType(juce::Justification::centredRight);
-    presetNameLabel.setColour(juce::Label::textColourId, juce::Colour(Colors::GOLD_LIGHT));
-    presetNameLabel.setFont(Typography::display(11.0f, true));
-    addAndMakeVisible(presetNameLabel);
+    // (Preset-name header label removed — redundant with the centred title and
+    //  the large name in the list.)
 
     // ── Header: transport buttons ──
     auto setupBtn = [this](juce::TextButton& b, const juce::String& text, bool toggle)
@@ -80,27 +77,9 @@ OrientalInstrumentEditor::OrientalInstrumentEditor(OrientalInstrumentProcessor& 
     btnPoly.onClick  = [this] { processorRef.setMonoMode(! btnPoly.getToggleState()); };
     btnLeg.onClick   = [this] { processorRef.setLegato(btnLeg.getToggleState()); };
     btnPanic.onClick = [this] { processorRef.panicAllNotes(); };
-
-    updatePresetLabel();
-    startTimerHz(6);
 }
 
-void OrientalInstrumentEditor::timerCallback()
-{
-    updatePresetLabel();
-}
-
-void OrientalInstrumentEditor::updatePresetLabel()
-{
-    const auto& p = processorRef.getPresetManager().getCurrentPreset();
-    // CharPointer_UTF8: plain juce::String(const char*) decodes · (U+00B7) as Latin-1 → "Â·".
-    const juce::String dot (juce::CharPointer_UTF8("  \xC2\xB7  "));
-    juce::String txt = p.name + dot + juce::String(instrumentName(p.instrument));
-    if (p.key.isNotEmpty())
-        txt += dot + p.key;
-    if (presetNameLabel.getText() != txt)
-        presetNameLabel.setText(txt, juce::dontSendNotification);
-}
+void OrientalInstrumentEditor::timerCallback() {}
 
 OrientalInstrumentEditor::~OrientalInstrumentEditor()
 {
@@ -125,16 +104,16 @@ void OrientalInstrumentEditor::resized()
     // the interactive children (preset name + transport buttons) on top.
     auto headerArea = bounds.removeFromTop(HEADER_HEIGHT);
     {
-        const int h = 18, y = headerArea.getCentreY() - h / 2, gap = 4;
-        const int totalBtnW = 34 + 34 + 28 + 30 + 30 + 42 + 5 * gap;
-        int x = headerArea.getRight() - 10 - totalBtnW;
+        // Wider buttons so the 12px caps are never clipped; sized to fit with a
+        // right margin. The preset-name label was removed (redundant — the name
+        // is already big in the list + centred title).
+        const int h = 20, y = headerArea.getCentreY() - h / 2, gap = 4;
+        const int wMidi = 42, wPoly = 42, wLeg = 36, wAB = 38, wRec = 38, wPanic = 52;
+        const int totalBtnW = wMidi + wPoly + wLeg + wAB + wRec + wPanic + 5 * gap;
+        int x = headerArea.getRight() - 12 - totalBtnW;
         auto place = [&](juce::TextButton& b, int w) { b.setBounds(x, y, w, h); x += w + gap; };
-        place(btnMidi, 34); place(btnPoly, 34); place(btnLeg, 28);
-        place(btnAB, 30);   place(btnRec, 30);  place(btnPanic, 42);
-
-        const int labelW = 150;
-        presetNameLabel.setBounds(headerArea.getRight() - 10 - totalBtnW - 10 - labelW,
-                                  y - 2, labelW, h + 4);
+        place(btnMidi, wMidi); place(btnPoly, wPoly); place(btnLeg, wLeg);
+        place(btnAB, wAB);     place(btnRec, wRec);   place(btnPanic, wPanic);
     }
 
     // Piano area (bottom 148px) with wheels on left/right
