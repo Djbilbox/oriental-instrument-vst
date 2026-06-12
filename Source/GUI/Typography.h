@@ -64,7 +64,7 @@ namespace Typography
 
     // ── Hierarchy ──
     inline juce::Font title()        { return display(22.0f, true); }
-    inline juce::Font headerTitle()  { return display(15.0f, true); }
+    inline juce::Font headerTitle()  { return display(20.0f, true); }
     inline juce::Font subtitle()     { return display( 9.0f, true); }
     inline juce::Font sectionLabel() { return body(    9.0f, true); }
     inline juce::Font knobLabel()    { return body(   10.0f, true); }

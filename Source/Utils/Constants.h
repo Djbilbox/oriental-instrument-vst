@@ -18,7 +18,7 @@ namespace OrientalConstants
     // GUI dimensions (matches HTML prototype: 980x640)
     constexpr int WINDOW_WIDTH = 980;
     constexpr int WINDOW_HEIGHT = 640;
-    constexpr int HEADER_HEIGHT = 50;
+    constexpr int HEADER_HEIGHT = 64;
     constexpr int PIANO_HEIGHT = 148;
     constexpr int LEFT_COL_WIDTH = 170;
     constexpr int RIGHT_COL_WIDTH = 162;

@@ -89,7 +89,7 @@ void BackgroundComponent::drawGlassPanel(juce::Graphics& g, juce::Rectangle<int>
             g.drawImageAt(cachedFrosted, 0, 0);
     }
 
-    g.setColour(juce::Colour(0xA60C0906)); // ~65% warm-dark tint
+    g.setColour(juce::Colour(0x8C0C0906)); // ~55% warm-dark tint (scene shows through)
     g.fillRect(rf);
 
     juce::ColourGradient sheen{juce::Colours::white.withAlpha(0.07f), rf.getX(), rf.getY(),
@@ -167,14 +167,14 @@ void BackgroundComponent::drawChrome(juce::Graphics& g)
     g.setColour(juce::Colour(Colors::GOLD_LIGHT));
     g.setFont(Typography::headerTitle());
     g.drawText("ORIENTAL INSTRUMENT",
-               titleZone.withTrimmedTop(8.0f), juce::Justification::centredTop);
+               titleZone.withTrimmedTop(7.0f), juce::Justification::centredTop);
 
     // ── By-line: sober, luxurious, legible — Cinzel tracked caps in gold,
     //    framed by two thin gold rules (engraved-plate look). ──
     {
-        auto blz = titleZone.withTrimmedTop(28.0f).withTrimmedBottom(2.0f);
+        auto blz = titleZone.withTrimmedTop(36.0f).withTrimmedBottom(2.0f);
         g.setColour(juce::Colour(Colors::GOLD_DIM));
-        g.setFont(Typography::display(8.5f, true));
+        g.setFont(Typography::display(11.5f, true));
         const juce::String byline = Typography::tracked("DJBILBOX BEATS");
         g.drawText(byline, blz, juce::Justification::centredTop);
 
@@ -251,6 +251,44 @@ void BackgroundComponent::drawArabesqueBackdrop(juce::Graphics& g, juce::Rectang
     drawMandala(g, w * 0.88f, h * 0.80f, juce::jmin(w, h) * 0.20f, 12, 0.04f);
     drawMandala(g, w * 0.12f, h * 0.16f, juce::jmin(w, h) * 0.16f, 10, 0.035f);
     drawMandala(g, w * 0.88f, h * 0.16f, juce::jmin(w, h) * 0.16f, 10, 0.035f);
+
+    // ── Sahara horizon: warm glow band + layered dune silhouettes. Sits behind
+    //    the monument + flag so they read as planted on the desert. ──
+    const float horizon = h * 0.555f;
+
+    // Warm sky band just above the horizon (sunset wash).
+    juce::ColourGradient sky{juce::Colour(0xFF4A2410).withAlpha(0.55f), 0, horizon - h * 0.18f,
+                             juce::Colours::transparentBlack, 0, horizon - h * 0.42f, false};
+    g.setGradientFill(sky);
+    g.fillRect(0.0f, horizon - h * 0.42f, w, h * 0.24f);
+
+    // Three dune layers, far (pale) → near (dark), each a smooth ridge.
+    struct Dune { float y; juce::uint32 col; float amp; };
+    const Dune dunes[] = {
+        { horizon - h * 0.010f, 0xFF6E3A18u, 0.030f },
+        { horizon + h * 0.045f, 0xFF4A2510u, 0.045f },
+        { horizon + h * 0.110f, 0xFF2A1408u, 0.060f },
+    };
+    for (const auto& d : dunes)
+    {
+        juce::Path ridge;
+        ridge.startNewSubPath(0.0f, h);
+        ridge.lineTo(0.0f, d.y);
+        const int steps = 24;
+        for (int i = 0; i <= steps; ++i)
+        {
+            const float t  = static_cast<float>(i) / steps;
+            const float xx = t * w;
+            const float yy = d.y - std::sin(t * juce::MathConstants<float>::pi * 2.0f + d.amp * 40.0f)
+                                      * h * d.amp
+                                 - std::sin(t * juce::MathConstants<float>::pi * 5.0f) * h * d.amp * 0.4f;
+            ridge.lineTo(xx, yy);
+        }
+        ridge.lineTo(w, h);
+        ridge.closeSubPath();
+        g.setColour(juce::Colour(d.col));
+        g.fillPath(ridge);
+    }
 }
 
 // One arabesque mandala: concentric rings, radial spokes, node circles, petals.
@@ -316,20 +354,22 @@ void BackgroundComponent::drawMonument(juce::Graphics& g, float sx, float sy)
 
     const float cx = 360.0f;     // scene-space centre (980x640 reference)
     const float baseY = 366.0f;  // foot on the horizon
-    const float apexY = 226.0f;  // fronds meet here
+    const float apexY = 200.0f;  // fronds meet here (taller monument)
 
-    const juce::Colour body(0xFF3A2820u);          // lighter silhouette for visibility
+    const juce::Colour body(0xFF4C3628u);          // lighter silhouette for visibility
     const juce::Colour rim(Colors::GOLD);          // brighter gold rim
 
-    // Base platform
+    // Base platform (wider)
     g.setColour(body);
-    g.fillRect(P(cx - 34.0f, baseY).x, P(cx - 34.0f, baseY).y, 68.0f * sx, 12.0f * sy);
+    g.fillRect(P(cx - 42.0f, baseY).x, P(cx - 42.0f, baseY).y, 84.0f * sx, 14.0f * sy);
+    g.setColour(rim.withAlpha(0.55f));
+    g.drawRect(P(cx - 42.0f, baseY).x, P(cx - 42.0f, baseY).y, 84.0f * sx, 14.0f * sy, 1.2f);
 
     // Three fronds: left, centre, right, all leaning into the apex.
     for (int i = -1; i <= 1; ++i)
     {
-        const float foot = cx + i * 24.0f;
-        const float fw   = 11.0f;
+        const float foot = cx + i * 28.0f;
+        const float fw   = 13.0f;
         const float midY = (baseY + apexY) * 0.5f;
 
         juce::Path fr;
@@ -340,8 +380,8 @@ void BackgroundComponent::drawMonument(juce::Graphics& g, float sx, float sy)
 
         g.setColour(body);
         g.fillPath(fr);
-        g.setColour(rim.withAlpha(0.75f));
-        g.strokePath(fr, juce::PathStrokeType(1.5f));
+        g.setColour(rim.withAlpha(0.9f));
+        g.strokePath(fr, juce::PathStrokeType(2.0f));
     }
 
     // Eternal flame at the apex
@@ -361,14 +401,17 @@ void BackgroundComponent::drawAlgerianFlag(juce::Graphics& g, float sx, float sy
 {
     auto P = [&](float x, float y) { return juce::Point<float>(x * sx, y * sy); };
 
-    const float px = 656.0f;     // pole x
-    const float topY = 300.0f;   // flag top
+    const float px = 660.0f;     // pole x
+    const float topY = 286.0f;   // flag top (taller pole)
     const float baseY = 372.0f;  // pole foot on the dune
-    const float fw = 65.0f, fh = 42.0f;
+    const float fw = 80.0f, fh = 52.0f;
 
     // Pole (thicker for visibility)
-    g.setColour(juce::Colour(0xFF4A3A2A));
-    g.fillRect(P(px, topY - 6.0f).x, P(px, topY - 6.0f).y, 3.0f * sx, (baseY - topY + 6.0f) * sy);
+    g.setColour(juce::Colour(0xFF6A5238));
+    g.fillRect(P(px, topY - 8.0f).x, P(px, topY - 8.0f).y, 4.0f * sx, (baseY - topY + 8.0f) * sy);
+    // Pole finial
+    g.setColour(juce::Colour(Colors::GOLD));
+    g.fillEllipse(P(px - 1.0f, topY - 12.0f).x, P(px - 1.0f, topY - 12.0f).y, 6.0f * sx, 6.0f * sy);
 
     auto fl = juce::Rectangle<float>(P(px + 2.0f, topY).x, P(px + 2.0f, topY).y, fw * sx, fh * sy);
 
