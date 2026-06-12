@@ -96,7 +96,7 @@ namespace OrientalConstants
         constexpr float BORDER_RADIUS_LG   = 5.0f;   // border-radius: 5px (srch, tab)
         constexpr float GLASS_BLUR         = 14.0f;  // backdrop-filter: blur(14px)
 
-        constexpr float KNOB_SIZE          = 54.0f;  // --knob-size: 54px
+        constexpr float KNOB_SIZE          = 42.0f;  // smaller round knobs
         constexpr float KNOB_ARC_WIDTH     = 2.8f;   // stroke-width in SVG
         constexpr float KNOB_POINTER_WIDTH = 2.3f;   // indicator line
         constexpr float KNOB_GLOW_ALPHA    = 0.5f;   // drop-shadow alpha

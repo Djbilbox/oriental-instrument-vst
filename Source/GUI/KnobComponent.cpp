@@ -36,8 +36,8 @@ void KnobComponent::resized()
     auto bounds = getLocalBounds().reduced(2);
 
     // Layout: knob centered, label below, value below label
-    auto labelArea = bounds.removeFromBottom(13);
-    auto valueArea = bounds.removeFromBottom(14);
+    auto labelArea = bounds.removeFromBottom(12);
+    auto valueArea = bounds.removeFromBottom(12);
 
     nameLabel.setBounds(labelArea);
     valueLabel.setBounds(valueArea);
