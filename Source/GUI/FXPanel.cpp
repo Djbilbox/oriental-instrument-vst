@@ -54,9 +54,9 @@ void FXPanel::FXSlot::timerCallback()
 void FXPanel::FXSlot::resized()
 {
     auto r = getLocalBounds().reduced(2);
-    const int btn = juce::jmin(20, r.getHeight());
+    const int btn = juce::jmin(15, r.getHeight()); // smaller nudge buttons
     plusBtn.setBounds(r.removeFromRight(btn).withSizeKeepingCentre(btn, btn));
-    r.removeFromRight(34);                 // reserve room for the % readout
+    r.removeFromRight(30);                 // reserve room for the % readout
     minusBtn.setBounds(r.removeFromRight(btn).withSizeKeepingCentre(btn, btn));
 }
 
@@ -108,14 +108,14 @@ void FXPanel::FXSlot::paint(juce::Graphics& g)
     // FX name (compact; width stops before the − button so nothing overlaps)
     g.setColour(on ? juce::Colour(0xFFE8E8E8) : juce::Colour(0xFF999999));
     g.setFont(juce::Font(13.0f, juce::Font::bold));
-    g.drawText(fxName, 20, 0, getWidth() - 100, getHeight() - 3, juce::Justification::centredLeft);
+    g.drawText(fxName, 20, 0, getWidth() - 92, getHeight() - 3, juce::Justification::centredLeft);
 
     // Amount value (between − and +)
     g.setColour(on ? juce::Colour(OrientalConstants::Colors::GOLD_LIGHT)
                    : juce::Colour(OrientalConstants::Colors::GOLD_DIM));
     g.setFont(juce::Font(11.0f, juce::Font::bold));
     g.drawText(juce::String(static_cast<int>(amt)) + "%",
-               getWidth() - 22 - 34, 0, 34, getHeight() - 3, juce::Justification::centred);
+               getWidth() - 17 - 30, 0, 30, getHeight() - 3, juce::Justification::centred);
 }
 
 void FXPanel::FXSlot::mouseDown(const juce::MouseEvent& e)

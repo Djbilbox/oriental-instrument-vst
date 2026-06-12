@@ -57,7 +57,9 @@ void BackgroundComponent::rebuildCaches()
         drawVignette(g, bounds);
     }
 
-    cachedFrosted = BlurUtils::frosted(cachedDesert, 17, 3);
+    // Light frost only — heavy blur (17,3) smeared the monument/desert into mush.
+    // A small radius keeps the décor recognisable behind the glass panels.
+    cachedFrosted = BlurUtils::frosted(cachedDesert, 4, 1);
 }
 
 void BackgroundComponent::paint(juce::Graphics& g)
@@ -273,9 +275,9 @@ void BackgroundComponent::drawArabesqueBackdrop(juce::Graphics& g, juce::Rectang
     // Three dune layers, far (pale) → near (dark), each a smooth ridge.
     struct Dune { float y; juce::uint32 col; float amp; };
     const Dune dunes[] = {
-        { horizon - h * 0.010f, 0xFF6E3A18u, 0.030f },
-        { horizon + h * 0.045f, 0xFF4A2510u, 0.045f },
-        { horizon + h * 0.110f, 0xFF2A1408u, 0.060f },
+        { horizon - h * 0.010f, 0xFFB06A2Eu, 0.030f },  // brighter, clearly visible
+        { horizon + h * 0.045f, 0xFF7E4418u, 0.045f },
+        { horizon + h * 0.110f, 0xFF4A2810u, 0.060f },
     };
     for (const auto& d : dunes)
     {
@@ -364,8 +366,8 @@ void BackgroundComponent::drawMonument(juce::Graphics& g, float sx, float sy)
     const float baseY = 366.0f;  // foot on the horizon
     const float apexY = 200.0f;  // fronds meet here (taller monument)
 
-    const juce::Colour body(0xFF4C3628u);          // lighter silhouette for visibility
-    const juce::Colour rim(Colors::GOLD);          // brighter gold rim
+    const juce::Colour body(0xFF6A4A30u);          // lighter silhouette for visibility
+    const juce::Colour rim(Colors::GOLD_LIGHT);    // bright gold rim
 
     // Base platform (wider)
     g.setColour(body);
