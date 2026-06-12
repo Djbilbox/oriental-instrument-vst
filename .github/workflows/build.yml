@@ -94,6 +94,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          lfs: true   # pull packaging/samples.zip for all-in-one DMG
 
       - name: Clone JUCE framework
         run: git clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git JUCE
@@ -147,15 +148,49 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      - name: Build styled DMG (full)
+      - name: Build all-in-one DMGs (Full encrypted + Demo)
         run: |
           chmod +x packaging/build_dmg.sh
-          packaging/build_dmg.sh "${{ steps.find_vst3.outputs.vst3_path }}" "Oriental-Instrument-VST3-macOS.dmg"
+          # FULL — samples bundled + AES-256 password (bundle)
+          packaging/build_dmg.sh "${{ steps.find_vst3.outputs.vst3_path }}" \
+            "Oriental-Instrument-macOS-FULL.dmg" "packaging/samples.zip" "DJBILBOX-ORIENT-2026"
+          # DEMO — samples bundled, no password (free)
+          packaging/build_dmg.sh "${{ steps.find_demo.outputs.demo_path }}" \
+            "Oriental-Instrument-macOS-DEMO.dmg" "packaging/samples.zip"
 
-      - name: Upload DMG installer (macOS)
+      - name: Package macOS release zips
+        run: |
+          cat > PASSWORD.txt <<'EOF'
+          ===========================================
+             ORIENTAL INSTRUMENT - BUNDLE (FULL) macOS
+             by DJBILBOX BEATS
+          ===========================================
+          Mot de passe / password (DMG chiffre AES-256):
+
+                  DJBILBOX-ORIENT-2026
+
+          Double-clique le .dmg, entre le mot de passe,
+          puis suis INSTALLATION.txt a l'interieur.
+          www.djbilboxbeats.com
+          ===========================================
+          EOF
+          mkdir -p release_mac
+          cp "Oriental-Instrument-macOS-FULL.dmg" PASSWORD.txt release_mac/
+          (cd release_mac && zip -9 ../OrientalInstrument-macOS-FULL.zip "Oriental-Instrument-macOS-FULL.dmg" PASSWORD.txt)
+          zip -9 OrientalInstrument-macOS-DEMO.zip "Oriental-Instrument-macOS-DEMO.dmg"
+
+      - name: Upload macOS FULL installer zip
         uses: actions/upload-artifact@v4
         with:
-          name: OrientalInstrument-Installer-DMG-macOS
-          path: Oriental-Instrument-VST3-macOS.dmg
+          name: OrientalInstrument-macOS-FULL
+          path: OrientalInstrument-macOS-FULL.zip
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload macOS DEMO installer zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrientalInstrument-macOS-DEMO
+          path: OrientalInstrument-macOS-DEMO.zip
           if-no-files-found: error
           retention-days: 90
