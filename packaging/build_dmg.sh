@@ -33,14 +33,16 @@ fi
 
 cp "$PKG_DIR/dmg_background.png" "$STAGE/.background/bg.png"
 
-# Volume icon
-ICONSET="$(mktemp -d)/icon.iconset"; mkdir -p "$ICONSET"
-for s in 16 32 64 128 256 512; do
-  sips -z $s $s "$PKG_DIR/volume_icon.png" --out "$ICONSET/icon_${s}x${s}.png" >/dev/null
-  d=$((s*2)); sips -z $d $d "$PKG_DIR/volume_icon.png" --out "$ICONSET/icon_${s}x${s}@2x.png" >/dev/null
-done
-iconutil -c icns "$ICONSET" -o "$STAGE/.VolumeIcon.icns"
-SetFile -a C "$STAGE" 2>/dev/null || true
+# Volume icon (non-fatal — cosmetic only)
+{
+  ICONSET="$(mktemp -d)/icon.iconset"; mkdir -p "$ICONSET"
+  for s in 16 32 64 128 256 512; do
+    sips -z $s $s "$PKG_DIR/volume_icon.png" --out "$ICONSET/icon_${s}x${s}.png" >/dev/null
+    d=$((s*2)); sips -z $d $d "$PKG_DIR/volume_icon.png" --out "$ICONSET/icon_${s}x${s}@2x.png" >/dev/null
+  done
+  iconutil -c icns "$ICONSET" -o "$STAGE/.VolumeIcon.icns"
+  SetFile -a C "$STAGE" 2>/dev/null || true
+} || echo "icon step skipped (non-fatal)"
 
 cat > "$STAGE/INSTALLATION.txt" << 'EOF'
 ORIENTAL INSTRUMENT VST3 — macOS
@@ -59,44 +61,18 @@ EOF
 [ -n "$DOC_PRESENT" ] && [ -f "$DOC_PRESENT" ] && cp "$DOC_PRESENT" "$STAGE/$(basename "$DOC_PRESENT")"
 [ -n "$DOC_LICENSE" ] && [ -f "$DOC_LICENSE" ] && cp "$DOC_LICENSE" "$STAGE/$(basename "$DOC_LICENSE")"
 
-# Writable DMG + Finder layout
-RW_DMG="$(mktemp -d)/rw.dmg"
-SIZE_MB=$(( $(du -sm "$STAGE" | cut -f1) + 60 ))
-hdiutil create -srcfolder "$STAGE" -volname "$VOLNAME" -fs HFS+ -format UDRW -size ${SIZE_MB}m "$RW_DMG"
-hdiutil attach "$RW_DMG" -nobrowse
-sleep 2
-osascript << EOF || true
-tell application "Finder"
-  tell disk "$VOLNAME"
-    open
-    set current view of container window to icon view
-    set toolbar visible of container window to false
-    set statusbar visible of container window to false
-    set the bounds of container window to {180, 100, 820, 540}
-    set vopts to the icon view options of container window
-    set arrangement of vopts to not arranged
-    set icon size of vopts to 92
-    set background picture of vopts to file ".background:bg.png"
-    set position of item "$VOLNAME.vst3" of container window to {150, 200}
-    set position of item "Drag here → VST3" of container window to {470, 200}
-    set position of item "SAMPLE ORIENTAL INSTRUMENT VST3" of container window to {150, 340}
-    set position of item "INSTALLATION.txt" of container window to {470, 340}
-    update without registering applications
-    delay 1
-    close
-  end tell
-end tell
-EOF
-sync
-hdiutil detach "/Volumes/$VOLNAME"
+# Build compressed DMG directly (no Finder/osascript styling — unreliable on
+# headless CI runners). Background + icon files travel inside the image.
+TMP_DMG="$(mktemp -d)/plain.dmg"
+hdiutil create -srcfolder "$STAGE" -volname "$VOLNAME" -fs HFS+ \
+  -format UDZO -imagekey zlib-level=9 -ov "$TMP_DMG"
 
-# Compress; encrypt if password supplied
 rm -f "$OUT_DMG"
 if [ -n "$PASSWORD" ]; then
   echo "Encrypting (AES-256)..."
-  printf '%s' "$PASSWORD" | hdiutil convert "$RW_DMG" -format UDZO -imagekey zlib-level=9 \
-    -encryption AES-256 -stdinpass -o "$OUT_DMG"
+  printf '%s' "$PASSWORD" | hdiutil convert "$TMP_DMG" -format UDZO -imagekey zlib-level=9 \
+    -encryption AES-256 -stdinpass -ov -o "$OUT_DMG"
 else
-  hdiutil convert "$RW_DMG" -format UDZO -imagekey zlib-level=9 -o "$OUT_DMG"
+  cp "$TMP_DMG" "$OUT_DMG"
 fi
 echo "✅ DMG: $OUT_DMG"
