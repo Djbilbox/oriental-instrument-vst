@@ -1,48 +1,56 @@
 ===============================================================
-   ORIENTAL INSTRUMENT — BUNDLE (PRO / COMPLET)
-   by DJBILBOX BEATS
+   ORIENTAL INSTRUMENT BY DJBILBOX BEATS
+   BUNDLE VST3 COMPLET
 ===============================================================
 
-L'instrument oriental ultime. Maqam authentique, son de studio.
-
-Synthé multisample hybride taillé pour la musique orientale, arabe,
-maghrébine et cinématique. 280 presets sur 7 instruments réels, avec
-moteur d'accordage maqam, pitch-bend et vibrato live, et une chaîne
-d'effets complète. VST3 Windows & macOS — FL Studio, Logic, Ableton,
-Cubase, Studio One.
+Plonge ta production dans les sonorités du Moyen-Orient et
+d'Afrique du Nord. Conçu par DJBILBOX BEATS (Toulouse), développé
+en C++ / JUCE — taillé pour le Hip-Hop, l'Afrotrap, le Deep House,
+l'Oriental et l'Arabic.
 
 ---------------------------------------------------------------
-INCLUS DANS LE BUNDLE
+FEATURES TECHNIQUES
 ---------------------------------------------------------------
-  +  280 presets multisample pro (Oud, Qanun, Ney, Violin,
-     Darbuka, Rababah, Mizmar)
-  +  895 samples — vrais instruments orientaux
-  +  Chaîne FX 8 effets : Reverb, Echo, Chorus, Distort,
-     Compressor, EQ, Phaser, Bitcrush
-  +  Molettes PITCH + MOD (pitch-bend + vibrato expressifs)
-  +  Polyphonie 32 voix
-  +  Clavier piano pleine largeur
-  +  Interface arabesque dorée + monument Maqam Echahid (Alger)
-  +  Export audio illimité
-  +  Licence commerciale (beats & productions autorisés)
+  - Polyphonie : 32 voix simultanées
+  - Latence : < 5 ms (buffer 128 samples)
+  - RAM : ~180 MB chargé en mémoire
+  - Moteur : multisample + accordage maqam micro-tonal
+  - FX intégrés (8) : Reverb, Echo, Chorus, Distort,
+    Compressor, EQ, Phaser, Bitcrush
+  - Molettes : Pitch-Bend + Vibrato (MOD) expressifs
+  - Compatible : VST3 — Windows 10/11 & macOS 12+
+  - Intégration native FL Studio (wrapper VST3 testé)
 
 ---------------------------------------------------------------
-POURQUOI LE PRO
+SONS & PACKS INCLUS
 ---------------------------------------------------------------
-  -  Son authentique, prêt pour le mix
-  -  Accordage maqam micro-tonal réaliste
-  -  Workflow rapide : recherche, catégories, tags
-  -  Conçu par un beatmaker pro (DJBILBOX BEATS, Toulouse)
+  - 895 samples — vrais instruments orientaux
+  - 280 presets (40+ signature production-ready)
+  - Qanun acoustique (multi-vélocité, plusieurs octaves)
+  - Oud acoustique & électro (fingerpicked & strummed)
+  - Violin / Rababah orientaux (legato & staccato)
+  - Naï (Ney) & Mizmar (legato & staccato)
+  - Percussions : Darbuka
+  - Synthés orientaux : pads arabesque, leads maqam
+
+---------------------------------------------------------------
+POURQUOI LES BEATMAKERS L'ADOPTENT
+---------------------------------------------------------------
+  - Sons uniques introuvables dans les packs génériques
+  - Workflow rapide — drag & drop, MIDI-ready
+  - Presets organisés par genre (Trap, Deep, Arabic Club)
+  - Zéro latence perceptible en sessions intensives
+  - UI pro : arabesque dorée + monument Maqam Echahid (Alger)
 
 ---------------------------------------------------------------
 INSTALLATION
 ---------------------------------------------------------------
-  Windows : lance le .exe, entre le mot de passe (PASSWORD.txt),
-            tout s'installe (plugin + samples).
+  Windows : lance le .exe, accepte la licence, entre le mot de
+            passe (PASSWORD.txt) — plugin + samples + docs installés.
   macOS   : ouvre le .dmg (chiffré, mot de passe dans PASSWORD.txt),
             glisse le plugin + le dossier samples, suis INSTALLATION.txt.
 
-Licence d'utilisation : voir LICENSE_BUNDLE.txt
+  Licence d'utilisation : voir LICENSE_BUNDLE.txt
 
 ===============================================================
   www.djbilboxbeats.com
