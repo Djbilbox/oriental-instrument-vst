@@ -58,6 +58,14 @@ public:
 private:
     OrientalSynthesiser synthesiser;
     SampleEngine sampleEngine;     // disk multisample player (falls back to synth when empty)
+
+    // Tone-shaping applied to the SAMPLE path so per-preset macros (filter, reso,
+    // depth) are audible — raw SamplerVoice ignores them, which made every preset
+    // of an instrument sound identical. Synth path has its own internal filter.
+    juce::dsp::StateVariableTPTFilter<float> sampleFilter;  // low-pass colour
+    juce::dsp::StateVariableTPTFilter<float> sampleHighpass; // orient → presence
+    float sampleDriveSmoothed = 1.0f;
+
     FXChain fxChain;
     MasterLimiter masterLimiter;   // final output protection (soft limiter + hard ceiling)
     PresetManager presetManager;

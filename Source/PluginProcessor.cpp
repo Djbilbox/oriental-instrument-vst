@@ -254,6 +254,17 @@ void OrientalInstrumentProcessor::prepareToPlay(double sampleRate, int samplesPe
     sampleEngine.prepare(sampleRate, samplesPerBlock);
     sampleEngine.setInstrument(static_cast<OrientalConstants::Instrument>(
         static_cast<int>(instrumentParam->load())));
+
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate       = sampleRate;
+    spec.maximumBlockSize = static_cast<juce::uint32>(samplesPerBlock);
+    spec.numChannels      = static_cast<juce::uint32>(juce::jmax(1, getTotalNumOutputChannels()));
+    sampleFilter.prepare(spec);
+    sampleFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
+    sampleHighpass.prepare(spec);
+    sampleHighpass.setType(juce::dsp::StateVariableTPTFilterType::highpass);
+    sampleDriveSmoothed = 1.0f;
+
     fxChain.prepare(sampleRate, samplesPerBlock);
     masterLimiter.prepare(sampleRate, samplesPerBlock);
 }
@@ -348,9 +359,41 @@ void OrientalInstrumentProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     // Render the instrument: real multisamples when the user has dropped wavs in
     // the instrument's Samples folder, otherwise the synthesis engine.
     if (sampleEngine.hasSamples())
+    {
         sampleEngine.render(buffer, midiMessages, 0, buffer.getNumSamples());
+
+        // Shape the raw sample with the preset's macros so presets sound DISTINCT.
+        // SamplerVoice ignores filter/reso/orient/depth, so without this every
+        // preset of an instrument is the same tone.
+        sampleFilter.setCutoffFrequency(juce::jlimit(120.0f, 18000.0f, cutoffHz));
+        sampleFilter.setResonance(juce::jlimit(0.10f, 1.6f, 0.30f + (reso / 100.0f) * 1.30f));
+        // ORIENT opens a presence/high-pass: low values = warm/round, high = airy/nasal.
+        sampleHighpass.setCutoffFrequency(juce::jlimit(20.0f, 1200.0f, 20.0f + (orient / 100.0f) * 1180.0f));
+        sampleHighpass.setResonance(0.50f);
+
+        juce::dsp::AudioBlock<float> block(buffer);
+        juce::dsp::ProcessContextReplacing<float> ctx(block);
+        sampleFilter.process(ctx);
+        if (orient > 5.0f)
+            sampleHighpass.process(ctx);
+
+        // DEPTH → soft harmonic drive (body/warmth) with make-up compensation.
+        const float driveTarget = 1.0f + (depth / 100.0f) * 2.2f;
+        for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
+        {
+            float* d = buffer.getWritePointer(ch);
+            for (int n = 0; n < buffer.getNumSamples(); ++n)
+            {
+                sampleDriveSmoothed += (driveTarget - sampleDriveSmoothed) * 0.001f;
+                const float x = d[n] * sampleDriveSmoothed;
+                d[n] = std::tanh(x) * (1.0f / std::tanh(sampleDriveSmoothed + 0.0001f));
+            }
+        }
+    }
     else
+    {
         synthesiser.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    }
 
     // Process FX chain
     fxChain.process(buffer);
