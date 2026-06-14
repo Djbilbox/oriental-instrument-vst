@@ -1,0 +1,24 @@
+# local.properties - Local development environment configuration
+# Copy this to local.properties and fill in your paths
+
+# Android SDK location (required)
+sdk.dir=/path/to/Android/sdk
+
+# Android NDK location (required for C++ build)
+ndk.dir=/path/to/Android/ndk/26.0.10792818
+
+# JUCE location (if building standalone)
+# juce.dir=/path/to/JUCE
+
+# Signing configuration for release builds
+# KEYSTORE_PATH=/path/to/keystore.jks
+# KEYSTORE_PASSWORD=your_keystore_password
+# KEY_ALIAS=your_key_alias
+# KEY_PASSWORD=your_key_password
+
+# Google Play Console configuration
+# GOOGLE_PLAY_PACKAGE_NAME=com.djbilbox.orientalinstrument
+# GOOGLE_PLAY_APP_ID=your_app_id_from_console
+
+# Build options
+# org.gradle.jvmargs=-Xmx4096m
