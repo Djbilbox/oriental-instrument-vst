@@ -1,0 +1,273 @@
+{
+  "site": {
+    "name": "DJBILBOX BEATS",
+    "defaultLocale": "fr",
+    "locales": ["fr", "en"],
+    "hubs": {
+      "root": {
+        "path": "/",
+        "title": "DJBILBOX — Beatmaker, Producteur VST & Label Musique",
+        "spokes": ["beatmaker", "vst", "label", "web"]
+      },
+      "beatmaker": {
+        "path": "/beatmaker-producer/",
+        "title": "Beatmaker & Producteur Professionnel",
+        "description": "Hip-Hop, Afrotrap, Deep House, G-Funk, Oriental à Paris et Worldwide",
+        "contentType": "service",
+        "spokes": [
+          {
+            "path": "/beatmaker-producer/paris/",
+            "type": "city_hub",
+            "city": "Paris",
+            "countryCode": "FR",
+            "spokes": [
+              { "path": "/beatmaker-producer/paris/hip-hop/", "genre": "Hip-Hop", "subgenres": ["Trap", "Boom Bap", "Cloud Rap"] },
+              { "path": "/beatmaker-producer/paris/afrotrap/", "genre": "Afrotrap", "subgenres": ["Afrobeats", "Grime Africain"] },
+              { "path": "/beatmaker-producer/paris/deep-house/", "genre": "Deep House", "subgenres": ["Minimal House", "Tech House"] },
+              { "path": "/beatmaker-producer/paris/oriental/", "genre": "Oriental Fusion", "subgenres": ["Arabic Trap", "Mahraganat Modern"] }
+            ]
+          },
+          {
+            "path": "/beatmaker-producer/london/",
+            "type": "city_hub",
+            "city": "London",
+            "countryCode": "UK",
+            "culturalContext": "Grime, Garage, Dub legacy",
+            "spokes": [
+              { "path": "/beatmaker-producer/london/grime-garage/", "genre": "Grime & Garage" },
+              { "path": "/beatmaker-producer/london/uk-trap/", "genre": "UK Trap" }
+            ]
+          },
+          {
+            "path": "/beatmaker-producer/los-angeles/",
+            "type": "city_hub",
+            "city": "Los Angeles",
+            "countryCode": "US",
+            "culturalContext": "West Coast Hip-Hop, G-Funk legacy",
+            "spokes": [
+              { "path": "/beatmaker-producer/los-angeles/g-funk/", "genre": "G-Funk" },
+              { "path": "/beatmaker-producer/los-angeles/trap/", "genre": "Trap/Plugg" }
+            ]
+          },
+          {
+            "path": "/beatmaker-producer/atlanta/",
+            "type": "city_hub",
+            "city": "Atlanta",
+            "countryCode": "US",
+            "culturalContext": "Trap birthplace, Southern Hip-Hop",
+            "spokes": [
+              { "path": "/beatmaker-producer/atlanta/trap/", "genre": "Trap" },
+              { "path": "/beatmaker-producer/atlanta/plugg/", "genre": "Plugg" }
+            ]
+          },
+          {
+            "path": "/beatmaker-producer/berlin/",
+            "type": "city_hub",
+            "city": "Berlin",
+            "countryCode": "DE",
+            "culturalContext": "Electronic, Techno, Experimental",
+            "spokes": [
+              { "path": "/beatmaker-producer/berlin/techno/", "genre": "Techno/Minimal" }
+            ]
+          }
+        ],
+        "internalLinking": {
+          "breadcrumb": ["root", "beatmaker", "city_hub", "genre_spoke"],
+          "crossLinks": ["vst", "label"]
+        }
+      },
+      "vst": {
+        "path": "/vst-plugins-audio/",
+        "title": "Plugins VST Professionnel — C++ JUCE",
+        "description": "Développement de plugins audio sur-mesure pour producteurs",
+        "contentType": "product",
+        "spokes": [
+          {
+            "path": "/vst-plugins-audio/beatmaker-essentials/",
+            "type": "product_category",
+            "target": "beatmakers",
+            "spokes": [
+              { "path": "/vst-plugins-audio/beatmaker-essentials/sampler/", "product": "Advanced Sampler" },
+              { "path": "/vst-plugins-audio/beatmaker-essentials/drum-plugin/", "product": "Drum Sound Design" }
+            ]
+          },
+          {
+            "path": "/vst-plugins-audio/mixing-mastering/",
+            "type": "product_category",
+            "target": "engineers",
+            "spokes": [
+              { "path": "/vst-plugins-audio/mixing-mastering/compressor/", "product": "Multiband Compressor" },
+              { "path": "/vst-plugins-audio/mixing-mastering/eq/", "product": "Algorithmic EQ" }
+            ]
+          },
+          {
+            "path": "/vst-plugins-audio/custom-development/",
+            "type": "service",
+            "description": "Audit technique JUCE, optimisation DSP, intégration Studio DAW"
+          }
+        ],
+        "internalLinking": {
+          "breadcrumb": ["root", "vst", "category", "product"],
+          "crossLinks": ["beatmaker", "web"]
+        }
+      },
+      "label": {
+        "path": "/label-musical/",
+        "title": "Label Musique — Distribution Indépendante Mondiale",
+        "description": "Services de distribution, édition, mastering pour artistes indépendants",
+        "contentType": "service",
+        "spokes": [
+          {
+            "path": "/label-musical/distribution/",
+            "type": "service",
+            "spokes": [
+              { "path": "/label-musical/distribution/streaming/", "service": "Distribution Streaming (Spotify, Apple Music, Deezer)" },
+              { "path": "/label-musical/distribution/vinyl/", "service": "Duplication Vinyle & CD" }
+            ]
+          },
+          {
+            "path": "/label-musical/mastering/",
+            "type": "service",
+            "description": "Mastering professionnel adapté par genre"
+          },
+          {
+            "path": "/label-musical/artist-management/",
+            "type": "service",
+            "description": "Gestion d'artiste, branding, stratégie digitale"
+          }
+        ],
+        "internalLinking": {
+          "breadcrumb": ["root", "label", "service"],
+          "crossLinks": ["beatmaker", "vst", "web"]
+        }
+      },
+      "web": {
+        "path": "/developpeur-web/",
+        "title": "Développeur Web Expert — Artistes & Tech",
+        "description": "Landing pages, portfolios, intégrations API musicales pour artistes",
+        "contentType": "service",
+        "spokes": [
+          {
+            "path": "/developpeur-web/artiste-portfolio/",
+            "type": "service",
+            "target": "musicians",
+            "spokes": [
+              { "path": "/developpeur-web/artiste-portfolio/landing-page/", "service": "Landing Page Artiste" },
+              { "path": "/developpeur-web/artiste-portfolio/bio-site/", "service": "Site Bio Complet" }
+            ]
+          },
+          {
+            "path": "/developpeur-web/api-integration/",
+            "type": "service",
+            "target": "technical",
+            "spokes": [
+              { "path": "/developpeur-web/api-integration/spotify-sync/", "service": "Intégration Spotify API" },
+              { "path": "/developpeur-web/api-integration/music-data/", "service": "Agrégation données musicales" }
+            ]
+          },
+          {
+            "path": "/developpeur-web/seo-programmatique/",
+            "type": "service",
+            "description": "Architecture SEO légère, cocons sémantiques, HTML5 pur"
+          }
+        ],
+        "internalLinking": {
+          "breadcrumb": ["root", "web", "service", "subsection"],
+          "crossLinks": ["beatmaker", "vst", "label"]
+        }
+      }
+    },
+    "contextualVariables": {
+      "cities": {
+        "Paris": {
+          "code": "Paris_FR",
+          "culturalAssets": ["Marais (studio district)", "La Villette (live venues)", "Pigalle (historical music)",  "Seine-Saint-Denis (hip-hop heritage)"],
+          "studioExamples": ["Studio Ferber", "Les Studios d'Île-de-France"],
+          "keyGenres": ["Afrotrap", "French Hip-Hop", "House Parisienne"],
+          "techHub": "Tech startups in 11e arrondissement",
+          "seoKeywords": ["beatmaker paris", "producteur musique paris", "label disque paris", "développeur web paris"]
+        },
+        "London": {
+          "code": "London_UK",
+          "culturalAssets": ["Abbey Road", "Grime epicenter (East London)", "Soho (recording)"],
+          "keyGenres": ["Grime", "Garage", "UK Trap"],
+          "seoKeywords": ["grime producer london", "uk trap beatmaker"]
+        },
+        "LosAngeles": {
+          "code": "LA_US",
+          "culturalAssets": ["The Roxy", "Sunset Strip", "West Coast hip-hop legacy"],
+          "keyGenres": ["G-Funk", "West Coast Trap"],
+          "seoKeywords": ["g-funk producer los angeles", "trap beatmaker la"]
+        },
+        "Atlanta": {
+          "code": "Atlanta_US",
+          "culturalAssets": ["Trap birthplace (T.I., Jeezy era)", "SCAD Atlanta"],
+          "keyGenres": ["Trap", "Plugg", "Southern Hip-Hop"],
+          "seoKeywords": ["trap producer atlanta", "plugg beats atlanta"]
+        },
+        "Berlin": {
+          "code": "Berlin_DE",
+          "culturalAssets": ["Tresor club", "Berghain", "Electronic music legacy"],
+          "keyGenres": ["Techno", "Minimal"],
+          "seoKeywords": ["techno producer berlin", "minimal techno"]
+        }
+      },
+      "genres": {
+        "HipHop": {
+          "code": "HipHop",
+          "characteristics": "Boom Bap, samples, storytelling",
+          "equipment": ["MPC", "Turntables", "Sampling gear"],
+          "releatedVST": ["Sampler plugin", "Drum machine VST"],
+          "audience": "Hip-Hop heads, producers, DJs"
+        },
+        "Afrotrap": {
+          "code": "Afrotrap",
+          "characteristics": "Trap beat + African percussion, melodies",
+          "culturalContext": "Born in Paris/Africa, global rising",
+          "equipment": ["Digital workstation", "African percussion plugins"],
+          "audience": "Africans abroad, Diaspora, Global Gen-Z"
+        },
+        "DeepHouse": {
+          "code": "DeepHouse",
+          "characteristics": "Soulful, minimal, groove-focused",
+          "equipment": ["Analog synths (software)", "Sampler"],
+          "audience": "Club DJs, electronic music aficionados"
+        },
+        "GFunk": {
+          "code": "GFunk",
+          "characteristics": "West Coast, funk-infused, synth-heavy",
+          "culturalContext": "1990s West Coast legacy",
+          "equipment": ["Synth VST", "Funk samples"],
+          "audience": "Hip-Hop purists, West Coast fans"
+        },
+        "Oriental": {
+          "code": "Oriental",
+          "characteristics": "Arabic scales, ethnic instruments, modern production",
+          "culturalContext": "MENA diaspora, fusion culture",
+          "equipment": ["Arabic scale VST", "Ethnic percussion plugins"],
+          "audience": "MENA diaspora, world music enthusiasts"
+        }
+      },
+      "services": {
+        "VST": {
+          "code": "VST_Dev",
+          "technology": "C++ JUCE framework",
+          "relatedSkills": ["DSP optimization", "Audio processing", "GUI design"],
+          "seoKeywords": ["custom VST developer", "juce c++ plugin", "dsp optimization"]
+        },
+        "WebDev": {
+          "code": "Web_Dev",
+          "technology": "HTML5, CSS3, Vanilla JS (no CMS)",
+          "relatedSkills": ["SEO", "Performance", "API integration"],
+          "seoKeywords": ["web developer", "landing page", "seo programmatique"]
+        },
+        "BeatProduction": {
+          "code": "Beat_Prod",
+          "technology": "DAW (Ableton, Logic, FL Studio)",
+          "relatedSkills": ["Sound design", "Mixing", "Mastering"],
+          "seoKeywords": ["beatmaker", "producer", "ghost producer"]
+        }
+      }
+    }
+  }
+}

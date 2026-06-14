@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{PAGE_TITLE}}</title>
+    <meta name="description" content="{{META_DESCRIPTION}}">
+    <meta name="keywords" content="{{KEYWORDS}}">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{PAGE_TITLE}}">
+    <meta property="og:description" content="{{META_DESCRIPTION}}">
+    <meta property="og:url" content="{{PAGE_URL}}">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{PAGE_TITLE}}">
+    <meta name="twitter:description" content="{{META_DESCRIPTION}}">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="{{PAGE_URL}}">
+
+    <!-- Minimal CSS - No Framework -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #2d2d2d;
+            --accent: #ff6b35;
+            --light: #f5f5f5;
+            --text: #333;
+            --border: #ddd;
+            --max-width: 1000px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: #fff;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        header nav {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        header nav a {
+            color: white;
+            padding: 0 1rem;
+            display: inline-block;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: var(--light);
+            padding: 0.8rem 2rem;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--accent);
+        }
+
+        /* Main Container */
+        main {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #555;
+            max-width: 700px;
+            margin-bottom: 2rem;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .cta-button:hover {
+            background: #e55a2b;
+            text-decoration: none;
+        }
+
+        /* Two Column Layout */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .content-main {
+            min-width: 0;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 8px;
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 3rem;
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            border-left: 4px solid var(--accent);
+            padding-left: 1rem;
+        }
+
+        section h3 {
+            font-size: 1.3rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: var(--secondary);
+        }
+
+        section p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        /* Use Cases */
+        .use-cases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .use-case {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            transition: box-shadow 0.3s;
+        }
+
+        .use-case:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .use-case h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .use-case p {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* FAQ */
+        .faq-item {
+            background: white;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            background: var(--light);
+            padding: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            background: #eee;
+        }
+
+        .faq-answer {
+            padding: 1rem;
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-toggle {
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+
+        /* Sidebar CTA */
+        .sidebar-cta {
+            background: var(--accent);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-cta h3 {
+            color: white;
+            border-left: none;
+            padding-left: 0;
+            margin-top: 0;
+        }
+
+        .sidebar-cta button {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+
+        .sidebar-cta button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Internal Links Box */
+        .internal-links {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .internal-links h4 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .internal-links ul {
+            list-style: none;
+        }
+
+        .internal-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .internal-links a {
+            font-size: 0.95rem;
+            display: block;
+            padding: 0.3rem 0;
+        }
+
+        /* Embeds */
+        .embed-container {
+            margin: 2rem 0;
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .embed-container h4 {
+            margin-bottom: 1rem;
+        }
+
+        iframe {
+            max-width: 100%;
+            height: auto;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        footer p {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        footer a {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            header nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            header nav a {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .sidebar, .cta-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header>
+        <nav>
+            <h2>DJBILBOX BEATS</h2>
+            <div>
+                <a href="/">Home</a>
+                <a href="/beatmaker-producer/">Beatmaker</a>
+                <a href="/vst-plugins-audio/">VST Plugins</a>
+                <a href="/label-musical/">Label</a>
+                <a href="/developpeur-web/">Web Dev</a>
+                <a href="/contact/">Contact</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        {{BREADCRUMB}}
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="content-grid">
+            <!-- Left Column: Main Content -->
+            <article class="content-main">
+                <!-- Hero Section -->
+                <section class="hero">
+                    <h1>{{PAGE_H1}}</h1>
+                    <p>{{HERO_PARAGRAPH}}</p>
+                    <a href="#contact-form" class="cta-button">{{CTA_PRIMARY_TEXT}}</a>
+                </section>
+
+                <!-- Introduction Section -->
+                <section>
+                    <h2>About My Practice in {{CITY}}</h2>
+                    <p>{{INTRO_SECTION}}</p>
+                </section>
+
+                <!-- Cultural Context Section -->
+                <section>
+                    <h2>{{GENRE}} Scene in {{CITY}}</h2>
+                    <p>{{CULTURAL_CONTEXT_INTRO}}</p>
+                    <h3>Local Studio Heritage</h3>
+                    <p>{{CULTURAL_ASSETS_TEXT}}</p>
+                </section>
+
+                <!-- Use Cases -->
+                <section>
+                    <h2>Who I Work With</h2>
+                    <div class="use-cases">
+                        {{USE_CASES_GRID}}
+                    </div>
+                </section>
+
+                <!-- Production Process -->
+                <section>
+                    <h2>My Production Approach</h2>
+                    <h3>Custom Beat Creation</h3>
+                    <p>Each beat is tailored to your specific vision. I work with detailed briefs and multiple revision rounds.</p>
+
+                    <h3>VST Integration & Optimization</h3>
+                    <p>Beyond standard DAW tools, I develop custom plugins to enhance your workflow and achieve signature sounds.</p>
+
+                    <h3>Mastering & Distribution</h3>
+                    <p>Full production pipeline from beat conception through streaming platform delivery.</p>
+                </section>
+
+                <!-- Spotify/YouTube Embed -->
+                <section class="embed-container">
+                    <h4>Listen to Recent {{GENRE}} Beats</h4>
+                    <iframe src="https://open.spotify.com/embed/playlist/{{SPOTIFY_PLAYLIST_ID}}" width="100%" height="380" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                </section>
+
+                <!-- FAQ Section -->
+                <section>
+                    <h2>Frequently Asked Questions</h2>
+                    {{FAQ_ITEMS}}
+                </section>
+
+                <!-- Contact Form -->
+                <section id="contact-form">
+                    <h2>{{CTA_SECONDARY_TEXT}}</h2>
+                    <form method="POST" action="/api/contact">
+                        <input type="hidden" name="city" value="{{CITY_CODE}}">
+                        <input type="hidden" name="genre" value="{{GENRE_CODE}}">
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px; margin-top: 0.5rem;">
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px; margin-top: 0.5rem;">
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="project">Describe Your Project</label>
+                            <textarea id="project" name="project" rows="5" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px; margin-top: 0.5rem; font-family: inherit;"></textarea>
+                        </div>
+
+                        <button type="submit" class="cta-button">Send Inquiry</button>
+                    </form>
+                </section>
+            </article>
+
+            <!-- Right Column: Sidebar -->
+            <aside class="sidebar" role="complementary">
+                <!-- CTA Box -->
+                <div class="sidebar-cta">
+                    <h3>Ready to Start?</h3>
+                    <p>{{CTA_URGENCY}}</p>
+                    <button onclick="document.getElementById('contact-form').scrollIntoView({behavior: 'smooth'})">
+                        {{CTA_PRIMARY_TEXT}}
+                    </button>
+                </div>
+
+                <!-- Internal Links -->
+                <nav class="internal-links">
+                    <h4>Explore More</h4>
+                    <ul>
+                        {{SIDEBAR_INTERNAL_LINKS}}
+                    </ul>
+                </nav>
+
+                <!-- Quick Stats -->
+                <div class="internal-links">
+                    <h4>By The Numbers</h4>
+                    <ul>
+                        <li>15+ years in music production</li>
+                        <li>500+ beats created</li>
+                        <li>50+ VST plugins developed</li>
+                        <li>Artists in 30+ countries</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 DJBILBOX BEATS. All rights reserved.</p>
+        <p><a href="/privacy/">Privacy Policy</a> | <a href="/terms/">Terms of Service</a></p>
+    </footer>
+
+    <!-- JSON-LD Schema Markup -->
+    <script type="application/ld+json">
+    {{SCHEMA_BREADCRUMB}}
+    </script>
+
+    <script type="application/ld+json">
+    {{SCHEMA_LOCAL_BUSINESS}}
+    </script>
+
+    <script type="application/ld+json">
+    {{SCHEMA_MUSIC_GROUP}}
+    </script>
+
+    <!-- Minimal JavaScript - No Framework -->
+    <script>
+        // FAQ Toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                this.parentElement.classList.toggle('active');
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Form handling
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                try {
+                    const response = await fetch(this.action, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (response.ok) {
+                        alert('Thank you! I will be in touch soon.');
+                        this.reset();
+                    }
+                } catch (error) {
+                    console.error('Form submission error:', error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

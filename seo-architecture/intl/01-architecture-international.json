@@ -1,0 +1,138 @@
+{
+  "$schema": "djbilbox-programmatic-seo/v2",
+  "site": {
+    "brand": "DJBILBOX BEATS",
+    "domain": "https://djbilboxbeats.com",
+    "defaultLocale": "en",
+    "locales": {
+      "en": { "market": "Global (US/UK/EU/MENA)", "role": "primary-money-keywords" },
+      "fr": { "market": "France hubs (Paris/Toulouse)", "role": "local-authority" }
+    },
+    "hreflang": { "x-default": "en", "en": "/", "fr": "/fr/" },
+    "strategy": "hub-and-spoke semantic silo, raw HTML5, target 100/100 PageSpeed, mass-index niche money pages"
+  },
+
+  "hubs": {
+
+    "vst-plugins": {
+      "path": "/vst-plugins/",
+      "locale": "en",
+      "scope": "WORLDWIDE",
+      "title": "Custom VST Plugin Development — C++ / JUCE Audio Engineer",
+      "h1": "Custom VST3 / AU Plugin Development",
+      "schemaType": ["Product", "ProfessionalService"],
+      "moneyKeywords": ["custom JUCE plugin developer", "C++ audio plugin development", "hire VST3 developer", "DSP plugin engineer for hire"],
+      "spokes": [
+        {
+          "path": "/vst-plugins/custom-vst-plugin-creation/",
+          "slug": "custom-vst-plugin-creation",
+          "title": "Custom VST Plugin Creation",
+          "intent": "transactional",
+          "keywords": ["custom vst plugin creation", "bespoke audio plugin", "white-label vst developer"],
+          "formats": ["VST3", "AU", "AAX", "CLAP"]
+        },
+        {
+          "path": "/vst-plugins/juce-cpp-developer/",
+          "slug": "juce-cpp-developer",
+          "title": "JUCE C++ Developer for Hire",
+          "intent": "transactional",
+          "keywords": ["juce c++ developer", "juce framework expert", "hire juce developer", "freelance audio programmer"],
+          "isHeroPage": true
+        },
+        {
+          "path": "/vst-plugins/audio-effects-plugin-architecture/",
+          "slug": "audio-effects-plugin-architecture",
+          "title": "Audio Effects Plugin Architecture",
+          "intent": "informational-commercial",
+          "keywords": ["audio effects plugin architecture", "dsp signal chain design", "real-time audio processing c++"],
+          "topics": ["buffers", "multi-threading", "lock-free FIFO", "SIMD", "transient shaping", "harmonics"]
+        },
+        {
+          "path": "/vst-plugins/dsp-optimization-service/",
+          "slug": "dsp-optimization-service",
+          "title": "DSP Optimization & Audit Service",
+          "intent": "transactional",
+          "keywords": ["dsp optimization service", "audio plugin cpu optimization", "juce performance audit"]
+        }
+      ]
+    },
+
+    "beats": {
+      "path": "/beats/",
+      "locale": "en",
+      "scope": "WORLDWIDE",
+      "title": "Professional Beats — Hip-Hop, Afrotrap, Deep House, G-Funk, Oriental",
+      "h1": "Professional Beats for Sale & Custom Production",
+      "schemaType": ["MusicGroup", "Product"],
+      "moneyKeywords": ["professional afrotrap beats", "g-funk producer for hire", "buy oriental trap beats", "deep house producer"],
+      "spokeMatrix": {
+        "pattern": "{genre}-beats-{city}",
+        "note": "each spoke = Genre x Global Music Hub, hyper-contextualised to local chart + scene"
+      },
+      "spokes": [
+        { "path": "/beats/hip-hop-beats-atlanta/", "genre": "Hip-Hop", "city": "Atlanta", "country": "US", "scene": "Trap birthplace, 808-driven, triplet hats" },
+        { "path": "/beats/trap-beats-los-angeles/", "genre": "Trap", "city": "Los Angeles", "country": "US", "scene": "West Coast plugg, melodic, hyphy revival" },
+        { "path": "/beats/g-funk-beats-los-angeles/", "genre": "G-Funk", "city": "Los Angeles", "country": "US", "scene": "Talkbox, portamento synth leads, P-Funk samples" },
+        { "path": "/beats/afrotrap-loops-london/", "genre": "Afrotrap", "city": "London", "country": "UK", "scene": "Afroswing, UK drill crossover, log-drum" },
+        { "path": "/beats/afrotrap-beats-paris/", "genre": "Afrotrap", "city": "Paris", "country": "FR", "scene": "Afrotrap birthplace (MHD era), coupé-décalé fusion" },
+        { "path": "/beats/deep-house-producer-berlin/", "genre": "Deep House", "city": "Berlin", "country": "DE", "scene": "Minimal, dub-techno tails, 120-124 BPM" },
+        { "path": "/beats/arabic-oriental-beats-dubai/", "genre": "Arabic / Oriental", "city": "Dubai", "country": "AE", "scene": "Mahraganat, Khaleeji, maqam scales, oud + 808" },
+        { "path": "/beats/uk-drill-beats-london/", "genre": "UK Drill", "city": "London", "country": "UK", "scene": "Sliding 808s, dark melodies, 140-145 BPM" }
+      ]
+    },
+
+    "web-dev-music": {
+      "path": "/web-dev-music/",
+      "locale": "en+fr",
+      "scope": "NATIONAL+INTERNATIONAL",
+      "title": "Web Development for the Music Industry — Artists, Studios, Labels",
+      "h1": "Web Engineering for the Music Industry",
+      "schemaType": ["ProfessionalService"],
+      "moneyKeywords": ["music artist website developer", "music label web developer", "artist landing page creator", "studio website developer"],
+      "spokes": [
+        {
+          "path": "/web-dev-music/artist-landing-page-creator/",
+          "slug": "artist-landing-page-creator",
+          "locale": "en",
+          "title": "Artist Landing Page Creator",
+          "keywords": ["artist landing page creator", "musician one-page website", "smartlink landing page"]
+        },
+        {
+          "path": "/web-dev-music/music-label-web-developer/",
+          "slug": "music-label-web-developer",
+          "locale": "en",
+          "title": "Music Label Web Developer",
+          "keywords": ["music label web developer", "record label website", "label catalog platform"]
+        },
+        {
+          "path": "/fr/web-dev-music/developpeur-web-musique-paris/",
+          "slug": "developpeur-web-musique-paris",
+          "locale": "fr",
+          "title": "Développeur Web pour Musiciens — Paris",
+          "keywords": ["développeur web musique paris", "site web artiste paris", "création site label paris"]
+        },
+        {
+          "path": "/fr/web-dev-music/developpeur-web-musique-toulouse/",
+          "slug": "developpeur-web-musique-toulouse",
+          "locale": "fr",
+          "title": "Développeur Web pour Musiciens — Toulouse",
+          "keywords": ["développeur web musique toulouse", "site web artiste toulouse", "création site studio toulouse"]
+        }
+      ]
+    }
+  },
+
+  "internalLinking": {
+    "breadcrumb": ["root", "hub", "spoke"],
+    "siloRule": "spokes link UP to own hub + SIDEWAYS to 2 sibling spokes; hubs cross-link once to each other hub (vst-plugins <-> beats <-> web-dev-music)",
+    "anchorStrategy": "exact-match for money keyword, partial-match for support links, branded for cross-hub",
+    "maxOutboundPerPage": 8
+  },
+
+  "scaling": {
+    "generationTarget": "300+ pages indexed in 24h",
+    "method": "static-gen: JSON x template x injection-variables -> flat .html files",
+    "sitemap": "auto-split sitemap_index.xml (1 per hub) + hreflang annotations",
+    "indexing": "IndexNow API ping (Bing) + GSC sitemap submit + internal-link graph for discovery"
+  }
+}

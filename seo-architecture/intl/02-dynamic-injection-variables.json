@@ -1,0 +1,105 @@
+{
+  "purpose": "Variables injected per-page so every spoke is hyper-contextualised and Google reads it as unique (not thin/duplicate). Each page resolves {genre} x {city} x {service} into a unique combination of the fields below.",
+
+  "antiDuplicateRule": "A page is unique when >=4 of these axes differ from any sibling: localScene, chartReference, slangLexicon, technicalSpec, hardwareRef, distributionFormat, bpmRange, scaleOrKey. Title/H1/meta rotated via deterministic hash of (slug) so no two share a pattern.",
+
+  "axes": {
+
+    "city": {
+      "Atlanta": {
+        "country": "US", "lang": "en",
+        "chartReference": "Billboard Hot R&B/Hip-Hop, Atlanta radio Hot 107.9",
+        "localScene": "Trap birthplace — Migos triplet flow, 808 Mafia / Metro Boomin lineage",
+        "slangLexicon": ["plug", "trapping", "lit", "no cap"],
+        "studioHeritage": ["Patchwerk Recording Studios", "Means Street"],
+        "venueRefs": ["Magic City influence on breaking records"]
+      },
+      "Los Angeles": {
+        "country": "US", "lang": "en",
+        "chartReference": "Billboard West Coast, Power 106 / Real 92.3",
+        "localScene": "G-Funk legacy (Dr. Dre, DJ Quik) + modern plugg / hyphy revival",
+        "slangLexicon": ["mobbin", "hyna", "ridin"],
+        "studioHeritage": ["Death Row era studios", "Record One Sherman Oaks"],
+        "venueRefs": ["The Roxy", "Sunset Strip"]
+      },
+      "London": {
+        "country": "UK", "lang": "en-GB",
+        "chartReference": "Official UK Singles Chart, BBC Radio 1Xtra, Rinse FM",
+        "localScene": "Grime / UK drill / Afroswing crossover (Headie One, NSG)",
+        "slangLexicon": ["bars", "wavey", "peak", "endz"],
+        "studioHeritage": ["Abbey Road", "Metropolis Studios"],
+        "venueRefs": ["East London grime epicentre"]
+      },
+      "Paris": {
+        "country": "FR", "lang": "fr",
+        "chartReference": "SNEP Top Singles, Skyrock, Mouv'",
+        "localScene": "Afrotrap birthplace (MHD), Seine-Saint-Denis rap heritage, coupé-décalé",
+        "slangLexicon": ["wesh", "bendo", "validé", "khapta"],
+        "studioHeritage": ["Studio Ferber", "studios du 93"],
+        "venueRefs": ["La Villette", "Pigalle"]
+      },
+      "Berlin": {
+        "country": "DE", "lang": "de/en",
+        "chartReference": "GfK Entertainment Charts, electronic underground (Resident Advisor)",
+        "localScene": "Minimal / dub-techno, club-first culture",
+        "slangLexicon": ["techno", "after-hour", "rave"],
+        "studioHeritage": ["Hansa Tonstudio", "Riverside Studios"],
+        "venueRefs": ["Berghain", "Tresor"]
+      },
+      "Dubai": {
+        "country": "AE", "lang": "ar/en",
+        "chartReference": "Anghami charts, Spotify MENA, Virgin Radio Dubai",
+        "localScene": "Khaleeji pop fusion, Egyptian mahraganat influence, oud-driven trap",
+        "slangLexicon": ["habibi", "yalla", "khaleeji"],
+        "studioHeritage": ["Dubai Studio City"],
+        "venueRefs": ["MENA diaspora streaming demand"]
+      }
+    },
+
+    "genre": {
+      "Hip-Hop":   { "bpmRange": "80-95 (half-time 140-170)", "keyScale": "natural minor", "signature": ["punchy 808", "boom-bap snare", "vinyl sample"], "audience": "rappers, ghost-writing clients" },
+      "Trap":      { "bpmRange": "130-150 (half-time)", "keyScale": "harmonic/natural minor", "signature": ["rolling hi-hats", "sliding 808", "dark bells"], "audience": "trap & plugg artists" },
+      "G-Funk":    { "bpmRange": "90-100", "keyScale": "Dorian/minor pentatonic", "signature": ["portamento synth lead", "talkbox", "P-Funk bass"], "audience": "West Coast revivalists" },
+      "Afrotrap":  { "bpmRange": "95-110", "keyScale": "major / Mixolydian", "signature": ["log-drum", "afro percussion", "melodic vocal chop"], "audience": "afro diaspora, Gen-Z global" },
+      "Deep House":{ "bpmRange": "120-124", "keyScale": "minor 7th / jazzy", "signature": ["deep sub", "Rhodes chords", "shuffled groove"], "audience": "club DJs, electronic listeners" },
+      "Arabic / Oriental": { "bpmRange": "90-105", "keyScale": "Hijaz / Nahawand maqam", "signature": ["oud", "qanun", "mizmar", "darbuka + 808"], "audience": "MENA diaspora, world-fusion" },
+      "UK Drill":  { "bpmRange": "140-145", "keyScale": "phrygian / minor", "signature": ["sliding 808", "dark pluck", "syncopated hats"], "audience": "UK & EU drill artists" }
+    },
+
+    "vstTechnical": {
+      "formats": { "VST3": "Steinberg, cross-DAW default", "AU": "macOS Logic/GarageBand", "AAX": "Pro Tools / studios", "CLAP": "open standard, modern DAWs" },
+      "dspConcepts": ["lock-free ring buffer", "SIMD (SSE/AVX/NEON)", "oversampling + anti-aliasing", "denormal handling", "real-time-safe allocation", "transient detection", "harmonic saturation", "multiband split", "linear-phase vs minimum-phase"],
+      "marketSpec": {
+        "shipped": "VST3 + AU (Windows + macOS) — confirmed on Oriental Instrument",
+        "mobile": "iOS (StoreKit2) + Android (Google Play Billing) standalone",
+        "onRequest": "AAX / CLAP scoped per project, not a default build"
+      },
+      "realClaims": ["sample-accurate automation", "PDC-correct latency reporting", "real-time-safe audio thread (no allocations/locks)"],
+      "doNotClaim": ["fixed CPU % benchmark", "number of plugins shipped beyond Oriental Instrument", "AAX/CLAP as default"]
+    },
+
+    "webDevTechnical": {
+      "stack": ["semantic HTML5", "vanilla CSS3 (no framework)", "vanilla JS", "Python static-gen", "GitHub Pages / Cloudflare"],
+      "integrations": ["Beatstars embed", "Spotify API sync", "smartlink/pre-save", "Stripe checkout", "IndexNow"],
+      "pageSpeedClaims": ["100/100 Lighthouse", "< 14KB critical path", "zero render-blocking JS", "inline critical CSS"]
+    },
+
+    "titlePatterns": {
+      "note": "selected by hash(slug) % N -> deterministic, non-repeating across siblings",
+      "beats": [
+        "{Genre} Beats {City} | Professional Production — DJBILBOX BEATS",
+        "Buy {Genre} Beats in {City} — {City} Sound, Studio Quality",
+        "{City} {Genre} Producer for Hire | Custom Beats & Loops"
+      ],
+      "vst": [
+        "{Service} | C++ JUCE Audio Plugin Engineer — DJBILBOX",
+        "{Service} — VST3 / AU Plugins Built in C++ & JUCE",
+        "{Service}: Custom DSP Built in C++ & JUCE"
+      ],
+      "web": [
+        "{Service} for Musicians | Ultra-Fast, SEO-Ready Sites",
+        "{Service} — Web Engineering for the Music Industry"
+      ]
+    }
+  }
+}

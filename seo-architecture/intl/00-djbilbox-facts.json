@@ -1,0 +1,68 @@
+{
+  "_note": "SOURCE UNIQUE DE VÉRITÉ. Seuls des faits vérifiables sur DJBILBOX BEATS. Aucune invention. Sourcé depuis le repo Oriental Instrument (Fiche Projet, PROJECT_SUMMARY.md) + écosystème connu. NE PAS ajouter de notes/avis, d'années d'expérience, de benchmarks CPU, ou de prix non confirmés.",
+
+  "brand": "DJBILBOX BEATS",
+  "site": "https://djbilboxbeats.com",
+  "siteAlt": "https://djbilboxbeats.github.io",
+  "email": "djbilbox@gmail.com",
+
+  "whatIsTrue": {
+    "beatmaking": {
+      "styles": ["Hip-Hop", "Afrotrap", "Deep House", "G-Funk", "Oriental", "Arabic"],
+      "tools": ["FL Studio"],
+      "platforms": ["Beatstars", "YouTube", "Twitch"],
+      "claim": "Beatmaker / producteur. Styles ci-dessus. PAS de chiffres de ventes ou nombre de beats inventés."
+    },
+    "vstDevelopment": {
+      "framework": "C++ / JUCE",
+      "realProduct": {
+        "name": "Oriental Instrument",
+        "type": "Instrument virtuel (sampler) de sonorités orientales",
+        "status": "EN DÉVELOPPEMENT — moteur sonore opérationnel, bibliothèque de samples finalisée, GUI en intégration, beta-testing à venir. NON ENCORE LANCÉ officiellement.",
+        "instruments": ["Violin", "Oud", "Ney", "Qanun", "Darbuka", "Rababah", "Mizmar"],
+        "instrumentCount": 7,
+        "presets": 70,
+        "presetsPerInstrument": 10,
+        "effects": 8,
+        "effectsExamples": ["réverbération à convolution", "délai", "compression"],
+        "microtonal": "Système d'accordage Maqam (quarts de ton)",
+        "soundArchitecture": "Multi-sampling multi-couches (vibrato, slides)",
+        "formatsShipped": ["VST3", "AU"],
+        "formatsNotBuilt": ["AAX", "CLAP"],
+        "desktop": ["Windows", "macOS"],
+        "mobile": {
+          "ios": "iOS 14.0+, StoreKit2",
+          "android": "API 21-34, Google Play Billing",
+          "model": "Freemium",
+          "demo": "3 instruments (Violin, Oud, Ney), 9 presets, 2 effets (reverb + compression)",
+          "proPrice": "4.99 USD (achat in-app — seul prix confirmé)"
+        }
+      },
+      "claim": "Développeur de plugins audio C++/JUCE. Produit réel : Oriental Instrument (en dev). Disponible pour développement sur-mesure. PAS de '50 plugins livrés', PAS de benchmark CPU chiffré, PAS d'années d'expérience inventées."
+    },
+    "webDevelopment": {
+      "stack": ["HTML5", "CSS3", "JavaScript", "Python"],
+      "hosting": ["GitHub", "GitHub Pages"],
+      "tools": ["VS Code", "GitHub"],
+      "claim": "Développeur web : landing pages, sites artistes, architectures pour l'industrie musicale. Vrai (ce cocon SEO en est la preuve)."
+    }
+  },
+
+  "geo": {
+    "hubsLocaux": ["Paris", "Toulouse"],
+    "marcheMondial": "EN pour US/UK/Europe/Moyen-Orient"
+  },
+
+  "interdits": [
+    "aggregateRating / reviewCount (aucun avis vérifié)",
+    "nombre d'années d'expérience",
+    "nombre de plugins/beats vendus ou livrés",
+    "benchmarks CPU chiffrés (ex: <0.5%)",
+    "prix fixes inventés (seul prix réel: Oriental Pro 4.99 USD)",
+    "formats AAX/CLAP présentés comme livrés",
+    "témoignages / clients nommés non confirmés",
+    "récompenses / certifications"
+  ],
+
+  "ctaHonnete": "Sur devis / nous contacter — pas de prix affichés non confirmés. Pour Oriental Instrument : mentionner statut beta/pré-lancement."
+}

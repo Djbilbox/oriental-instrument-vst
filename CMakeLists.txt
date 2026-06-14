@@ -48,18 +48,6 @@ set(ORIENTAL_SOURCES
     Source/GUI/BackgroundComponent.cpp
 )
 
-# Mobile-specific shared sources (DSP + abstractions)
-set(ORIENTAL_MOBILE_SOURCES
-    Source/Mobile/MobileAudioContext.cpp
-    Source/Mobile/UI/MobileUIController.cpp
-    Source/Mobile/UI/MobileKeyboard.cpp
-    Source/Mobile/UI/MobileKnob.cpp
-    Source/Mobile/UI/MobilePresetBrowser.cpp
-    Source/Mobile/UI/FreemiumIndicator.cpp
-    Source/Mobile/IAP/iOSIAPManager.cpp
-    Source/Mobile/IAP/AndroidIAPManager.cpp
-)
-
 # Build one plugin target (full or DEMO). DEMO defines ORIENTAL_DEMO=1 which
 # limits PresetManager to 5 presets per instrument.
 function(add_oriental_target tgt product code is_demo)
@@ -120,26 +108,28 @@ function(add_oriental_target tgt product code is_demo)
     )
 endfunction()
 
-add_oriental_target(OrientalInstrument     "Oriental Instrument"      OrIn FALSE)
-add_oriental_target(OrientalInstrumentDemo "Oriental Instrument DEMO" OrDm TRUE)
+# VST3 plugin targets are desktop-only (no VST3 on iOS/Android).
+if(NOT ANDROID AND NOT (CMAKE_SYSTEM_NAME STREQUAL "iOS"))
+    add_oriental_target(OrientalInstrument     "Oriental Instrument"      OrIn FALSE)
+    add_oriental_target(OrientalInstrumentDemo "Oriental Instrument DEMO" OrDm TRUE)
+endif()
 
 # ============================================================================
-# iOS Standalone App
+# iOS Standalone App  (reuses desktop editor + full DSP source list)
 # ============================================================================
-if(JUCE_PLATFORM_IOS OR CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
     juce_add_gui_app(OrientalInstrumentiOS
         COMPANY_NAME "DJBILBOX BEATS"
         PRODUCT_NAME "Oriental Instrument"
-        DESCRIPTION "Oriental Virtual Instrument - Maqam Edition (iOS)"
         BUNDLE_ID com.djbilbox.orientalinstrument.ios
-        ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Icons/Icon-iOS.png"
     )
 
     target_sources(OrientalInstrumentiOS PRIVATE
         ${ORIENTAL_SOURCES}
-        ${ORIENTAL_MOBILE_SOURCES}
-        Source/Mobile/Main.cpp
-        Source/Mobile/iOS/MainViewController.cpp
+        Source/Mobile/iOSStandalone.cpp
+        Source/Mobile/UI/iOSViewController.mm
+        Source/Mobile/UI/iOSLayoutAdapter.cpp
+        Source/Mobile/IAP/iOSIAPManager.mm
     )
 
     juce_generate_juce_header(OrientalInstrumentiOS)
@@ -150,15 +140,22 @@ if(JUCE_PLATFORM_IOS OR CMAKE_SYSTEM_NAME STREQUAL "iOS")
             JUCE_STRICT_REFCOUNTEDPOINTER=1
             JUCE_WEB_BROWSER=0
             JUCE_USE_CURL=0
+            JUCE_DISPLAY_SPLASH_SCREEN=0
             ORIENTAL_MOBILE=1
             ORIENTAL_IOS=1
+            JUCE_COREGRAPHICS_DRAW_ASYNC=1
     )
+
+    if(ORIENTAL_DEMO_IOS)
+        target_compile_definitions(OrientalInstrumentiOS PUBLIC ORIENTAL_DEMO_IOS=1 ORIENTAL_DEMO=1)
+    endif()
 
     target_link_libraries(OrientalInstrumentiOS
         PRIVATE
             juce::juce_audio_basics
             juce::juce_audio_devices
             juce::juce_audio_formats
+            juce::juce_audio_processors
             juce::juce_audio_utils
             juce::juce_core
             juce::juce_data_structures
@@ -174,29 +171,37 @@ if(JUCE_PLATFORM_IOS OR CMAKE_SYSTEM_NAME STREQUAL "iOS")
             juce::juce_recommended_warning_flags
     )
 
-    # iOS-specific settings
+    target_link_libraries(OrientalInstrumentiOS PRIVATE
+        "-framework StoreKit"
+        "-framework AVFoundation"
+        "-framework AudioToolbox"
+        "-framework CoreAudio"
+        "-framework UIKit"
+        "-framework Foundation"
+    )
+
     set_target_properties(OrientalInstrumentiOS PROPERTIES
-        MACOSX_DEPLOYMENT_TARGET "13.0"
-        XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer"
+        XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES
+        XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "14.0"
     )
 endif()
 
 # ============================================================================
-# Android Standalone App
+# Android Standalone App  (reuses desktop editor + full DSP source list)
 # ============================================================================
-if(JUCE_PLATFORM_ANDROID OR CMAKE_SYSTEM_NAME STREQUAL "Android")
+if(ANDROID)
     juce_add_gui_app(OrientalInstrumentAndroid
         COMPANY_NAME "DJBILBOX BEATS"
         PRODUCT_NAME "Oriental Instrument"
-        DESCRIPTION "Oriental Virtual Instrument - Maqam Edition (Android)"
         BUNDLE_ID com.djbilbox.orientalinstrument.android
     )
 
     target_sources(OrientalInstrumentAndroid PRIVATE
         ${ORIENTAL_SOURCES}
-        ${ORIENTAL_MOBILE_SOURCES}
-        Source/Mobile/Main.cpp
-        Source/Mobile/Android/MainActivity.cpp
+        Source/Mobile/AndroidStandalone.cpp
+        Source/Mobile/AndroidActivity.cpp
+        Source/Mobile/UI/AndroidUIAdapter.cpp
+        Source/Mobile/IAP/AndroidIAPManager.cpp
     )
 
     juce_generate_juce_header(OrientalInstrumentAndroid)
@@ -207,8 +212,10 @@ if(JUCE_PLATFORM_ANDROID OR CMAKE_SYSTEM_NAME STREQUAL "Android")
             JUCE_STRICT_REFCOUNTEDPOINTER=1
             JUCE_WEB_BROWSER=0
             JUCE_USE_CURL=0
+            JUCE_DISPLAY_SPLASH_SCREEN=0
             ORIENTAL_MOBILE=1
             ORIENTAL_ANDROID=1
+            ORIENTAL_DEMO_ANDROID=1
     )
 
     target_link_libraries(OrientalInstrumentAndroid
@@ -216,6 +223,7 @@ if(JUCE_PLATFORM_ANDROID OR CMAKE_SYSTEM_NAME STREQUAL "Android")
             juce::juce_audio_basics
             juce::juce_audio_devices
             juce::juce_audio_formats
+            juce::juce_audio_processors
             juce::juce_audio_utils
             juce::juce_core
             juce::juce_data_structures

@@ -8,6 +8,12 @@
       "port": 8099
     },
     {
+      "name": "seo-intl",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "serve", "-l", "8123", "C:/seo-intl"],
+      "port": 8123
+    },
+    {
       "name": "hero3d",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "C:/djbilbox-site/hero3d", "run", "dev"],
