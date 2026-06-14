@@ -17,44 +17,41 @@ jobs:
         submodules: recursive
 
     - name: Clone JUCE
-      if: steps.check-juce.outputs.exists == 'false'
       run: |
         if [ ! -d "JUCE" ]; then
-          git clone --depth 1 https://github.com/juce-framework/JUCE.git
+          git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
         fi
 
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
 
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
-      with:
-        api-level: 34
-        ndk-version: '26.0.10792818'
-        cmake-version: '3.22.1'
 
-    - name: Setup CMake
-      uses: jwlawson/actions-setup-cmake@v2
-      with:
-        cmake-version: '3.22.1'
+    - name: Install NDK + CMake + platforms
+      run: |
+        yes | sdkmanager --licenses || true
+        sdkmanager "platforms;android-34" "build-tools;34.0.0" \
+                   "ndk;26.0.10792818" "cmake;3.22.1" "platform-tools"
 
     - name: Configure local.properties
       run: |
         cd android
         cat > local.properties << EOF
         sdk.dir=$ANDROID_SDK_ROOT
-        ndk.dir=$ANDROID_NDK_ROOT
+        ndk.dir=$ANDROID_SDK_ROOT/ndk/26.0.10792818
         cmake.dir=$ANDROID_SDK_ROOT/cmake/3.22.1
         EOF
 
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+
     - name: Build Android (Debug)
-      run: |
-        cd android
-        chmod +x gradlew || true
-        ./gradlew assembleDebug --stacktrace
+      working-directory: android
+      run: gradle assembleDebug --stacktrace --no-daemon
 
     - name: Locate APK
       if: always()

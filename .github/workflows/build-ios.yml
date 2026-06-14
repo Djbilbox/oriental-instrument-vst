@@ -19,7 +19,7 @@ jobs:
     - name: Clone JUCE
       run: |
         if [ ! -d "JUCE" ]; then
-          git clone --depth 1 https://github.com/juce-framework/JUCE.git
+          git clone --depth 1 --branch 7.0.12 https://github.com/juce-framework/JUCE.git
         fi
 
     - name: Setup CMake

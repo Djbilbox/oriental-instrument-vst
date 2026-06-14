@@ -4,6 +4,13 @@ project(OrientalInstrument VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Objective-C++ (.mm) is needed for the iOS platform glue (StoreKit, AVAudioSession).
+# Only enable on Apple — MSVC/Linux have no OBJCXX compiler and would fail to configure.
+if(APPLE)
+    enable_language(OBJC)
+    enable_language(OBJCXX)
+endif()
+
 add_subdirectory(JUCE)
 
 # Embed the UI fonts (Cinzel / Inter, OFL) + background photo → BinaryData::*.
