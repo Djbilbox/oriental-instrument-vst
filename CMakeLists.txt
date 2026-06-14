@@ -48,6 +48,14 @@ set(ORIENTAL_SOURCES
     Source/GUI/BackgroundComponent.cpp
 )
 
+# Mobile-specific shared sources (DSP + abstractions)
+set(ORIENTAL_MOBILE_SOURCES
+    Source/Mobile/MobileAudioContext.cpp
+    Source/Mobile/UI/MobileUIController.cpp
+    Source/Mobile/IAP/iOSIAPManager.cpp
+    Source/Mobile/IAP/AndroidIAPManager.cpp
+)
+
 # Build one plugin target (full or DEMO). DEMO defines ORIENTAL_DEMO=1 which
 # limits PresetManager to 5 presets per instrument.
 function(add_oriental_target tgt product code is_demo)
@@ -110,3 +118,112 @@ endfunction()
 
 add_oriental_target(OrientalInstrument     "Oriental Instrument"      OrIn FALSE)
 add_oriental_target(OrientalInstrumentDemo "Oriental Instrument DEMO" OrDm TRUE)
+
+# ============================================================================
+# iOS Standalone App
+# ============================================================================
+if(JUCE_PLATFORM_IOS OR CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    juce_add_gui_app(OrientalInstrumentiOS
+        COMPANY_NAME "DJBILBOX BEATS"
+        PRODUCT_NAME "Oriental Instrument"
+        DESCRIPTION "Oriental Virtual Instrument - Maqam Edition (iOS)"
+        BUNDLE_ID com.djbilbox.orientalinstrument.ios
+        ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Icons/Icon-iOS.png"
+    )
+
+    target_sources(OrientalInstrumentiOS PRIVATE
+        ${ORIENTAL_SOURCES}
+        ${ORIENTAL_MOBILE_SOURCES}
+        Source/Mobile/Main.cpp
+        Source/Mobile/iOS/MainViewController.cpp
+    )
+
+    juce_generate_juce_header(OrientalInstrumentiOS)
+    target_include_directories(OrientalInstrumentiOS PRIVATE Source)
+
+    target_compile_definitions(OrientalInstrumentiOS
+        PUBLIC
+            JUCE_STRICT_REFCOUNTEDPOINTER=1
+            JUCE_WEB_BROWSER=0
+            JUCE_USE_CURL=0
+            ORIENTAL_MOBILE=1
+            ORIENTAL_IOS=1
+    )
+
+    target_link_libraries(OrientalInstrumentiOS
+        PRIVATE
+            juce::juce_audio_basics
+            juce::juce_audio_devices
+            juce::juce_audio_formats
+            juce::juce_audio_utils
+            juce::juce_core
+            juce::juce_data_structures
+            juce::juce_dsp
+            juce::juce_events
+            juce::juce_graphics
+            juce::juce_gui_basics
+            juce::juce_gui_extra
+            OrientalBinaryData
+        PUBLIC
+            juce::juce_recommended_config_flags
+            juce::juce_recommended_lto_flags
+            juce::juce_recommended_warning_flags
+    )
+
+    # iOS-specific settings
+    set_target_properties(OrientalInstrumentiOS PROPERTIES
+        MACOSX_DEPLOYMENT_TARGET "13.0"
+        XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer"
+    )
+endif()
+
+# ============================================================================
+# Android Standalone App
+# ============================================================================
+if(JUCE_PLATFORM_ANDROID OR CMAKE_SYSTEM_NAME STREQUAL "Android")
+    juce_add_gui_app(OrientalInstrumentAndroid
+        COMPANY_NAME "DJBILBOX BEATS"
+        PRODUCT_NAME "Oriental Instrument"
+        DESCRIPTION "Oriental Virtual Instrument - Maqam Edition (Android)"
+        BUNDLE_ID com.djbilbox.orientalinstrument.android
+    )
+
+    target_sources(OrientalInstrumentAndroid PRIVATE
+        ${ORIENTAL_SOURCES}
+        ${ORIENTAL_MOBILE_SOURCES}
+        Source/Mobile/Main.cpp
+        Source/Mobile/Android/MainActivity.cpp
+    )
+
+    juce_generate_juce_header(OrientalInstrumentAndroid)
+    target_include_directories(OrientalInstrumentAndroid PRIVATE Source)
+
+    target_compile_definitions(OrientalInstrumentAndroid
+        PUBLIC
+            JUCE_STRICT_REFCOUNTEDPOINTER=1
+            JUCE_WEB_BROWSER=0
+            JUCE_USE_CURL=0
+            ORIENTAL_MOBILE=1
+            ORIENTAL_ANDROID=1
+    )
+
+    target_link_libraries(OrientalInstrumentAndroid
+        PRIVATE
+            juce::juce_audio_basics
+            juce::juce_audio_devices
+            juce::juce_audio_formats
+            juce::juce_audio_utils
+            juce::juce_core
+            juce::juce_data_structures
+            juce::juce_dsp
+            juce::juce_events
+            juce::juce_graphics
+            juce::juce_gui_basics
+            juce::juce_gui_extra
+            OrientalBinaryData
+        PUBLIC
+            juce::juce_recommended_config_flags
+            juce::juce_recommended_lto_flags
+            juce::juce_recommended_warning_flags
+    )
+endif()

@@ -426,3 +426,36 @@ PresetData PresetManager::loadUserPreset(const juce::File& file)
     }
     return preset;
 }
+
+void PresetManager::setProUnlocked(bool unlocked)
+{
+    proUnlocked = unlocked;
+}
+
+bool PresetManager::isPresetAvailable(int index) const
+{
+    if (proUnlocked || index >= static_cast<int>(factoryPresets.size()))
+        return true;
+
+    // Demo mode: only first 3 instruments, 3 presets each
+    const auto& preset = factoryPresets[index];
+    int instIndex = static_cast<int>(preset.instrument);
+
+    if (instIndex >= DEMO_NUM_INSTRUMENTS)
+        return false;
+
+    // Count presets for this instrument up to this point
+    int presetCountForInst = 0;
+    for (int i = 0; i <= index; ++i)
+    {
+        if (static_cast<int>(factoryPresets[i].instrument) == instIndex)
+            presetCountForInst++;
+    }
+
+    return presetCountForInst <= DEMO_PRESETS_PER_INSTRUMENT;
+}
+
+int PresetManager::getMaxPresetsPerInstrument() const
+{
+    return proUnlocked ? OrientalConstants::PRESETS_PER_INSTRUMENT : DEMO_PRESETS_PER_INSTRUMENT;
+}

@@ -4,20 +4,14 @@
     {
       "name": "site",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["-y", "serve", "-l", "8099", "C:/Users/djbil/Desktop/Siteweb/site"],
+      "runtimeArgs": ["-y", "serve", "-l", "8099", "C:/djbilbox-site"],
       "port": 8099
     },
     {
       "name": "hero3d",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "C:/Users/djbil/Desktop/Siteweb/site/hero3d", "run", "dev"],
+      "runtimeArgs": ["--prefix", "C:/djbilbox-site/hero3d", "run", "dev"],
       "port": 5180
-    },
-    {
-      "name": "hero3d-dist",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["-y", "serve", "-l", "5181", "C:/Users/djbil/Desktop/Siteweb/site/hero3d/dist"],
-      "port": 5181
     }
   ]
 }
