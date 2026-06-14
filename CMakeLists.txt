@@ -52,6 +52,10 @@ set(ORIENTAL_SOURCES
 set(ORIENTAL_MOBILE_SOURCES
     Source/Mobile/MobileAudioContext.cpp
     Source/Mobile/UI/MobileUIController.cpp
+    Source/Mobile/UI/MobileKeyboard.cpp
+    Source/Mobile/UI/MobileKnob.cpp
+    Source/Mobile/UI/MobilePresetBrowser.cpp
+    Source/Mobile/UI/FreemiumIndicator.cpp
     Source/Mobile/IAP/iOSIAPManager.cpp
     Source/Mobile/IAP/AndroidIAPManager.cpp
 )
