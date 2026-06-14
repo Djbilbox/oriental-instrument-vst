@@ -1,0 +1,51 @@
+## Oriental Instrument — Maqam Synth for iPhone/iPad
+
+**Play authentic Oriental instruments with precise maqam tuning.**
+
+### 🎼 7 Traditional Instruments
+✦ Oud — percussive plucked elegance
+✦ Ney — breathy wind whispers
+✦ Qanun — crystalline harp shimmer
+✦ Violin — singing legato and vibrato
+✦ Darbuka — rhythmic percussion
+✦ Rababah — bowed depth
+✦ Mizmar — reedy brilliance
+
+### 🎛️ 70 Presets Inspired by Middle Eastern Cities
+Each instrument × 10 presets, from Cairo's tarab to Istanbul's Dervish chants.
+
+### 🎯 Accurate Maqam Tuning
+Quarter-tone intervals (24-tone equal temperament) for authentic Arab music — not just transpose!
+
+### 🎚️ Rich Sound Design
+- SVF resonant filters with key-tracking
+- Waveshaper saturation for organic warmth
+- Ensemble unison detune + sub-bass
+- Formant modulation (body/resonance)
+
+### 🎨 8 Effect Processors
+Reverb, Delay, Chorus, Distortion, Compressor, EQ, Phaser, Bitcrusher
+
+### ⌨️ Touch Keyboard + MIDI Support
+- On-screen keyboard with finger pitch-bend
+- Full MIDI controller support (BLE or wired)
+- Sustain + pitch-wheel + mod-wheel
+
+### 🎓 Perfect For
+- World music composers
+- MENA culture students
+- Experimental electronic musicians
+- Interactive performances
+
+### 📱 App Features
+- Portrait + Landscape auto-rotation
+- Preset browser with search/tags
+- Save custom presets
+- Responsive touch interface
+
+**Free Demo**: Try 3 instruments (Violin, Oud, Ney) with 3 presets each.
+**Pro Unlock**: Full 70 presets + all 7 instruments + effects ($4.99)
+
+---
+
+*Oriental Instrument by DJBILBOX BEATS — crafted for authenticity and expressiveness.*

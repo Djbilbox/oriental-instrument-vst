@@ -1,0 +1,105 @@
+{
+  "app_name": "Oriental Instrument",
+  "subtitle": "Maqam Synth for iPhone & iPad",
+  "publisher": "DJBILBOX BEATS",
+  "support_url": "https://djbilboxbeats.github.io/support",
+  "privacy_policy_url": "https://djbilboxbeats.github.io/privacy",
+
+  "app_store_ios": {
+    "bundle_id": "com.djbilbox.orientalinstrument.ios",
+    "keywords": [
+      "music",
+      "synthesizer",
+      "synth",
+      "oriental",
+      "maqam",
+      "oud",
+      "ney",
+      "qanun",
+      "world music",
+      "MENA",
+      "producer",
+      "instrument",
+      "DAW",
+      "MIDI",
+      "audio",
+      "composition"
+    ],
+    "category": "Music",
+    "content_rating": "4+",
+    "requires_login": false,
+    "supports_icloud": true,
+    "icloud_container_identifier": "iCloud.com.djbilbox.orientalinstrument.ios",
+    "iap_products": [
+      {
+        "id": "oriental_pro",
+        "name": "Oriental Instrument Pro",
+        "type": "non_consumable",
+        "price_tier": 3,
+        "description": "Unlock all 7 instruments, 70 presets, and full effect chain."
+      }
+    ],
+    "minimum_ios_version": "13.0",
+    "supported_devices": [
+      "iPhone",
+      "iPad",
+      "iPod"
+    ],
+    "screenshot_descriptions": [
+      "Desert UI with animated background",
+      "7 Oriental instruments to explore",
+      "Maqam tuning with quarter-tone precision",
+      "70 presets from Middle Eastern cities",
+      "Full effect chain: Reverb, Delay, Chorus, Distortion, EQ, Phaser, Compressor, Bitcrusher",
+      "On-screen keyboard with pitch-bend touch",
+      "Preset browser with search & tags",
+      "Portrait and landscape support"
+    ]
+  },
+
+  "google_play_android": {
+    "package_name": "com.djbilbox.orientalinstrument.android",
+    "keywords": [
+      "music",
+      "synthesizer",
+      "synth",
+      "oriental",
+      "maqam",
+      "oud",
+      "ney",
+      "qanun",
+      "world music",
+      "MENA",
+      "producer",
+      "instrument",
+      "MIDI",
+      "audio",
+      "composition"
+    ],
+    "category": "Music & Audio",
+    "content_rating": "Everyone",
+    "supports_google_play_services": false,
+    "google_play_services_version": null,
+    "iap_products": [
+      {
+        "id": "oriental_pro",
+        "name": "Oriental Instrument Pro",
+        "type": "inapp",
+        "price_usd": 4.99,
+        "description": "Unlock all 7 instruments, 70 presets, and full effect chain."
+      }
+    ],
+    "minimum_android_api": 30,
+    "target_android_api": 34,
+    "screenshot_descriptions": [
+      "Desert UI with animated background",
+      "7 Oriental instruments to explore",
+      "Maqam tuning with quarter-tone precision",
+      "70 presets from Middle Eastern cities",
+      "Full effect chain: Reverb, Delay, Chorus, Distortion, EQ, Phaser, Compressor, Bitcrusher",
+      "On-screen keyboard with pitch-bend touch",
+      "Preset browser with search & tags",
+      "Portrait and landscape support"
+    ]
+  }
+}
