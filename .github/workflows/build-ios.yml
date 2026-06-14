@@ -23,7 +23,7 @@ jobs:
         fi
 
     - name: Setup CMake
-      uses: jwlawson/actions-setup-cmake@v1.14
+      uses: jwlawson/actions-setup-cmake@v2
       with:
         cmake-version: '3.22.1'
 
@@ -41,47 +41,36 @@ jobs:
           -DCMAKE_OSX_ARCHITECTURES=arm64 \
           -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
           -DCMAKE_OSX_SYSROOT=iphoneos \
+          -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO \
+          -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED=NO \
           ..
 
-    - name: Build iOS (Release)
+    - name: Build iOS (Release, unsigned)
       run: |
         cd build-ios
-        cmake --build . --config Release --target OrientalInstrumentiOS
+        cmake --build . --config Release --target OrientalInstrumentiOS -- \
+          CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
 
-    - name: Build iOS (Demo)
+    - name: Create IPA (unsigned)
       run: |
         cd build-ios
-        cmake --build . --config Release --target OrientalInstrumentiOS_Demo
-
-    - name: Create IPA (Release)
-      run: |
-        cd build-ios
-        # Package app as IPA
+        APP=$(find . -name "*.app" -type d | head -1)
+        echo "Found app: $APP"
+        if [ -z "$APP" ]; then echo "No .app produced"; exit 1; fi
         mkdir -p Payload
-        cp -r Release/Oriental\ Instrument.app Payload/
-        zip -r Oriental_Instrument_Release.ipa Payload/
-        rm -rf Payload
-
-    - name: Create IPA (Demo)
-      run: |
-        cd build-ios
-        # Package app as IPA
-        mkdir -p Payload
-        cp -r Release/Oriental\ Instrument\ Demo.app Payload/
-        zip -r Oriental_Instrument_Demo.ipa Payload/
+        cp -r "$APP" Payload/
+        zip -r Oriental_Instrument_unsigned.ipa Payload/
         rm -rf Payload
 
     - name: Upload IPA artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: ios-ipas
-        path: |
-          build-ios/Oriental_Instrument_Release.ipa
-          build-ios/Oriental_Instrument_Demo.ipa
+        name: ios-ipa-unsigned
+        path: build-ios/Oriental_Instrument_unsigned.ipa
 
     - name: Upload to GitHub Release
       if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           build-ios/Oriental_Instrument_Release.ipa
