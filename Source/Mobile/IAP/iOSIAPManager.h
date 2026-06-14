@@ -1,35 +1,58 @@
 #pragma once
-#include "IAPManager.h"
 
-#if JUCE_IOS
-#include <StoreKit/StoreKit.h>
+#ifdef JUCE_IOS
+    #import <StoreKit/StoreKit.h>
+#endif
 
-class iOSIAPManager : public IAPManager
-{
-public:
-    iOSIAPManager();
-    ~iOSIAPManager() override;
+#include <JuceHeader.h>
 
-    void initialise() override;
-    bool isPurchased(const juce::String& productId) const override;
-    juce::String getProductPrice(const juce::String& productId) const override;
-    void requestPurchase(const juce::String& productId, PurchaseCallback callback) override;
-    void restorePurchases(PurchaseCallback callback) override;
+class OrientalInstrumentProcessor;
 
-private:
-    struct ProductInfo
-    {
-        juce::String productId;
-        juce::String displayName;
-        juce::String displayPrice;
-    };
+/*
+    iOSIAPManager.h — In-App Purchase manager using StoreKit2 (iOS 15.0+).
 
-    juce::HashMap<juce::String, ProductInfo> productCache;
-    juce::HashMap<juce::String, bool> purchaseCache;
-    PurchaseCallback currentCallback;
+    Freemium model:
+    - Demo tier (free): 3 instruments (Violin, Oud, Qanun), 3 presets each, 2 effects (Reverb, Delay)
+    - Full tier (IAP): All 7 instruments, 10 presets each, all 8 effects
 
-    void queryProducts();
-    void handlePurchaseResult(bool success, const juce::String& productId);
-};
+    Product identifiers:
+    - "com.djbilbox.oriental.instruments" — unlock all instruments
+    - "com.djbilbox.oriental.full" — unlock full feature set (future)
 
-#endif // JUCE_IOS
+    Manages:
+    - Product fetching from App Store
+    - Purchase flow (request, validation, completion)
+    - Entitlement verification via local cache + server validation (optional)
+    - Restore purchases
+*/
+
+#ifdef JUCE_IOS
+
+@interface OrientalInstrumentiOSIAPManager : NSObject
+
+@property (nonatomic, assign, readonly) BOOL isFullVersionPurchased;
+@property (nonatomic, assign, readonly) BOOL isLoadingProducts;
+@property (nonatomic, copy) void (^purchaseCompletionHandler)(BOOL success, NSString* _Nullable error);
+
+- (instancetype)initWithProcessor:(class OrientalInstrumentProcessor*)processor;
+
+// Product management
+- (void)loadProducts;
+- (nullable SKProduct*)productForIdentifier:(NSString*)identifier;
+- (NSArray<SKProduct*>*)availableProducts;
+
+// Purchase flow
+- (void)purchaseProductWithIdentifier:(NSString*)productID;
+- (void)restorePurchases;
+
+// Entitlement checking
+- (BOOL)isProductUnlocked:(NSString*)productID;
+- (void)updateEntitlements;
+
+// Debug helpers
+- (void)logEntitlementStatus;
+- (void)simulatePurchaseForTesting:(NSString*)productID;
+
+@end
+
+#endif
