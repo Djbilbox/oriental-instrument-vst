@@ -1,0 +1,163 @@
+name: Release Android + iOS
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Clone JUCE
+      run: |
+        if [ ! -d "JUCE" ]; then
+          git clone --depth 1 https://github.com/juce-framework/JUCE.git
+        fi
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 34
+        ndk-version: '26.0.10792818'
+        cmake-version: '3.22.1'
+
+    - name: Configure local.properties
+      run: |
+        cd android
+        cat > local.properties << EOF
+        sdk.dir=$ANDROID_SDK_ROOT
+        ndk.dir=$ANDROID_NDK_ROOT
+        cmake.dir=$ANDROID_SDK_ROOT/cmake/3.22.1
+        EOF
+
+    - name: Build Android Release
+      run: |
+        cd android
+        ./gradlew assembleRelease
+
+    - name: Sign APK
+      uses: r0adkll/sign-android-release@v1
+      with:
+        releaseDirectory: android/app/build/outputs/apk/release
+        signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
+        alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+        keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+    - name: Upload signed APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-release-signed
+        path: android/app/build/outputs/apk/release/app-release-signed.apk
+
+  ios:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Clone JUCE
+      run: |
+        if [ ! -d "JUCE" ]; then
+          git clone --depth 1 https://github.com/juce-framework/JUCE.git
+        fi
+
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@v1.14
+      with:
+        cmake-version: '3.22.1'
+
+    - name: Import Apple Code Signing
+      uses: Apple-Actions/import-codesign-certs@v2
+      with:
+        p12-file-base64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+        p12-password: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+
+    - name: Create build directory
+      run: mkdir -p build-ios
+
+    - name: Configure CMake (iOS)
+      run: |
+        cd build-ios
+        cmake -G Xcode \
+          -DCMAKE_SYSTEM_NAME=iOS \
+          -DCMAKE_OSX_ARCHITECTURES=arm64 \
+          -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
+          -DCMAKE_OSX_SYSROOT=iphoneos \
+          -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="Apple Distribution" \
+          ..
+
+    - name: Build iOS Release
+      run: |
+        cd build-ios
+        cmake --build . --config Release --target OrientalInstrumentiOS
+
+    - name: Create IPA
+      run: |
+        cd build-ios
+        mkdir -p Payload
+        cp -r Release/Oriental\ Instrument.app Payload/
+        zip -r Oriental_Instrument_Release.ipa Payload/
+        rm -rf Payload
+
+    - name: Upload IPA
+      uses: actions/upload-artifact@v3
+      with:
+        name: ios-release
+        path: build-ios/Oriental_Instrument_Release.ipa
+
+  create-release:
+    needs: [android, ios]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v3
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          android-release-signed/app-release-signed.apk
+          ios-release/Oriental_Instrument_Release.ipa
+        body: |
+          # Oriental Instrument Mobile Release
+
+          ## Download
+          - **Android**: `app-release-signed.apk` — Install via `adb install`
+          - **iOS**: `Oriental_Instrument_Release.ipa` — Install via Xcode or Apple Configurator
+
+          ## Installation
+
+          ### Android
+          ```bash
+          adb install app-release-signed.apk
+          adb shell am start -n com.djbilbox.orientalinstrument.android/.MainActivity
+          ```
+
+          ### iOS
+          - Via Xcode: Window → Devices & Simulators → drag .ipa
+          - Via Apple Configurator: Add → select .ipa
+
+          ## Features
+          - 7 Oriental instruments (Violin, Oud, Ney, Qanun, Darbuka, Rababah, Mizmar)
+          - 70 presets from Middle Eastern cities
+          - Maqam tuning (quarter-tone system)
+          - 8 effects (Reverb, Delay, Chorus, Distortion, Compressor, EQ, Phaser, Bitcrusher)
+          - Touch keyboard with pitch-bend
+          - Free demo mode (3 instruments, 3 presets)
+          - In-app purchase to unlock pro
+
+          Enjoy!
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

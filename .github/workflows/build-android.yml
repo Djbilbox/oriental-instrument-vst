@@ -1,0 +1,79 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ feature/refonte-dsp-ui, main ]
+  pull_request:
+    branches: [ feature/refonte-dsp-ui, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Clone JUCE
+      if: steps.check-juce.outputs.exists == 'false'
+      run: |
+        if [ ! -d "JUCE" ]; then
+          git clone --depth 1 https://github.com/juce-framework/JUCE.git
+        fi
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 34
+        ndk-version: '26.0.10792818'
+        cmake-version: '3.22.1'
+
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@v1.14
+      with:
+        cmake-version: '3.22.1'
+
+    - name: Configure local.properties
+      run: |
+        cd android
+        cat > local.properties << EOF
+        sdk.dir=$ANDROID_SDK_ROOT
+        ndk.dir=$ANDROID_NDK_ROOT
+        cmake.dir=$ANDROID_SDK_ROOT/cmake/3.22.1
+        EOF
+
+    - name: Build Android (Debug)
+      run: |
+        cd android
+        ./gradlew assembleDebug
+
+    - name: Build Android (Release)
+      run: |
+        cd android
+        ./gradlew assembleRelease
+
+    - name: Upload APK artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-apks
+        path: |
+          android/app/build/outputs/apk/debug/app-debug.apk
+          android/app/build/outputs/apk/release/app-release.apk
+
+    - name: Upload to GitHub Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          android/app/build/outputs/apk/debug/app-debug.apk
+          android/app/build/outputs/apk/release/app-release.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
